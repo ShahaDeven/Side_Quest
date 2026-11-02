@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "side-quest",
+  "compatibility_date": "2026-10-23",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  // IDs are omitted on purpose: wrangler provisions these on first deploy.
+  "kv_namespaces": [{ "binding": "CACHE" }],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "side-quest",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

@@ -1,0 +1,909 @@
+{
+ "login": "ShahaDeven",
+ "name": "Deven Shah",
+ "avatarUrl": "https://avatars.githubusercontent.com/u/24701686?v=4",
+ "profileUrl": "https://github.com/ShahaDeven",
+ "repos": [
+  {
+   "name": "AI_SQL_Agent",
+   "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
+   "description": "Production-grade Text-to-SQL Agent with 91.7% accuracy on 60 queries | What-If Simulator | Hybrid BM25 + Semantic Retrieval | Self-Healing SQL | Eval Framework | Docker + CI/CD",
+   "language": "Python",
+   "topics": [
+    "anthropic",
+    "chromadb",
+    "docker",
+    "duckdb",
+    "evaluation-framework",
+    "langchain",
+    "llm",
+    "rag",
+    "sql-agent",
+    "streamlit",
+    "text-to-sql"
+   ],
+   "stars": 1,
+   "pushedAt": "2026-07-15T01:15:33Z",
+   "homepage": null,
+   "contributors": 1,
+   "ownerShare": 1
+  },
+  {
+   "name": "storeroom-slip-validator",
+   "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
+   "description": "Catches handwritten storeroom checkout slip errors at the counter, not days later at the stock count. AI reads the handwriting; deterministic rules decide. Flags closed work orders, ambiguous units and parts, and tells the clerk what to ask the crew.",
+   "language": "Python",
+   "topics": [
+    "claude",
+    "claude-code",
+    "computer-vision",
+    "fastapi",
+    "handwriting-recognition",
+    "human-in-the-loop",
+    "inventory-management",
+    "llm",
+    "prototype",
+    "python",
+    "react",
+    "rule-based",
+    "sqlite",
+    "typescript",
+    "validation"
+   ],
+   "stars": 0,
+   "pushedAt": "2026-10-29T14:00:33Z",
+   "homepage": null,
+   "contributors": 1,
+   "ownerShare": 1
+  },
+  {
+   "name": "Market_Pulse",
+   "url": "https://github.com/ShahaDeven/Market_Pulse",
+   "description": "LangGraph multi-agent equity research system that drafts company-outlook memos by triangulating SEC filings, macroeconomic indicators, and consumer sentiment  with confidence-gated human-in-the-loop review and an LLM-as-judge eval pipeline.",
+   "language": "Python",
+   "topics": [
+    "ai-agents",
+    "equity-research",
+    "fintech",
+    "human-in-the-loop",
+    "langchain",
+    "langgraph",
+    "mcp",
+    "multi-agent-systems",
+    "postgresql",
+    "python",
+    "streamlit"
+   ],
+   "stars": 0,
+   "pushedAt": "2026-07-22T16:09:57Z",
+   "homepage": null,
+   "contributors": 1,
+   "ownerShare": 1
+  },
+  {
+   "name": "Rossman_sales_project",
+   "url": "https://github.com/ShahaDeven/Rossman_sales_project",
+   "description": "Production ML pipeline for Rossmann store sales forecasting using PyTorch LSTM  includes REST API, monitoring dashboard, and MLflow experiment tracking.",
+   "language": "Jupyter Notebook",
+   "topics": [
+    "deep-learning",
+    "fastapi",
+    "lstm",
+    "machine-learning",
+    "mlflow",
+    "python",
+    "pytorch",
+    "rest-api",
+    "streamlit",
+    "time-series-forecasting"
+   ],
+   "stars": 0,
+   "pushedAt": "2026-02-23T16:55:11Z",
+   "homepage": null,
+   "contributors": 1,
+   "ownerShare": 1
+  },
+  {
+   "name": "Meeting_Insight_Trust",
+   "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+   "description": "Which meeting insights are safe to auto-write to a CRM? Evaluation on 24 real AMI meetings: Whisper + pyannote speech pipeline, quote-backed LLM extraction, a risk score and write policy (auto-write / review / reject), and a review console.",
+   "language": "Python",
+   "topics": [
+    "crm",
+    "human-in-the-loop",
+    "llm-agents",
+    "llm-evaluation",
+    "meeting-assistant",
+    "pyannote",
+    "react",
+    "risk-scoring",
+    "speech-recognition",
+    "whisper"
+   ],
+   "stars": 0,
+   "pushedAt": "2026-10-26T23:17:39Z",
+   "homepage": null,
+   "contributors": 1,
+   "ownerShare": 1
+  },
+  {
+   "name": "SQL-Forge",
+   "url": "https://github.com/ShahaDeven/SQL-Forge",
+   "description": "Post-training Qwen2.5-Coder for Text-to-SQL: SFT → DPO → GRPO with execution-verified rewards. +20pp in-domain, zero forgetting, and an honest negative result.",
+   "language": "Python",
+   "topics": [
+    "dpo",
+    "duckdb",
+    "fine-tuning",
+    "grpo",
+    "llm",
+    "llm-evaluation",
+    "lora",
+    "peft",
+    "post-training",
+    "qwen",
+    "rlvr",
+    "synthetic-data",
+    "text-to-sql",
+    "trl",
+    "vllm"
+   ],
+   "stars": 0,
+   "pushedAt": "2026-07-23T18:09:36Z",
+   "homepage": null,
+   "contributors": 1,
+   "ownerShare": 1
+  },
+  {
+   "name": "Project_interface",
+   "url": "https://github.com/ShahaDeven/Project_interface",
+   "description": "LLM discovers how to complete a task in a legacy web UI once — discovery compiles a reusable capability artifact, then a deterministic interpreter replays it with zero model calls.",
+   "language": "Python",
+   "topics": [
+    "ai-agents",
+    "browser-automation",
+    "computer-use",
+    "llm-agents",
+    "playwright"
+   ],
+   "stars": 0,
+   "pushedAt": "2026-08-17T14:19:45Z",
+   "homepage": null,
+   "contributors": 1,
+   "ownerShare": 1
+  },
+  {
+   "name": "margin-guard",
+   "url": "https://github.com/ShahaDeven/margin-guard",
+   "description": "Agent system that reads supplier price-change emails, finds the open quotes losing margin, decides what to do about each one, and drafts the message for a human to approve. Rules do the math, Claude makes the judgment calls, and an eval loop measures when to trust it.",
+   "language": "Python",
+   "topics": [
+    "ai-agents",
+    "anthropic",
+    "claude",
+    "fastapi",
+    "human-in-the-loop",
+    "langgraph",
+    "llm-evals",
+    "manufacturing",
+    "multi-agent",
+    "pricing",
+    "prototype",
+    "python",
+    "react",
+    "sqlite"
+   ],
+   "stars": 0,
+   "pushedAt": "2026-10-14T20:47:47Z",
+   "homepage": null,
+   "contributors": 1,
+   "ownerShare": 1
+  },
+  {
+   "name": "discharge-safety-gate",
+   "url": "https://github.com/ShahaDeven/discharge-safety-gate",
+   "description": "Safety gate for post-discharge AI voice agents. Replays synthetic patient calls, scores escalation, medication handling and call rules, and returns allow / needs checking / block with evidence.",
+   "language": "HTML",
+   "topics": [
+    "ai-agents",
+    "ai-safety",
+    "eval-harness",
+    "healthcare-ai",
+    "llm-evaluation",
+    "python",
+    "synthetic-data",
+    "voice-agents"
+   ],
+   "stars": 0,
+   "pushedAt": "2026-10-24T23:12:56Z",
+   "homepage": null,
+   "contributors": 1,
+   "ownerShare": 1
+  }
+ ],
+ "evidence": {
+  "python": [
+   {
+    "skill": "python",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "42 .py files",
+     "7 test files in `tests/`",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "python",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "AI_SQL_Agent",
+    "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
+    "reasons": [
+     "16 .py files",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "python",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "storeroom-slip-validator",
+    "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
+    "reasons": [
+     "12 .py files",
+     "3 test files in `tests/`"
+    ]
+   }
+  ],
+  "sql": [
+   {
+    "skill": "sql",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "AI_SQL_Agent",
+    "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
+    "reasons": [
+     "`requirements.txt` lists duckdb · 16 source files",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "sql",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "4 .sql files",
+     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+    ]
+   },
+   {
+    "skill": "sql",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "SQL-Forge",
+    "url": "https://github.com/ShahaDeven/SQL-Forge",
+    "reasons": [
+     "`sqlforge/requirements-grpo.txt` lists duckdb · 18 source files"
+    ]
+   }
+  ],
+  "docker": [
+   {
+    "skill": "docker",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "AI_SQL_Agent",
+    "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
+    "reasons": [
+     "2 files `Dockerfile`, `docker-compose.yml`",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "docker",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "1 file `docker-compose.yml`",
+     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+    ]
+   },
+   {
+    "skill": "docker",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Rossman_sales_project",
+    "url": "https://github.com/ShahaDeven/Rossman_sales_project",
+    "reasons": [
+     "3 files `Dockerfile`, `Dockerfile.monitoring`, `docker-compose.yml`",
+     "CI in `.github/workflows/`"
+    ]
+   }
+  ],
+  "ci-cd": [
+   {
+    "skill": "ci-cd",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "1 workflow in `.github/workflows/`",
+     "7 test files in `tests/`"
+    ]
+   },
+   {
+    "skill": "ci-cd",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "AI_SQL_Agent",
+    "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
+    "reasons": [
+     "1 workflow in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "ci-cd",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "Rossman_sales_project",
+    "url": "https://github.com/ShahaDeven/Rossman_sales_project",
+    "reasons": [
+     "1 workflow in `.github/workflows/`"
+    ]
+   }
+  ],
+  "testing": [
+   {
+    "skill": "testing",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "`pyproject.toml` lists pytest · 42 source files",
+     "7 files in `tests/`",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "testing",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "AI_SQL_Agent",
+    "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
+    "reasons": [
+     "`requirements.txt` lists pytest · 16 source files",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "testing",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "storeroom-slip-validator",
+    "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
+    "reasons": [
+     "`requirements.txt` lists pytest · 12 source files",
+     "3 files in `tests/`"
+    ]
+   }
+  ],
+  "observability": [
+   {
+    "skill": "observability",
+    "tier": "described",
+    "source": "repo",
+    "repo": "AI_SQL_Agent",
+    "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
+    "reasons": [
+     "README: “📈 Observability Dashboard”"
+    ]
+   },
+   {
+    "skill": "observability",
+    "tier": "described",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "README: “Observability”"
+    ]
+   },
+   {
+    "skill": "observability",
+    "tier": "described",
+    "source": "repo",
+    "repo": "Rossman_sales_project",
+    "url": "https://github.com/ShahaDeven/Rossman_sales_project",
+    "reasons": [
+     "README: “…served via a REST API with a real-time monitoring dashboard.…”"
+    ]
+   }
+  ],
+  "llm": [
+   {
+    "skill": "llm",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "`pyproject.toml` lists anthropic · 42 source files",
+     "7 test files in `tests/`",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "llm",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "AI_SQL_Agent",
+    "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
+    "reasons": [
+     "`requirements.txt` lists langchain, langchain-community, langchain-core · 16 source files",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "llm",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "storeroom-slip-validator",
+    "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
+    "reasons": [
+     "`requirements.txt` lists anthropic · 12 source files",
+     "3 test files in `tests/`"
+    ]
+   }
+  ],
+  "agents": [
+   {
+    "skill": "agents",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "`pyproject.toml` lists langgraph · 40 source files",
+     "14 files e.g. `agent/audit_log.py`",
+     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+    ]
+   },
+   {
+    "skill": "agents",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "AI_SQL_Agent",
+    "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
+    "reasons": [
+     "2 files `src/agent_graph.py`, `tests/test_agent.py`",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "agents",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Project_interface",
+    "url": "https://github.com/ShahaDeven/Project_interface",
+    "reasons": [
+     "3 files in `cua/agent/`",
+     "9 test files in `tests/`"
+    ]
+   }
+  ],
+  "evals": [
+   {
+    "skill": "evals",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "8 files in `evals/`",
+     "7 test files in `tests/`",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "evals",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "AI_SQL_Agent",
+    "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
+    "reasons": [
+     "4 files in `eval/`",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "evals",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "2 files in `evals/`",
+     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+    ]
+   }
+  ],
+  "rag": [
+   {
+    "skill": "rag",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "AI_SQL_Agent",
+    "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
+    "reasons": [
+     "`requirements.txt` lists sentence-transformers · 16 source files",
+     "2 files `eval/retrieval_eval.py`, `src/retriever.py`",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "rag",
+    "tier": "described",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "README: “…ation built in: agents with LangGraph, RAG and GraphRAG, fine-tuning (a Qwen2.5-Coder-7B text-to-SQL model), and eval ha…”"
+    ]
+   },
+   {
+    "skill": "rag",
+    "tier": "described",
+    "source": "repo",
+    "repo": "SQL-Forge",
+    "url": "https://github.com/ShahaDeven/SQL-Forge",
+    "reasons": [
+     "README: “No self-healing retry loop, no few-shot examples, no retrieval.”"
+    ]
+   }
+  ],
+  "search-ranking": [
+   {
+    "skill": "search-ranking",
+    "tier": "described",
+    "source": "repo",
+    "repo": "AI_SQL_Agent",
+    "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
+    "reasons": [
+     "README: “Hybrid Search Retriever: BM25 + Semantic Search (ChromaDB) with 99.1% table recall — maps vague user terms to specific d…”"
+    ]
+   }
+  ],
+  "typescript": [
+   {
+    "skill": "typescript",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "`web/package.json` lists typescript · 13 source files",
+     "13 .ts/.tsx files",
+     "7 test files in `tests/`",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "typescript",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "storeroom-slip-validator",
+    "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
+    "reasons": [
+     "`frontend/package.json` lists typescript · 12 source files",
+     "12 .ts/.tsx files",
+     "3 test files in `tests/`"
+    ]
+   },
+   {
+    "skill": "typescript",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "`frontend/package.json` lists typescript · 11 source files",
+     "11 .ts/.tsx files",
+     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+    ]
+   }
+  ],
+  "react": [
+   {
+    "skill": "react",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "`web/package.json` lists react, react-dom · 13 source files",
+     "7 test files in `tests/`",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "react",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "storeroom-slip-validator",
+    "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
+    "reasons": [
+     "`frontend/package.json` lists react, react-dom · 12 source files",
+     "3 test files in `tests/`"
+    ]
+   },
+   {
+    "skill": "react",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "`frontend/package.json` lists react, react-dom · 11 source files",
+     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+    ]
+   }
+  ],
+  "node": [
+   {
+    "skill": "node",
+    "tier": "described",
+    "source": "repo",
+    "repo": "storeroom-slip-validator",
+    "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
+    "reasons": [
+     "README: “No API key, paid service or Node needed (the built web UI is included).”"
+    ]
+   },
+   {
+    "skill": "node",
+    "tier": "described",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "README: “Needs only Node.js 20 or later.”"
+    ]
+   },
+   {
+    "skill": "node",
+    "tier": "described",
+    "source": "repo",
+    "repo": "margin-guard",
+    "url": "https://github.com/ShahaDeven/margin-guard",
+    "reasons": [
+     "README: “Needs Python 3.11+ and Node 20.19+ (tested on Python 3.11 and Node 22).”"
+    ]
+   }
+  ],
+  "python-backend": [
+   {
+    "skill": "python-backend",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "storeroom-slip-validator",
+    "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
+    "reasons": [
+     "`requirements.txt` lists fastapi · 12 source files",
+     "3 test files in `tests/`"
+    ]
+   },
+   {
+    "skill": "python-backend",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Rossman_sales_project",
+    "url": "https://github.com/ShahaDeven/Rossman_sales_project",
+    "reasons": [
+     "`requirements.txt` lists fastapi · 9 source files",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "python-backend",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Project_interface",
+    "url": "https://github.com/ShahaDeven/Project_interface",
+    "reasons": [
+     "`requirements.txt` lists Flask · 41 source files",
+     "9 test files in `tests/`"
+    ]
+   }
+  ],
+  "computer-vision": [
+   {
+    "skill": "computer-vision",
+    "tier": "mentioned",
+    "source": "repo",
+    "repo": "storeroom-slip-validator",
+    "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
+    "reasons": [
+     "tagged `computer-vision`"
+    ]
+   }
+  ],
+  "browser-automation": [
+   {
+    "skill": "browser-automation",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Project_interface",
+    "url": "https://github.com/ShahaDeven/Project_interface",
+    "reasons": [
+     "`requirements.txt` lists playwright · 41 source files",
+     "9 test files in `tests/`"
+    ]
+   },
+   {
+    "skill": "browser-automation",
+    "tier": "described",
+    "source": "repo",
+    "repo": "storeroom-slip-validator",
+    "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
+    "reasons": [
+     "README: “drove the web UI in a real browser (scripted with Playwright) through the full demo path and at phone width;”"
+    ]
+   }
+  ],
+  "postgres": [
+   {
+    "skill": "postgres",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "`pyproject.toml` lists psycopg · 40 source files",
+     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+    ]
+   }
+  ],
+  "mcp": [
+   {
+    "skill": "mcp",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "`pyproject.toml` lists fastmcp · 40 source files",
+     "6 files e.g. `agent/mcp_client.py`",
+     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+    ]
+   }
+  ],
+  "deep-learning": [
+   {
+    "skill": "deep-learning",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Rossman_sales_project",
+    "url": "https://github.com/ShahaDeven/Rossman_sales_project",
+    "reasons": [
+     "`requirements.txt` lists torch · 9 source files",
+     "CI in `.github/workflows/`"
+    ]
+   }
+  ],
+  "ml": [
+   {
+    "skill": "ml",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "`pyproject.toml` lists scikit-learn, xgboost · 42 source files",
+     "7 test files in `tests/`",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "ml",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Rossman_sales_project",
+    "url": "https://github.com/ShahaDeven/Rossman_sales_project",
+    "reasons": [
+     "`requirements.txt` lists scikit-learn · 9 source files",
+     "CI in `.github/workflows/`"
+    ]
+   }
+  ],
+  "data-pipelines": [
+   {
+    "skill": "data-pipelines",
+    "tier": "shipped",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "6 files in `pipeline/`",
+     "7 test files in `tests/`",
+     "CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "data-pipelines",
+    "tier": "described",
+    "source": "repo",
+    "repo": "SQL-Forge",
+    "url": "https://github.com/ShahaDeven/SQL-Forge",
+    "reasons": [
+     "README: “The data pipeline's biggest win was deleting a filter.”"
+    ]
+   }
+  ],
+  "fine-tuning": [
+   {
+    "skill": "fine-tuning",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "SQL-Forge",
+    "url": "https://github.com/ShahaDeven/SQL-Forge",
+    "reasons": [
+     "`sqlforge/requirements-grpo.txt` lists trl, peft · 18 source files",
+     "10 files in `sqlforge/`"
+    ]
+   },
+   {
+    "skill": "fine-tuning",
+    "tier": "described",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "README: “…ents with LangGraph, RAG and GraphRAG, fine-tuning (a Qwen2.5-Coder-7B text-to-SQL model), and eval harnesses like this…”"
+    ]
+   },
+   {
+    "skill": "fine-tuning",
+    "tier": "described",
+    "source": "repo",
+    "repo": "Project_interface",
+    "url": "https://github.com/ShahaDeven/Project_interface",
+    "reasons": [
+     "README: “distillation — it does not exist in our process to leak.”"
+    ]
+   }
+  ],
+  "speech": [
+   {
+    "skill": "speech",
+    "tier": "described",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "README: “…peakers deliberately mixed up, headset speech recognition, and a single room microphone.…”"
+    ]
+   },
+   {
+    "skill": "speech",
+    "tier": "described",
+    "source": "repo",
+    "repo": "discharge-safety-gate",
+    "url": "https://github.com/ShahaDeven/discharge-safety-gate",
+    "reasons": [
+     "README: “On voice calls, speech recognition can mishear a name, which fails this check (see the voice story).”"
+    ]
+   }
+  ]
+ },
+ "reposConsidered": 16,
+ "fetchedAt": "2026-11-02T18:06:30.764Z"
+}

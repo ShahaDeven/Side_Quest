@@ -1,0 +1,4 @@
+# Worker secrets for local dev (gitignored). Its presence stops wrangler from loading .env,
+# which holds script-only keys (ANTHROPIC_API_KEY) that must never reach the Worker.
+# Step 1.2: fine-grained GitHub token, no scopes (public read only).
+GITHUB_TOKEN=

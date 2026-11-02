@@ -1,0 +1,548 @@
+{
+  "_note": "Side-quest briefs for DEMO opt-in roles (founders have not actually opted in). Generated at build time; only entries with reviewed: true are shown. Set handEdited: true after editing so regeneration never overwrites it.",
+  "entries": [
+    {
+      "roleId": "01be0d6f-9fa8-49dd-96c5-1db935fe96a8",
+      "company": "Darwin",
+      "roleTitle": "Member of Technical Staff",
+      "targetSkill": "agents",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:15:45.186Z",
+      "brief": {
+        "title": "Sandboxed capability eval for a tool-calling agent",
+        "why_they_care": "Darwin says understanding whether an agent can complete your task requires testing its capabilities, checking availability and access requirements, and learning from actual execution outcomes.",
+        "jd_quote": "Develop sandboxed tests, benchmarks, and outcome measurements that establish what agents can actually do.",
+        "scope": [
+          "Write 30 synthetic tasks, each with a goal, the tool it needs, and an expected outcome that code checks, not a model judge.",
+          "Build a local sandbox with 4 stub HTTP services that return success, 401, 429, and timeouts, so the agent's access and availability handling gets tested.",
+          "Run a simple tool-calling agent loop against the stubs, logging every call, retry, and final outcome to SQLite.",
+          "Write a short report that separates reasoning failures from access and availability failures, with the retry policy that changed the results."
+        ],
+        "stack": [
+          "Python",
+          "pytest",
+          "FastAPI",
+          "SQLite",
+          "Ollama",
+          "Docker"
+        ],
+        "data": "Synthetic. Create the 30 tasks and expected outputs yourself, and implement the 4 stub services locally with FastAPI. Use no real websites, no scraping, and no Darwin product data or access. Run an open-weight model locally through Ollama so there are no API terms to worry about.",
+        "numbers": [
+          "Task completion rate per category, with 3 runs per task at fixed temperature and seed.",
+          "Share of failures caused by 401, 429, or timeout versus wrong tool arguments or wrong final answer.",
+          "Recovery rate after a 429 or timeout when the agent retries with backoff versus when it gives up."
+        ],
+        "done_looks_like": "A repo that runs with one command in Docker and produces a results table and a one-page report. Each failure is labeled as access, availability, or reasoning, and the report says what I would change next.",
+        "founder_note": "I built a sandboxed eval harness for a tool-calling agent that runs 30 synthetic tasks against local stubs for auth errors, rate limits, and timeouts. The main finding was [FINDING]. The code is at [LINK]. Would you have 15 minutes for a chat next week?",
+        "risks": [
+          "Synthetic tasks can make the agent look better or worse than it is on real sites, so state that limit in the report and do not claim real-world rates.",
+          "Local model output varies between runs, so fix the seed and temperature and report run-to-run spread instead of a single number.",
+          "Scope creep into a dashboard or multi-model comparison; cut both before the eval logic is working.",
+          "Hitting live websites could break terms of service, so keep every endpoint local."
+        ]
+      },
+      "handEdited": true
+    },
+    {
+      "roleId": "01be0d6f-9fa8-49dd-96c5-1db935fe96a8",
+      "company": "Darwin",
+      "roleTitle": "Member of Technical Staff",
+      "targetSkill": "evals",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:16:01.499Z",
+      "brief": {
+        "title": "Offline eval harness for agent task outcomes",
+        "why_they_care": "The role asks for sandboxed tests, benchmarks, and outcome measurements that show what agents can actually do, and this brief builds a small version of that.",
+        "jd_quote": "Develop sandboxed tests, benchmarks, and outcome measurements that establish what agents can actually do.",
+        "scope": [
+          "Write 40 synthetic task specs across three categories (search, form-fill, multi-step) with fixture data and a sandboxed mock tool layer with no network access.",
+          "Build a runner that executes each task 5 times against one open-weight or public-API model with fixed seeds where supported, logging every tool call and final state.",
+          "Grade outcomes with deterministic state checks first, use an LLM judge only for free-text answers, and hand-label 30 cases to measure judge agreement.",
+          "Write a short failure-mode report that groups failures by cause (wrong tool, bad argument, stale state, grader error) with two example traces each."
+        ],
+        "stack": [
+          "Python",
+          "pytest",
+          "pydantic",
+          "SQLite",
+          "Ollama or a public model API",
+          "CSV and JSON result files"
+        ],
+        "data": "Generate all tasks and fixtures with a script using invented names, prices, and inventories. Use no scraped sites, no logins, and no real customer or Darwin data. Keep the mock tools deterministic so any grader result can be rerun.",
+        "numbers": [
+          "Pass rate per category with a range across the 5 runs",
+          "Run-to-run variance for each task, flagging tasks that flip between pass and fail",
+          "LLM judge agreement with the 30 hand labels, reported as raw percent agreement and Cohen's kappa"
+        ],
+        "done_looks_like": "One command runs the full suite and writes a results table and a failure report. A reader can rerun it and get the same grades on every deterministic check, and the judge agreement numbers are included.",
+        "founder_note": "I built a small offline eval harness for agent task completion with 40 synthetic tasks, a sandboxed tool layer, and graders checked against hand labels. The main finding was [FINDING]. Code and write-up are at [LINK]; could we do a 15-minute chat this week about how you grade agent outcomes?",
+        "risks": [
+          "LLM judges can be biased toward fluent wrong answers, so keep deterministic checks as the primary grade and treat the judge as secondary.",
+          "Small hand-labeled sets give noisy agreement numbers, so report the sample size next to every kappa value.",
+          "Tasks written by one person can fit the model's known quirks, so vary phrasing and include some distractor tools.",
+          "Do not point the runner at live third-party sites; a sandbox avoids both ToS problems and flaky results."
+        ]
+      },
+      "handEdited": true
+    },
+    {
+      "roleId": "01be0d6f-9fa8-49dd-96c5-1db935fe96a8",
+      "company": "Darwin",
+      "roleTitle": "Member of Technical Staff",
+      "targetSkill": "search-ranking",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:15:34.954Z",
+      "brief": {
+        "title": "Constraint-aware retrieval eval for agent capability cards",
+        "why_they_care": "Darwin's JD asks for systems that index agent capabilities and match them to tasks, constraints, and user intent, so this project tests exactly that matching step on synthetic agent cards.",
+        "jd_quote": "Discovery and ranking: Build systems that index agent capabilities and match them to tasks, constraints, and user intent.",
+        "scope": [
+          "Generate about 200 synthetic agent capability cards with name, declared description, supported tasks, auth requirement, region, and price tier, including deliberately misleading descriptions.",
+          "Build three retrievers over the cards: BM25 on descriptions, dense embeddings on descriptions, and a hybrid with hard constraint filters applied before reranking.",
+          "Write 60 task queries with user constraints, label graded relevance by hand, and report NDCG@10, MRR, and recall@20 per retriever.",
+          "Write a short failure-mode note listing the top 10 cases where description-only ranking surfaces agents that cannot meet the stated constraints, with a proposed fix."
+        ],
+        "stack": [
+          "Python",
+          "rank_bm25",
+          "sentence-transformers",
+          "FAISS",
+          "pandas",
+          "pytest"
+        ],
+        "data": "Synthetic agent cards and task queries written by the candidate, with no scraped third-party content. Optionally seed descriptions from public OpenAPI specs with licenses that allow reuse, and record the license for each source.",
+        "numbers": [
+          "NDCG@10, MRR, and recall@20 for each of the three retrievers on the 60 labeled queries",
+          "Share of top-5 results that violate a stated hard constraint, per retriever",
+          "p95 query latency on a laptop CPU for the hybrid retriever over 200 cards"
+        ],
+        "done_looks_like": "A repo with a reproducible script that rebuilds the index, runs all three retrievers, and prints the metric table, plus a one-page writeup that names the single largest failure mode and what fixed it or did not.",
+        "founder_note": "I built a small offline ranking eval over synthetic agent capability cards to test whether matching on declared descriptions holds up once task constraints are applied. The main finding: [FINDING]. The code, labeled queries, and results are at [LINK]. Would you have 15 minutes for a chat next week?",
+        "risks": [
+          "Synthetic cards can make results look better than real data; state that the labels are hand-written and the dataset is small, and avoid claiming production performance.",
+          "Scope creep into a full crawler or UI; keep to a static index and a script, and cut anything not in the metric table.",
+          "Overfitting the constraint filter to the 60 queries; hold out 15 queries and report results on them separately."
+        ]
+      }
+    },
+    {
+      "roleId": "21e899e9-9a45-4d34-838b-3b69256a27d7",
+      "company": "Nexxa.ai",
+      "roleTitle": "Senior Software Development Engineer in Test (SDET), QA - AI Systems",
+      "targetSkill": "ci-cd",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:16:44.369Z",
+      "brief": {
+        "title": "Eval quality gate for a tool-calling agent",
+        "why_they_care": "They want automated evals and test suites run on every model, prompt, or tool change, wired into CI/CD as enforceable quality gates.",
+        "jd_quote": "Build automated pipelines that run evals and test suites on every model, prompt, or tool-integration change, and integrate them into CI/CD as enforceable quality gates.",
+        "scope": [
+          "Build a small tool-calling agent over a mock industrial API with synthetic pump and valve status endpoints, run in Docker Compose.",
+          "Write 25 synthetic task cases in YAML: expected tool calls, final state checks, and 5 unsafe requests that must be refused.",
+          "Add a GitHub Actions workflow that runs the suite on each pull request and fails on pass rate below 90% or any unsafe case passing.",
+          "Seed three regressions on branches (renamed tool, dropped argument, removed refusal) and confirm the gate blocks each."
+        ],
+        "stack": [
+          "GitHub Actions",
+          "Python",
+          "pytest",
+          "Docker Compose",
+          "promptfoo",
+          "PyYAML"
+        ],
+        "data": "Hand-written synthetic task cases and a mock API that returns fixed JSON for pump and valve status. No real plant data, no customer data, and no login to Nexxa systems. The agent can use any public LLM API on a free or low-cost tier, with the key stored as a GitHub Actions secret.",
+        "numbers": [
+          "Median wall-clock time of the eval job from push to pass or fail.",
+          "Number of seeded regressions the gate blocks, out of three.",
+          "Pass-rate spread across five reruns of an unchanged branch."
+        ],
+        "done_looks_like": "A public repo where a pull request that introduces any of the three seeded regressions turns the GitHub Actions check red with a readable failure summary, and an unchanged branch passes reliably across reruns.",
+        "founder_note": "I built a small tool-calling agent over a mock pump and valve API and wired its eval suite into GitHub Actions as a merge gate. The main finding was [FINDING]. The repo and CI run history are at [LINK]. Would you be open to a 15-minute chat this week?",
+        "risks": [
+          "LLM output varies between runs, so the gate can flake; mitigate by setting a pass-rate threshold, fixing temperature to 0, and reporting rerun spread as a metric.",
+          "Live API keys in forks or pull requests from outside contributors can leak; mitigate by not exposing secrets to fork PRs and using a cheap, rate-limited key.",
+          "Scope creep into dashboards or a full simulator; mitigate by keeping the mock API to two endpoints and cutting anything beyond the four bullets."
+        ]
+      },
+      "handEdited": true
+    },
+    {
+      "roleId": "21e899e9-9a45-4d34-838b-3b69256a27d7",
+      "company": "Nexxa.ai",
+      "roleTitle": "Senior Software Development Engineer in Test (SDET), QA - AI Systems",
+      "targetSkill": "llm",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:17:04.470Z",
+      "brief": {
+        "title": "Tool-calling agent eval harness over a synthetic plant API",
+        "why_they_care": "They want someone who understands how LLM agents work, including prompting, tool/function calling, context management, and orchestration, so the candidate can test the action loop rather than only the final response.",
+        "jd_quote": "Understanding of how LLM agents work: prompting, tool/function calling, context management, RAG, memory, and orchestration frameworks.",
+        "scope": [
+          "Build a FastAPI mock plant-tool API with four synthetic endpoints (read sensor, list alarms, set setpoint, get status) and a switch to inject errors and timeouts.",
+          "Write a minimal tool-calling loop: tool schemas, model call, tool execution, observations fed back into context, retry on tool error, and a hard step cap.",
+          "Write 30 seeded scenarios (normal, ambiguous, tool-error). Assert tool-call names and arguments, check final system state, and score the final answer with a short rubric.",
+          "Run the suite five times per scenario in GitHub Actions with a pinned model tag; report pass rate and run-to-run variance per failure category."
+        ],
+        "stack": [
+          "Python",
+          "pytest",
+          "Pydantic",
+          "FastAPI",
+          "Ollama with a small open-weight model",
+          "GitHub Actions"
+        ],
+        "data": "No real plant data. Generate all sensor readings, alarm lists, and setpoints with a seeded Python script so every run is repeatable. Use a small open-weight model served locally through Ollama, which needs no account or paid API.",
+        "numbers": [
+          "Tool-call validity rate: share of calls with a valid tool name and schema-conformant arguments.",
+          "Task success rate across the 30 scenarios, split by normal, ambiguous, and tool-error groups.",
+          "Run-to-run variance: how often the same scenario flips between pass and fail across the five repeats."
+        ],
+        "done_looks_like": "The suite runs in CI from a clean checkout, the mock API and agent loop are documented in a README, and the report shows which failure categories are model errors versus loop or tool errors. A reader should be able to reproduce any failing scenario with one command.",
+        "founder_note": "I built a small tool-calling agent loop over a synthetic plant-tool API and a pytest harness that checks tool-call arguments and final state across 30 seeded scenarios. The main finding: [FINDING]. Repo: [LINK]. Could we talk for 15 minutes this week about how you would scope the agent eval gates?",
+        "risks": [
+          "Local model output varies between runs, so a single pass proves little; use repeats and report variance instead of one-shot results.",
+          "Scope creep into a full agent framework or dashboard; keep the loop under about 150 lines and skip any UI.",
+          "Mock tools can make the agent look better than real industrial APIs; state in the README that the mock is a simplification and do not claim safety results for real equipment.",
+          "Model choice may not match Nexxa's stack; say so in the write-up and keep the harness model-agnostic behind one client function."
+        ]
+      }
+    },
+    {
+      "roleId": "21e899e9-9a45-4d34-838b-3b69256a27d7",
+      "company": "Nexxa.ai",
+      "roleTitle": "Senior Software Development Engineer in Test (SDET), QA - AI Systems",
+      "targetSkill": "observability",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:16:16.108Z",
+      "brief": {
+        "title": "Trace-checked mock agent for industrial tool calls",
+        "why_they_care": "They want tracing built into agent architecture from day one, and you will show that traces can be checked automatically against the agent's action loop.",
+        "jd_quote": "Advocate for testability, observability, and tracing in agent architecture from day one.",
+        "scope": [
+          "Wrap a small mock tool-calling agent, with synthetic industrial tools (read sensor, set setpoint on a simulator, fetch work order), in OpenTelemetry spans for planning, tool selection, tool execution, error recovery, and final answer.",
+          "Run the agent and a Jaeger trace backend under Docker Compose, and log each trace ID next to the eval result for that run.",
+          "Write a pytest checker that fails a run when a required span, attribute, or parent-child link is missing.",
+          "Inject three faults (tool timeout, malformed tool output, stale sensor value) and confirm each one appears in the trace with the correct error status, even when the final answer looks fine."
+        ],
+        "stack": [
+          "Python",
+          "OpenTelemetry Python SDK",
+          "Jaeger",
+          "pytest",
+          "FastAPI for the mock tool API",
+          "Docker Compose"
+        ],
+        "data": "Use only synthetic data: a seeded random generator for sensor readings, fixed JSON fixtures for work orders, and a mock tool API you write yourself. Use public OpenTelemetry semantic conventions as the span schema. Do not use any Nexxa API, data, or documentation.",
+        "numbers": [
+          "Share of 200 scripted runs that produce a complete trace with every required action-loop span",
+          "Span count per run by stage, and the median latency added by tracing compared with an untraced run",
+          "Number of injected faults caught from the trace versus caught from the final output alone"
+        ],
+        "done_looks_like": "A repo where docker compose up and pytest run the agent, store one trace per run in Jaeger, and print a checker report that lists every run missing a required span. The report must show at least one fault that the final output hid but the trace exposed.",
+        "founder_note": "I built a small OpenTelemetry-instrumented mock agent with synthetic industrial tools and checked each run's trace against the action-loop stages in your posting. The main finding: [FINDING]. The repo is at [LINK]. Could we set up a 15-minute chat this week so I can hear how your team checks traces for agent runs?",
+        "risks": [
+          "Span attributes can leak prompts or operational values; use only synthetic values and redact arguments before they are written to a span.",
+          "Scope creep into dashboards or extra exporters; keep to traces and one checker and cut the rest.",
+          "The mock tools will not match Nexxa's real interfaces; label them as stand-ins and do not claim they reflect the product.",
+          "Sampling below 100 percent can hide the faults you are testing for; set full sampling in the test environment."
+        ]
+      }
+    },
+    {
+      "roleId": "21e899e9-9a45-4d34-838b-3b69256a27d7",
+      "company": "Nexxa.ai",
+      "roleTitle": "Senior Software Development Engineer in Test (SDET), QA - AI Systems",
+      "targetSkill": "testing",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:16:33.147Z",
+      "brief": {
+        "title": "Tool-call eval harness with CI regression gate",
+        "why_they_care": "They want someone to design, build, and maintain test frameworks, evaluation harnesses, and regression suites for LLM-based agents that call tools.",
+        "jd_quote": "Design, build, and maintain test frameworks, evaluation harnesses, and regression suites for LLM-based agents",
+        "scope": [
+          "Write a mock tool API (FastAPI) for work orders and sensor readings, generated from a seeded script so every run sees identical data.",
+          "Write 40 labeled test cases with a rubric: correct tool chosen, correct arguments, correct final answer, and at least 8 ambiguous or injected-instruction cases.",
+          "Build a pytest-based runner that repeats each case 5 times and reports per-category pass rate and run-to-run variance.",
+          "Wire the runner into GitHub Actions as a gate that fails the build when pass rate drops below a stored baseline."
+        ],
+        "stack": [
+          "Python",
+          "pytest",
+          "FastAPI",
+          "GitHub Actions",
+          "Docker",
+          "An open-weights LLM served locally or a free-tier API"
+        ],
+        "data": "Fully synthetic. A seeded Python script generates fake work orders, asset IDs, and sensor readings with made-up names. Injected-instruction cases are hand-written text placed inside work-order notes. No real plant, customer, or Nexxa data, no login, and no scraping of their product.",
+        "numbers": [
+          "Pass rate per rubric category (tool choice, arguments, final answer) across the 40 cases",
+          "Run-to-run variance over 5 repeats per case, to show where the agent is non-deterministic",
+          "Number of cases that flip between pass and fail across two CI runs on the same commit"
+        ],
+        "done_looks_like": "The repo runs in CI on every push, prints a per-category report, and fails when pass rate drops below the baseline. The write-up includes one reproducible failure, traced to tool arguments or prompt, with the case ID and the fix that turned it into a regression test.",
+        "founder_note": "I built a small eval harness for a tool-calling agent over a synthetic work-order API, with a CI gate that fails on regression. The main finding was [FINDING]. The repo and report are at [LINK]. Could we talk for 15 minutes next week?",
+        "risks": [
+          "Non-deterministic LLM output makes the gate flaky: use 5 repeats, a pass threshold with a margin, and report variance rather than a single run.",
+          "Scope creep into dashboards or a full framework: cap at 40 cases and one runner, and cut anything beyond the four scope bullets.",
+          "Paid API costs or rate limits: use a local open-weights model or a free tier, and cache responses by prompt hash.",
+          "Looking like a clone of their product: the mock API and cases use generic synthetic data and are not presented as Nexxa's system."
+        ]
+      }
+    },
+    {
+      "roleId": "6b385ffe-8550-44cb-969e-5fae13d6f42a",
+      "company": "Sekai",
+      "roleTitle": "AI Agent Engineer (Coding Agent)",
+      "targetSkill": "agents",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:15:07.914Z",
+      "brief": {
+        "title": "Mini-app generation agent with repair loop and eval harness",
+        "why_they_care": "The role asks for agentic systems with tool use, orchestration, retry/repair loops, and context management, and the team wants to generate fully autonomous software for recreational use.",
+        "jd_quote": "tool use, orchestration, retry/repair loops, context management",
+        "scope": [
+          "Build a small agent that turns a one-paragraph spec into a single-file HTML/JS mini app, with tools for write_file, run_in_sandbox, and read_test_output.",
+          "Add a repair loop: when the sandbox test fails, the agent gets the error and the failing file, retries up to 3 times, and logs each step as a trace.",
+          "Write 20 synthetic app specs of varying difficulty and a pass/fail check per spec, then run the agent across all 20.",
+          "Tag each failed run with a failure category (syntax error, wrong behavior, tool misuse, gave up early) and write a short failure taxonomy."
+        ],
+        "stack": [
+          "Python",
+          "Anthropic or OpenAI SDK (raw tool-calling API, no framework)",
+          "Docker with no network access for the sandbox",
+          "pytest",
+          "jsonlines for traces",
+          "matplotlib"
+        ],
+        "data": "Write the 20 specs yourself so there is no licensing question. Each spec includes a small set of expected behaviors that a Playwright or jsdom script can check. Use only a model API you have access to; do not use any Sekai app content, screenshots, or private data.",
+        "numbers": [
+          "First-attempt pass rate and pass rate after up to 3 repair rounds, per difficulty tier",
+          "Average tool calls, tokens, and wall-clock seconds per successful app",
+          "Count of each failure category, so the top failure mode is visible"
+        ],
+        "done_looks_like": "A repo with the agent loop, the 20-spec eval, a trace file per run, and a README table showing pass rates before and after repair, plus the failure taxonomy with two or three example traces.",
+        "founder_note": "I built a small tool-using agent that generates single-file mini apps from a spec, runs them in a no-network sandbox, and repairs failures for up to three rounds. The main thing I found: [FINDING]. The code and traces are at [LINK]; would you have 15 minutes for a chat this week to tell me where your current failure modes are?",
+        "risks": [
+          "Scope creep into a full product or UI: keep output to one HTML file and a fixed spec set.",
+          "Generated code running on your machine: run only inside a Docker container with networking disabled and a time limit.",
+          "Overclaiming about Sekai's system: describe the project as a reproduction of the general pattern, not as their architecture.",
+          "API cost during repeated runs: cap retries at 3, cache responses to the same prompt, and log token totals from day one."
+        ]
+      }
+    },
+    {
+      "roleId": "6b385ffe-8550-44cb-969e-5fae13d6f42a",
+      "company": "Sekai",
+      "roleTitle": "AI Agent Engineer (Coding Agent)",
+      "targetSkill": "distributed",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:14:58.509Z",
+      "brief": {
+        "title": "Durable job queue with a chaos test",
+        "why_they_care": "Sekai asks for experience with distributed / real-time systems alongside long-horizon agentic workflows with retry/repair loops. This shows the job layer under those workflows surviving crashed workers without losing or duplicating an app.",
+        "jd_quote": "Experience with distributed / real-time systems",
+        "scope": [
+          "Build a small job queue on Redis Streams where a worker claims an app-generation task, and an idempotency key stops duplicate generations from being written.",
+          "Add retries with exponential backoff, a dead-letter stream, and a claim timeout so a crashed worker's task is reclaimed by another worker.",
+          "Write a chaos test that kills random workers mid-task across 1,000 synthetic tasks and checks that every task reaches a terminal state with one output row.",
+          "Write a one-page note on the failure modes you hit and what delivery guarantee the system actually provides."
+        ],
+        "stack": [
+          "Python",
+          "asyncio",
+          "Redis Streams",
+          "SQLite",
+          "pytest",
+          "Docker Compose"
+        ],
+        "data": "Generate 1,000 short synthetic app prompts with a script. Use a stub generator that sleeps a random interval and returns fixed output, so there is no model cost and no user data or login to Sekai is needed.",
+        "numbers": [
+          "Duplicate output rows per 1,000 tasks under random worker kills (target 0)",
+          "Lost tasks per run (target 0) and median time to reclaim a killed worker's task",
+          "p95 enqueue-to-completion time with 1 worker versus 3 workers"
+        ],
+        "done_looks_like": "One command starts Redis and three workers, runs the chaos test, and prints zero duplicate outputs and zero lost tasks. The README states the delivery guarantee the system gives, which is at-least-once delivery with idempotent writes.",
+        "founder_note": "I built a small Redis Streams job queue for app-generation tasks, with idempotent workers and a chaos test that kills workers mid-task. The main finding was [FINDING]. The repo is at [LINK]. Would you have 15 minutes this week to hear how you think about failure handling in the generation lane?",
+        "risks": [
+          "Do not claim exactly-once delivery; state at-least-once delivery with idempotent writes and show the test that proves it.",
+          "Keep the stub generator. A real model call adds cost and noise and hides the queue behavior you are measuring.",
+          "Work only from the public job description and public app store pages; do not guess at Sekai's internal architecture or scale."
+        ]
+      },
+      "handEdited": true
+    },
+    {
+      "roleId": "6b385ffe-8550-44cb-969e-5fae13d6f42a",
+      "company": "Sekai",
+      "roleTitle": "AI Agent Engineer (Coding Agent)",
+      "targetSkill": "evals",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:15:19.161Z",
+      "brief": {
+        "title": "Eval harness for generated mini apps",
+        "why_they_care": "They want robust evaluation and quality loops for agent-driven app generation, and this brief builds a small measured version of that loop.",
+        "jd_quote": "Developing robust evaluation and quality loops, including eval harnesses, regression testing, and failure taxonomies",
+        "scope": [
+          "Write 40 synthetic prompts for small interactive web mini apps (a quiz, a timer, a drawing toy), each with machine-checkable acceptance criteria.",
+          "Build a harness that generates an app per prompt with one fixed model, saves each output, and runs it headless in a sandbox.",
+          "Score each run with deterministic checks (build passes, page loads, required controls exist) plus a rubric-based LLM judge, and tag every failure into a 6 to 8 category taxonomy.",
+          "Hand-label 50 judged cases, measure judge-versus-human agreement, and report the disagreements."
+        ],
+        "stack": [
+          "Python",
+          "pytest",
+          "Playwright",
+          "SQLite",
+          "one hosted LLM API",
+          "pandas"
+        ],
+        "data": "Synthetic prompts you write yourself. Do not scrape or log into Sekai's app, and do not use any user content from it. Use only public docs or your own fixtures, and label the 50 judged cases yourself.",
+        "numbers": [
+          "Pass rate per deterministic check and per failure category",
+          "Judge-versus-human agreement (Cohen's kappa) on the 50 hand-labeled cases",
+          "Run-to-run variance across 3 repeats of the full suite"
+        ],
+        "done_looks_like": "A repo that runs the full suite with one command, a failure taxonomy with counts per category, and a one-page write-up of where the judge disagrees with my labels and why.",
+        "founder_note": "I built a small eval harness that generates mini apps from 40 synthetic prompts, checks them headlessly, and tags each failure into a taxonomy. The main finding: [FINDING]. The code and write-up are at [LINK]. Would you have 15 minutes for a chat in the next week or so?",
+        "risks": [
+          "LLM judge bias can make scores look better than they are. Mitigate by reporting judge-versus-human agreement and never reporting judge scores alone.",
+          "40 prompts can overfit the taxonomy. Keep the taxonomy coarse and say in the write-up that the sample is small.",
+          "Scope creep into building a full generator or dashboard. Cut both first; the harness and the report are the deliverable."
+        ]
+      }
+    },
+    {
+      "roleId": "3166d525-4ecd-47af-b0b1-e38b43a8d0c3",
+      "company": "Tenera",
+      "roleTitle": "Founding Member of Technical Staff",
+      "targetSkill": "nextjs",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:17:15.080Z",
+      "brief": {
+        "title": "Persona decision review page in Next.js",
+        "why_they_care": "The role asks you to ship full-stack features across their TypeScript, React, and Next.js frontend and Postgres backend. This project exercises the Next.js part end to end: server components, a route handler, and caching.",
+        "jd_quote": "Ship full-stack features across our TypeScript, React, and Next.js frontend and our Postgres backend.",
+        "scope": [
+          "Build a Next.js App Router page at /runs/[id] that lists synthetic persona decisions read from a Postgres table through Prisma, with a server component for the data and a loading boundary.",
+          "Add a route handler that accepts a batch of persona decisions as JSON, validates it with zod, and writes it to Postgres, returning clear 400 errors for bad rows.",
+          "Write Playwright tests that load the page, check the rendered decision rows, and post a bad batch to the route handler.",
+          "Add a short README note explaining which parts of the page are static, dynamic, or revalidated, and why."
+        ],
+        "stack": [
+          "Next.js (App Router)",
+          "React",
+          "TypeScript",
+          "PostgreSQL with Prisma",
+          "Playwright",
+          "GitHub Actions"
+        ],
+        "data": "Generate 500 synthetic persona runs with a seeded script in the repo, each with a persona id, a product scenario written by you, and a decision label. Use no Tenera data, no customer data, and no login to their product. Keep the seed in the repo so anyone can reproduce the numbers.",
+        "numbers": [
+          "p95 time to first byte for /runs/[id] with 500 rows, measured locally with a fixed seed and 20 requests.",
+          "Share of Playwright test runs that pass over 10 consecutive CI runs.",
+          "Number of 400 responses from the route handler on a fixed set of 20 malformed batches, and whether each error message names the bad field."
+        ],
+        "done_looks_like": "A public repo with the page, route handler, Playwright tests, and a green GitHub Actions run, plus a README with the three measured numbers. Someone can clone it, run one command, and see the page load with the seeded data.",
+        "founder_note": "I built a small Next.js App Router page with a Prisma-backed Postgres table and a validated route handler for synthetic persona decisions. The one thing that stood out was [FINDING]. Here is the repo: [LINK]. Could we set up a 15-minute chat this week to talk about where this would fit on your team?",
+        "risks": [
+          "Next.js caching can make a page look correct on the first load and stale later, so the README must state the caching choice and the test must hit the page twice.",
+          "The project can grow into a product clone; keep it to one page and one route handler and cut anything else first.",
+          "Synthetic persona data can look more realistic than it is; label every row as synthetic in the UI and the README."
+        ]
+      },
+      "handEdited": true
+    },
+    {
+      "roleId": "3166d525-4ecd-47af-b0b1-e38b43a8d0c3",
+      "company": "Tenera",
+      "roleTitle": "Founding Member of Technical Staff",
+      "targetSkill": "postgres",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:17:35.295Z",
+      "brief": {
+        "title": "Persona store index benchmark",
+        "why_they_care": "The role asks for strong PostgreSQL experience with an ORM, and says the hire must be deeply technical on database architecture and performance.",
+        "jd_quote": "Strong PostgreSQL experience, ideally with Prisma or a similar ORM.",
+        "scope": [
+          "Create a PostgreSQL 16 schema with pgvector for synthetic personas, simulated sessions, and product decisions, managed with Prisma migrations.",
+          "Generate about 1M session events and 50k persona embeddings with a seeded Python script. No real user data.",
+          "Run the top 10 read queries with EXPLAIN (ANALYZE, BUFFERS), add btree and HNSW indexes where the plans justify them, and re-run the same queries.",
+          "Write a short note per index covering write-time cost, disk size, and recall@10 against exact search on 500 sample queries."
+        ],
+        "stack": [
+          "PostgreSQL 16",
+          "pgvector",
+          "Prisma",
+          "Docker Compose",
+          "Python with psycopg"
+        ],
+        "data": "Generate all rows locally with a seeded Python script that creates synthetic personas, sessions, and decisions with realistic skew (power-law session counts, timestamps over 90 days). Use no scraped or customer data, so there are no licensing or privacy questions.",
+        "numbers": [
+          "p50 and p95 latency for each of the 10 queries, before and after indexing",
+          "Index size on disk and insert throughput change per added index",
+          "recall@10 of the HNSW index versus exact search on 500 sample queries"
+        ],
+        "done_looks_like": "A repo with Prisma migrations, the seed script, and a results table with before and after EXPLAIN plans. It ends with a one-page note naming the one index I would ship and why.",
+        "founder_note": "I built a PostgreSQL 16 and pgvector benchmark for a synthetic persona schema, with seeded data and Prisma migrations. The main finding: [FINDING]. The repo and results are at [LINK]. Could we find 15 minutes this week to talk through the tradeoffs?",
+        "risks": [
+          "Synthetic data can hide skew that real traffic would show, so state the distribution assumptions in the write-up and do not claim production numbers.",
+          "Running against their database or any shared environment is out of scope; keep everything in local Docker.",
+          "Index results depend on hardware and pgvector version, so record both and re-run once before reporting.",
+          "Scope creep into a dashboard or a full app; cut it first if the day runs long."
+        ]
+      }
+    },
+    {
+      "roleId": "3166d525-4ecd-47af-b0b1-e38b43a8d0c3",
+      "company": "Tenera",
+      "roleTitle": "Founding Member of Technical Staff",
+      "targetSkill": "react",
+      "reviewed": true,
+      "model": "claude-haiku-5-5",
+      "generatedAt": "2026-11-02T18:17:23.698Z",
+      "brief": {
+        "title": "Persona-vs-observed decision review panel",
+        "why_they_care": "The role asks for strong Next.js, React, and TypeScript experience, and the company's core output is testing whether simulated personas make the right product decisions.",
+        "jd_quote": "Strong experience with Next.js, React, and TypeScript.",
+        "scope": [
+          "Build a standalone Next.js and React page that loads a public or synthetic dataset of simulated persona choices next to observed user choices for the same product flows, and renders a per-flow comparison table with filters for agreement and disagreement.",
+          "Implement the interaction state carefully: loading, empty, error, and partial-data states, plus keyboard-navigable rows and a detail drawer that shows the persona's stated reason for each choice.",
+          "Write Playwright tests that cover each state, the filter logic, and the drawer, and run them in CI on every push."
+        ],
+        "stack": [
+          "Next.js",
+          "React",
+          "TypeScript",
+          "Tailwind",
+          "Playwright"
+        ],
+        "data": "Use a public dataset of user interaction logs or usability study results, or generate a synthetic dataset with a script that models persona choices and observed choices with controlled disagreement rates. Do not use any Tenera data, login, or internal API. Document the source and license in the README.",
+        "numbers": [
+          "Count of UI states and interactions covered by Playwright tests, and the pass rate across 20 consecutive CI runs.",
+          "Time to first meaningful render for the comparison table at 1k and 10k flow rows on a standard laptop.",
+          "Share of flows where the synthetic persona choice disagrees with the observed choice, with the filter output checked against a hand-computed count."
+        ],
+        "done_looks_like": "A deployed page and public repo where a reviewer can load the dataset, filter disagreements, open any row to see the persona's reasoning, and run the Playwright suite green in CI. The README states the data source, the test coverage, and the timing numbers.",
+        "founder_note": "I built a small React and Next.js review panel that compares simulated persona choices against observed user choices, with Playwright tests covering every UI state. The one finding was [FINDING]. The code and write-up are at [LINK]. Would you have 15 minutes for a chat this week?",
+        "risks": [
+          "Scope creep into a full product clone: keep the page to one comparison view and one drawer, and cut anything else first.",
+          "Implying access to Tenera's data or product: state clearly that the dataset is public or synthetic and that nothing touches their systems.",
+          "Overbuilding the React layer: avoid heavy state libraries; use React state and the URL for filters so the code stays small and reviewable.",
+          "Flaky Playwright tests slowing CI: use fixed seeded data and wait on explicit UI conditions rather than timeouts."
+        ]
+      }
+    }
+  ]
+}

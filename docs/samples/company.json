@@ -1,0 +1,44 @@
+{
+  "company": {
+    "slug": "darwin",
+    "name": "Darwin",
+    "url": "https://speedrun-talent-network.com/companies/darwin",
+    "tier": "speedrun",
+    "cohort": "SR004",
+    "open_roles": 1,
+    "location": "San Francisco, California",
+    "industries": [
+      "AI Agents",
+      "AI Infra",
+      "Commerce / Marketplaces"
+    ],
+    "blurb": "Discovery & execution layer for AI agents on the web.",
+    "logo": "https://cdn.a16zspeedrun.com/platform/companies/bd6e3f5a-9928-4c4f-b3c9-ef9776b3edb5/logos/light_copy_2.png",
+    "labels": {
+      "stage": "seed",
+      "size": "1-10",
+      "business_model": null,
+      "industry": "Computer Software",
+      "frontier_lab": false,
+      "big_tech": false,
+      "ai_native": true,
+      "hardware": false
+    },
+    "jobs": [
+      {
+        "id": "01be0d6f-9fa8-49dd-96c5-1db935fe96a8",
+        "title": "Member of Technical Staff",
+        "url": "https://speedrun-talent-network.com/jobs/member-of-technical-staff-darwin-01be0d6f",
+        "location": "Palo Alto",
+        "workplace_type": "Onsite",
+        "employment_type": "FullTime",
+        "comp_summary": "$100K – $500K • Offers Equity",
+        "comp_min": 100000,
+        "comp_max": 500000,
+        "comp_period": null,
+        "published_at": "2026-01-18T04:18:28.622+00:00"
+      }
+    ]
+  },
+  "source": "side-quest"
+}

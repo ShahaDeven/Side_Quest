@@ -1,0 +1,162 @@
+import { useEffect, useState, type FormEvent } from 'react';
+import type { CandidateProfile } from '../lib/types';
+
+export type ProfileState =
+  | { kind: 'none' }
+  | { kind: 'loading'; login: string }
+  | { kind: 'ready'; profile: CandidateProfile; demo: boolean }
+  | { kind: 'error'; login: string; message: string };
+
+interface Props {
+  state: ProfileState;
+  resume: string;
+  onRead: (login: string) => void;
+  onDemo: () => void;
+  onResume: (text: string) => void;
+}
+
+export default function ProofBar({ state, resume, onRead, onDemo, onResume }: Props) {
+  const [login, setLogin] = useState(state.kind === 'ready' && !state.demo ? state.profile.login : '');
+  const [showResume, setShowResume] = useState(resume.length > 0);
+  // Once a profile is loaded the form gets out of the way; it comes back on "Use a different GitHub".
+  const [editing, setEditing] = useState(state.kind !== 'ready');
+  useEffect(() => setEditing(state.kind !== 'ready'), [state]);
+  const busy = state.kind === 'loading';
+  const isDemo = state.kind === 'ready' && state.demo;
+
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    const v = login.trim().replace(/^@/, '').replace(/^https?:\/\/github\.com\//i, '').replace(/\/.*$/, '');
+    if (v) onRead(v);
+  };
+
+  return (
+    <section aria-label="Your proof" className="rounded-xl border border-line bg-surface p-4 sm:p-5">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <Who state={state} />
+
+        <form onSubmit={submit} className="flex flex-wrap items-center gap-2">
+          {editing ? (
+            <>
+              <label htmlFor="gh-login" className="sr-only">
+                GitHub username
+              </label>
+              <div className="field flex items-center">
+                <span className="pl-3 text-sm text-muted" aria-hidden>
+                  github.com/
+                </span>
+                <input
+                  id="gh-login"
+                  value={login}
+                  onChange={(e) => setLogin(e.target.value)}
+                  placeholder="username"
+                  autoComplete="off"
+                  spellCheck={false}
+                  autoFocus={state.kind === 'ready'}
+                  className="w-36 bg-transparent py-2 pr-3 font-mono text-sm outline-none"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={busy || !login.trim()}
+                className="btn btn-md btn-primary"
+              >
+                {busy ? 'Reading…' : 'Read my GitHub'}
+              </button>
+              {!isDemo && (
+                <button type="button" onClick={onDemo} className="btn btn-md btn-secondary">
+                  See the demo
+                </button>
+              )}
+            </>
+          ) : (
+            <>
+              <button type="button" onClick={() => setEditing(true)} className="btn btn-md btn-secondary">
+                {isDemo ? 'Use my GitHub instead' : 'Use a different GitHub'}
+              </button>
+              {!isDemo && (
+                <button type="button" onClick={onDemo} className="btn btn-md btn-quiet">
+                  See the demo
+                </button>
+              )}
+            </>
+          )}
+          <button
+            type="button"
+            aria-expanded={showResume}
+            aria-controls="resume-box"
+            onClick={() => setShowResume((v) => !v)}
+            className="px-2 py-2 text-sm text-muted underline decoration-line underline-offset-4 hover:text-ink"
+          >
+            {showResume ? 'Hide resume' : 'Add resume text'}
+          </button>
+        </form>
+      </div>
+
+      {state.kind === 'error' && (
+        <p role="alert" className="mt-3 text-sm">
+          {state.message}{' '}
+          <button type="button" onClick={onDemo} className="underline underline-offset-4">
+            Open the demo profile instead
+          </button>
+        </p>
+      )}
+
+      {showResume && (
+        <div id="resume-box" className="mt-4">
+          <label htmlFor="resume" className="text-sm font-semibold">
+            Resume text <span className="font-normal text-muted">(optional)</span>
+          </label>
+          <textarea
+            id="resume"
+            value={resume}
+            onChange={(e) => onResume(e.target.value)}
+            rows={5}
+            placeholder="Paste your resume. Skills found here count as mentioned, never as proven."
+            className="field mt-1.5 w-full p-3 text-sm"
+          />
+          <p className="mt-1.5 text-xs text-muted">Resume text stays in this browser. It is never sent or saved.</p>
+        </div>
+      )}
+
+      <p className="mt-3 text-xs text-muted">
+        Only public repos are read. Results are cached for 6 hours to stay within GitHub's limits.
+      </p>
+    </section>
+  );
+}
+
+function Who({ state }: { state: ProfileState }) {
+  if (state.kind === 'ready') {
+    const p = state.profile;
+    return (
+      <div className="flex min-w-0 items-center gap-3">
+        {p.avatarUrl && <img src={p.avatarUrl} alt="" width={40} height={40} className="size-10 rounded-full border border-line" />}
+        <div className="min-w-0">
+          <p className="truncate font-semibold">
+            {p.name ?? p.login}{' '}
+            <a href={p.profileUrl} target="_blank" rel="noopener" className="font-mono text-sm font-normal text-muted hover:text-ink">
+              github.com/{p.login}
+            </a>
+          </p>
+          <p className="text-sm text-muted">
+            Read {p.repos.length} of {p.reposConsidered} public repos in depth
+            {state.demo && `, captured ${new Date(p.fetchedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`}
+          </p>
+        </div>
+      </div>
+    );
+  }
+  if (state.kind === 'loading')
+    return (
+      <p role="status" className="text-sm">
+        Reading <span className="font-mono">github.com/{state.login}</span>: repos, READMEs and dependency files…
+      </p>
+    );
+  return (
+    <div>
+      <p className="font-semibold">Start with your GitHub</p>
+      <p className="text-sm text-muted">We match what your repos actually show against every role's requirements.</p>
+    </div>
+  );
+}

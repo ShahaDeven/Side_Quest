@@ -1,0 +1,41 @@
+{
+  "job": {
+    "id": "01be0d6f-9fa8-49dd-96c5-1db935fe96a8",
+    "status": "open",
+    "url": "https://speedrun-talent-network.com/jobs/member-of-technical-staff-darwin-01be0d6f",
+    "title": "Member of Technical Staff",
+    "company": "Darwin",
+    "company_slug": "darwin",
+    "company_url": "https://speedrun-talent-network.com/companies/darwin",
+    "tier": "speedrun",
+    "stealth": false,
+    "location": "Palo Alto",
+    "workplace_type": "Onsite",
+    "employment_type": "FullTime",
+    "function": "engineering",
+    "seniority": "staff",
+    "remote": false,
+    "comp_summary": "$100K – $500K • Offers Equity",
+    "comp_min": 100000,
+    "comp_max": 500000,
+    "comp_currency": "USD",
+    "comp_period": null,
+    "published_at": "2026-01-18T04:18:28.622+00:00",
+    "apply": {
+      "kind": "external",
+      "url": "https://jobs.ashbyhq.com/darwin/01be0d6f-9fa8-49dd-96c5-1db935fe96a8/application"
+    },
+    "description_text": "Darwin is building the discovery and execution layer for AI agents on the web. Our mission is to understand what AI agents can reliably do and give people and AI exceptional ways to find and use them.\nAn agent’s description tells you what it claims to do. Understanding whether it can complete your task requires more: testing its capabilities, checking availability and access requirements, and learning from actual execution outcomes.\nWe’re building the infrastructure and product experiences that make this possible. Through Navigator, people, developers, and AI assistants can discover agents and work with them through the web, APIs, and MCP.\nDarwin is backed by a16z Speedrun and angels across AI and technology. Read our funding announcement.\n\nAbout the role\nAs a Member of Technical Staff, you’ll own meaningful parts of Darwin from initial design through production. You’ll work closely with the founders to turn difficult technical problems into products people use, measure where they succeed or fail, and improve them.\nDepending on your strengths, your work could include:\n\n- Discovery and ranking: Build systems that index agent capabilities and match them to tasks, constraints, and user intent.\n\n- Reliability and evaluation: Develop sandboxed tests, benchmarks, and outcome measurements that establish what agents can actually do.\n\n- Execution infrastructure: Build dependable agent interactions, including authentication, permissions, state management, retries, and recovery.\n\n- Product and developer experience: Make discovery and execution understandable and useful across Navigator, APIs, SDKs, and MCP.\n\n- Production performance: Improve search quality, task completion, latency, and cost using evidence from real usage.\n\nYou might be a good fit if you\n\n- Have built and shipped production software and taken responsibility for how it performs.\n\n- Bring depth in search, distributed systems, data infrastructure, applied AI, or product engineering.\n\n- Can take an ambiguous problem, make sound technical decisions, and deliver a working solution.\n\n- Care about product details and can explain complex system behavior clearly.\n\n- Are comfortable investigating failures across models, services, and interfaces.\n\n- Work independently, communicate directly, and revise your approach when the evidence changes.\n\n- Have experience with retrieval, ranking, agent evaluations, or agent protocols is valuable. You don’t need experience in every area above; we’re looking for technical depth, judgment, and the ability to build.",
+    "labels": {
+      "function": "engineering",
+      "specialty": "LLM apps and agents",
+      "seniority": "staff or principal",
+      "min_experience": "unknown",
+      "workplace": "onsite",
+      "engagement": "full-time",
+      "founding_role": false,
+      "ai_native_role": true
+    }
+  },
+  "source": "side-quest"
+}

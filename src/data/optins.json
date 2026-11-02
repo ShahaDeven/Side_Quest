@@ -1,0 +1,10 @@
+{
+  "_note": "Demo data. These founders have NOT actually opted in; the UI labels every one as demo. See docs/demo-roles.md.",
+  "demoRoleId": "6b385ffe-8550-44cb-969e-5fae13d6f42a",
+  "roles": [
+    { "id": "6b385ffe-8550-44cb-969e-5fae13d6f42a", "company": "Sekai", "title": "AI Agent Engineer (Coding Agent)" },
+    { "id": "01be0d6f-9fa8-49dd-96c5-1db935fe96a8", "company": "Darwin", "title": "Member of Technical Staff" },
+    { "id": "21e899e9-9a45-4d34-838b-3b69256a27d7", "company": "Nexxa.ai", "title": "Senior Software Development Engineer in Test (SDET), QA - AI Systems" },
+    { "id": "3166d525-4ecd-47af-b0b1-e38b43a8d0c3", "company": "Tenera", "title": "Founding Member of Technical Staff" }
+  ]
+}

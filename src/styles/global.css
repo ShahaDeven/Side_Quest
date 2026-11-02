@@ -1,0 +1,224 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter-tight';
+@import '@fontsource-variable/jetbrains-mono';
+
+/*
+ * Side Quest design tokens: three layers. Spec and rationale: docs/design-system.md
+ *
+ *   1. Primitives  raw values, named by what they are. Plain CSS variables: no utilities are generated,
+ *                  so components cannot reach a raw colour.
+ *   2. Semantic    named by purpose (paper, ink, muted…). The ONLY layer dark mode changes.
+ *                  Exposed to Tailwind via @theme inline → bg-paper, text-ink, border-line, …
+ *   3. Component   layout widths, tints and control states, as variables + small @utility classes.
+ *
+ * Direction: a native feature of the speedrun talent site. Warm off-white, true-black grotesk, the
+ * purple→blue gradient in exactly one place (the side-quest edge). Mono only for literal code/data.
+ * Evidence strength is ink weight, not traffic-light colour.
+ */
+
+/* ---------- 1. Primitives ---------------------------------------------------------------------- */
+:root {
+  --sq-stone-50: #f4f3ef;
+  --sq-stone-100: #eae8e3;
+  --sq-stone-300: #d5d2ca;
+  --sq-stone-500: #85827a;
+  --sq-stone-700: #66645f;
+  --sq-night-400: #9b988f;
+  --sq-night-600: #6b6963;
+  --sq-night-700: #2c2c31;
+  --sq-night-800: #18181b;
+  --sq-night-900: #0f0f11;
+  --sq-cream: #f2f0eb;
+  --sq-black: #000000;
+  --sq-violet-500: #8b5cf6;
+  --sq-blue-500: #3b82f6;
+  --sq-blue-600: #2563eb;
+
+  --sq-font-grotesk: 'Inter Tight Variable', ui-sans-serif, system-ui, sans-serif;
+  --sq-font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+}
+
+/* ---------- 2. Semantic (light; dark swaps this block only) ----------------------------------- */
+:root {
+  --paper: var(--sq-stone-100); /* page background */
+  --surface: var(--sq-stone-50); /* raised panels, selected rows */
+  --ink: var(--sq-black); /* text, solid controls; 17.2:1 on paper */
+  --muted: var(--sq-stone-700); /* secondary text; 4.8:1 on paper */
+  --line: var(--sq-stone-300); /* decorative hairlines only */
+  --field: var(--sq-stone-500); /* input borders; ≥3.1:1 (WCAG 1.4.11) */
+  --focus: var(--sq-blue-600); /* focus ring; 4.2:1 on paper */
+  --accent-from: var(--sq-violet-500);
+  --accent-to: var(--sq-blue-500);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: var(--sq-night-900);
+    --surface: var(--sq-night-800);
+    --ink: var(--sq-cream); /* 16.8:1 */
+    --muted: var(--sq-night-400); /* 6.6:1 */
+    --line: var(--sq-night-700);
+    --field: var(--sq-night-600); /* ≥3.2:1 */
+    --focus: var(--sq-blue-500); /* 5.2:1 */
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-field: var(--field);
+  --color-accent-from: var(--accent-from);
+  --color-accent-to: var(--accent-to);
+  /* component tints, defined below */
+  --color-wash: var(--row-hover);
+  --color-blank: var(--blank-bg);
+
+  --font-sans: var(--sq-font-grotesk);
+  --font-mono: var(--sq-font-mono);
+
+  /* type roles beyond Tailwind's default scale */
+  --text-code: 0.85em; /* relative: code sits inside running text */
+  --leading-display: 1.05; /* tight display headings */
+}
+
+/* ---------- 3. Component tokens ---------------------------------------------------------------- */
+:root {
+  --shell-list-width: 22rem; /* role list column (lg+) */
+  --row-label-width: 13rem; /* skill column in evidence / requirement rows (sm+) */
+  --mark-col: 1.25rem; /* strength glyph column in list rows */
+  --sticky-gap: 1.5rem; /* top offset of the sticky role list */
+  --row-hover: color-mix(in oklab, var(--surface) 60%, transparent);
+  --blank-bg: color-mix(in oklab, var(--ink) 10%, transparent); /* [LINK]/[FINDING] blanks */
+  --control-radius: 0.5rem;
+  --duration-fast: 150ms;
+}
+
+/* Layout */
+@utility layout-shell {
+  grid-template-columns: var(--shell-list-width) minmax(0, 1fr);
+}
+@utility layout-row {
+  grid-template-columns: var(--row-label-width) minmax(0, 1fr);
+}
+@utility layout-mark {
+  grid-template-columns: var(--mark-col) minmax(0, 1fr);
+}
+@utility layout-defs {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+@utility list-viewport {
+  max-height: calc(100dvh - 2 * var(--sticky-gap));
+}
+
+/* Buttons: default / hover / focus-visible (global ring) / disabled. Spec: docs/design-system.md */
+/* Compose as: btn + one size (btn-md | btn-sm) + one variant (btn-primary | btn-secondary | btn-quiet).
+   No two of these set the same property, so their order in the stylesheet never matters. */
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--control-radius);
+  font-weight: 600;
+  text-align: center;
+  transition-property: color, background-color, border-color;
+  transition-duration: var(--duration-fast);
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+@utility btn-md {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+@utility btn-sm {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+@utility btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+  &:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--ink) 82%, var(--paper));
+  }
+}
+@utility btn-secondary {
+  border-color: var(--ink);
+  &:hover:not(:disabled) {
+    background: var(--surface);
+  }
+}
+@utility btn-quiet {
+  border-color: var(--line);
+  &:hover:not(:disabled) {
+    border-color: var(--ink);
+  }
+}
+
+/* Text inputs: border meets 3:1. On focus: ink border, plus the focus ring. A wrapper that contains
+   the real <input> (e.g. the "github.com/" prefix field) draws the ring itself via :has(). */
+@utility field {
+  border: 1px solid var(--field);
+  border-radius: var(--control-radius);
+  background: var(--paper);
+  transition: border-color var(--duration-fast);
+  &:focus-within,
+  &:focus {
+    border-color: var(--ink);
+  }
+  &:has(:focus-visible) {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+}
+
+/* The one gradient moment: a 1.5px gradient edge, like speedrun's "Get started" button. */
+@utility edge-accent {
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(120deg, var(--accent-from), var(--accent-to)) border-box;
+}
+
+@utility text-accent {
+  background-image: linear-gradient(90deg, var(--accent-from), var(--accent-to));
+  background-clip: text;
+  color: transparent;
+}
+
+@layer base {
+  html {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sq-font-grotesk);
+    -webkit-font-smoothing: antialiased;
+  }
+  code {
+    font-family: var(--sq-font-mono);
+    font-size: 0.85em;
+  }
+  ::placeholder {
+    color: var(--muted);
+    opacity: 1;
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
