@@ -229,5 +229,17 @@ export async function sha256Hex(text: string): Promise<string> {
   return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-/** Rate-limit bucket: a daily hash of the IP, so raw IPs are never stored. */
-export const ipBucket = async (ip: string, day: string) => (await sha256Hex(`${day}:${ip}`)).slice(0, 16);
+const toHex = (buf: ArrayBuffer) => Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join('');
+
+/** HMAC-SHA256 of `message` under `secret`, as hex. */
+export async function hmacSha256Hex(secret: string, message: string): Promise<string> {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  return toHex(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message)));
+}
+
+/**
+ * Rate-limit bucket: HMAC-SHA256(IP_HASH_SECRET, "day:ip"), first 16 hex chars. Keyed, because a plain hash of
+ * an IPv4 address can be reversed by hashing all 2^32 addresses; without the secret that search is useless.
+ * The date in the message rotates every bucket daily. Raw IPs are never stored.
+ */
+export const ipBucket = async (ip: string, day: string, secret: string) => (await hmacSha256Hex(secret, `${day}:${ip}`)).slice(0, 16);

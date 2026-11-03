@@ -166,7 +166,8 @@ flowchart LR
 - **The browser never sends evidence.** Creating a proof link sends only a GitHub login and role ids. The server
   rereads GitHub and rebuilds the document, so a page can't be edited to claim more. A role link must name exactly one
   role, and requests for more are rejected rather than trimmed. Links are capped at 64 KB, limited to 20 per IP per
-  day (IPs are stored only as a daily hash), and deletable with a one-time token stored as a SHA-256 hash.
+  day (counted under an HMAC-SHA256 of the date and IP, keyed with a Worker secret, so the IP is never stored and
+  the hash can't be reversed by trying every IPv4 address), and deletable with a one-time token stored as a SHA-256 hash.
 - **It never shows a blank screen.** If the Worker can't be reached, the page falls back to the bundled job snapshot
   and the bundled demo profile.
 - **Versioned caches.** `EVIDENCE_VERSION` is part of every cache key, so a deploy never serves evidence computed
@@ -224,6 +225,7 @@ Cloudflare Workers (free plan), built from this repo by Cloudflare's GitHub inte
   ```bash
   pnpm wrangler d1 migrations apply side-quest --remote
   pnpm wrangler secret put GITHUB_TOKEN
+  pnpm wrangler secret put IP_HASH_SECRET   # any long random string; proof links refuse to work without it
   ```
 
 Every push to `main` deploys after the tests pass. Pushes to other branches get preview URLs.

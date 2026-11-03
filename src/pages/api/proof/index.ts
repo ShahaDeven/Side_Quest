@@ -33,12 +33,18 @@ export const POST: APIRoute = async ({ request }) => {
   const invalid = validate({ login, demo, kind, roleIds });
   if (invalid && !invalid.ok) return error(invalid.status, invalid.code, invalid.message);
 
-  // 20 per IP per day. The bucket is a daily hash of the IP; raw IPs are never stored. Local dev shares one
-  // "IP" for every test, so it gets a high limit (production behaviour was verified: 20 × 201, then 429).
+  // 20 per IP per day. The bucket is a keyed daily hash of the IP (proof.ts ipBucket); raw IPs are never stored.
+  // Local dev shares one "IP" for every test, so it gets a high limit (production: 20 × 201, then 429).
   const limit = import.meta.env.DEV ? 1000 : PROOFS_PER_IP_PER_DAY;
+  // Fail closed: without the secret the bucket would be a plain, reversible hash of the IP.
+  const secret = env.IP_HASH_SECRET;
+  if (!secret) {
+    console.error('proof: IP_HASH_SECRET is not set');
+    return error(503, 'not-configured', 'Proof links are unavailable right now.');
+  }
   const day = new Date().toISOString().slice(0, 10);
   const ip = request.headers.get('cf-connecting-ip') ?? 'local';
-  const rlKey = `rl:proof:${day}:${await ipBucket(ip, day)}`;
+  const rlKey = `rl:proof:${day}:${await ipBucket(ip, day, secret)}`;
   const used = Number((await env.CACHE.get(rlKey).catch(() => null)) ?? 0);
   if (used >= limit) return error(429, 'rate-limited', `You've created ${limit} proof links today. Try again tomorrow.`);
 

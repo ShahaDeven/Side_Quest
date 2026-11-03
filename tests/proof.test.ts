@@ -4,6 +4,7 @@ import {
   MAX_PROOF_BYTES,
   buildProof,
   fitProof,
+  hmacSha256Hex,
   ipBucket,
   isProofId,
   maxRoles,
@@ -196,11 +197,22 @@ describe('ids, tokens and hashing', () => {
     expect(isProofId('../etc/pas')).toBe(false);
   });
 
-  it('hashes with SHA-256 and buckets IPs per day without storing them', async () => {
+  it('hashes delete tokens with SHA-256', async () => {
     expect(await sha256Hex('abc')).toBe('ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
-    const a = await ipBucket('203.0.113.7', '2026-11-02');
+  });
+
+  it('buckets IPs with HMAC-SHA256 keyed by a secret, rotating daily, never storing the IP', async () => {
+    // RFC 4231 test case 2: HMAC-SHA256(key "Jefe", "what do ya want for nothing?").
+    expect(await hmacSha256Hex('Jefe', 'what do ya want for nothing?')).toBe('5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843');
+
+    const a = await ipBucket('203.0.113.7', '2026-11-02', 'secret-1');
+    expect(a).toBe((await hmacSha256Hex('secret-1', '2026-11-02:203.0.113.7')).slice(0, 16));
     expect(a).toHaveLength(16);
     expect(a).not.toContain('203');
-    expect(await ipBucket('203.0.113.7', '2026-11-03')).not.toBe(a);
+    // Not the old, brute-forceable plain hash of the same message.
+    expect(a).not.toBe((await sha256Hex('2026-11-02:203.0.113.7')).slice(0, 16));
+    expect(await ipBucket('203.0.113.7', '2026-11-03', 'secret-1')).not.toBe(a); // rotates daily
+    expect(await ipBucket('203.0.113.7', '2026-11-02', 'secret-2')).not.toBe(a); // useless without the key
+    expect(await ipBucket('203.0.113.8', '2026-11-02', 'secret-1')).not.toBe(a);
   });
 });
