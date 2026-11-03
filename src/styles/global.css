@@ -113,6 +113,9 @@
 }
 
 /* Layout */
+@utility ref-grid {
+  grid-template-columns: 2.5rem minmax(0, 1fr); /* mobile rows: the A1 / rank reference, then the content */
+}
 @utility layout-shell {
   grid-template-columns: var(--shell-list-width) minmax(0, 1fr);
 }

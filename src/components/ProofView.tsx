@@ -122,7 +122,7 @@ function NetworkLink({ doc }: { doc: ProofDoc }) {
           return (
             <li key={r.roleId} className="border-b border-rule">
               <details open={n === 1} className="group">
-                <summary className="summary-plain grid min-h-11 cursor-pointer grid-cols-[2.5rem_1fr] gap-x-3 py-4 hover:bg-wash">
+                <summary className="summary-plain grid min-h-11 cursor-pointer ref-grid gap-x-3 py-4 hover:bg-wash">
                   <span className="report-head tnum text-lg text-slate">{i + 1}</span>
                   <span className="min-w-0">
                     <span className="flex flex-wrap items-baseline justify-between gap-x-4">

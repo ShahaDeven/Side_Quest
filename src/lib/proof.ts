@@ -157,7 +157,7 @@ const STRENGTH_WORD = { strong: 'Strong proof', some: 'Some proof', thin: 'Thin 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
 /** One-line verdict for a role, shared by the network page's summaries and the Markdown. */
-export const roleSummary = (r: ProofRole) => `${r.covered.length} of ${r.total} requirements shown in the code`;
+export const roleSummary = (r: ProofRole) => `${r.covered.length} of ${r.total} skills shown in the code`;
 
 /** Title for the page and the Markdown heading. A role link names the company; a network link never needs to. */
 export function proofTitle(doc: ProofDoc): string {

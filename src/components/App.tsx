@@ -135,7 +135,10 @@ export default function App() {
         <div className="mt-4" aria-busy={!loaded}>
           {loaded ? (
             <>
-              <ScopeBar set={loaded.set} via={loaded.via} />
+              {/* On narrow screens the scope line follows the report, so the first screen reaches the evidence. */}
+              <div className="hidden lg:block">
+                <ScopeBar set={loaded.set} via={loaded.via} />
+              </div>
               <div className="grid gap-6 lg:layout-shell lg:gap-8">
                 <div id="roles" className="scroll-mt-4 lg:sticky lg:top-6 lg:list-viewport lg:self-start lg:overflow-y-auto lg:pr-1">
                   <button
@@ -189,6 +192,9 @@ export default function App() {
                     </RoleDetail>
                   )}
                 </div>
+              </div>
+              <div className="mt-6 lg:hidden">
+                <ScopeBar set={loaded.set} via={loaded.via} />
               </div>
             </>
           ) : (

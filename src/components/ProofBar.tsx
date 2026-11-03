@@ -128,7 +128,6 @@ function Who({ state }: { state: ProfileState }) {
       <div className="flex min-w-0 items-center gap-3">
         {p.avatarUrl && <img src={p.avatarUrl} alt="" width={40} height={40} className="size-10 border border-rule" />}
         <div className="min-w-0">
-          <p className="field-label">{state.demo ? 'Demo: a real public GitHub; founder opt-ins are simulated' : 'Public GitHub read'}</p>
           <h1 className="truncate text-lg leading-snug font-semibold">
             <span className="sr-only">Evidence report for </span>
             {p.name ?? p.login}{' '}
@@ -138,7 +137,8 @@ function Who({ state }: { state: ProfileState }) {
           </h1>
           <p className="tnum text-sm text-slate">
             {p.repos.length} of {p.reposConsidered} public repos read in depth
-            {state.demo && `, captured ${new Date(p.fetchedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`}
+            {state.demo &&
+              `, captured ${new Date(p.fetchedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}. Demo: a real public GitHub; founder opt-ins are simulated`}
           </p>
         </div>
       </div>

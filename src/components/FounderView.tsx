@@ -101,6 +101,8 @@ export default function FounderView({ role, requirements, optedIn, onToggleOptIn
       </div>
       <p className="mt-1 max-w-prose text-reading text-slate">
         Each row is what the candidate's public code shows against {role.company}'s own requirements, with the file it comes from.
+        Candidates are ordered by strength of evidence, then by how much of the role the code shows, with skills from the title and
+        the requirements list counting most. That is why core skills are listed on each row.
       </p>
 
       <div className="mt-4 flex items-start gap-3 border-y border-rule py-3">
@@ -196,10 +198,15 @@ function CandidateRow({
   const m = row.match;
   const best = [...m.covered].sort((a, b) => TIER_RANK[b.evidence.tier] - TIER_RANK[a.evidence.tier] || b.weight - a.weight)[0];
   const brief = optedIn && m.strength === 'strong' ? pickBrief(briefs, role.id, m.missing) : null;
+  // Core = skills from the description's explicit requirements list.
+  const core = {
+    shown: m.covered.filter((c) => c.section === 'requirements').length,
+    total: [...m.covered, ...m.missing].filter((c) => c.section === 'requirements').length,
+  };
   const open = brief ? m.missing.find((x) => x.skill === brief.targetSkill) : (m.missing.find((x) => x.section !== 'other') ?? m.missing[0]);
 
   return (
-    <tr className="grid grid-cols-[2.5rem_1fr] gap-x-3 gap-y-3 border-b border-rule py-5 lg:table-row lg:py-0">
+    <tr className="ref-grid grid gap-x-3 gap-y-3 border-b border-rule py-5 lg:table-row lg:py-0">
       <td className="report-head tnum text-lg text-slate lg:py-5 lg:pr-3 lg:align-top">{rank}</td>
       <td className="min-w-0 lg:py-5 lg:pr-5 lg:align-top">
         <p className="font-semibold">{row.name}</p>
@@ -216,9 +223,14 @@ function CandidateRow({
         <p className="mt-3 text-sm">
           <span className="font-semibold">{strengthLabel(m.strength)}</span>
           <span className="tnum text-slate">
-            , {m.covered.length} of {total} requirements
+            , {m.covered.length} of {total} skills
           </span>
         </p>
+        {core.total > 0 && (
+          <p className="tnum text-sm">
+            Core skills shown: {core.shown} of {core.total}
+          </p>
+        )}
         <Breakdown b={tierBreakdown(m)} className="block text-sm text-slate" />
       </td>
       <td className="col-start-2 min-w-0 text-sm lg:col-auto lg:py-5 lg:pr-5 lg:align-top">

@@ -60,8 +60,21 @@ export function sectionLines(description: string): Line[] {
 const cleanQuote = (line: string, skill: Skill) => {
   const text = line.replace(/^[-•*]\s*/, '').trim();
   const at = findSkill(skill, text);
-  return at < 0 ? text : snippet(text, at, 160);
+  if (at < 0) return text;
+  // Bullets flattened with no punctuation ("…cost optimization Creating debuggable agents…"): quote only the
+  // clause holding the skill. Splitting, never inserting, keeps the quote the founder's exact words.
+  let start = 0;
+  for (const m of text.matchAll(RUN_TOGETHER)) {
+    const cut = m.index + m[0].length;
+    if (cut > at) {
+      return snippet(text.slice(start, m.index), at - start, 160);
+    }
+    start = cut;
+  }
+  return snippet(text.slice(start), at - start, 160);
 };
+/** A lowercase word, then a capitalised -ing verb: the seam where two bullets were run together. */
+const RUN_TOGETHER = /(?<=[a-z0-9)])\s+(?=[A-Z][a-z]+ing\b)/g;
 
 /** "IOS: https://apps.apple.com/…" is a link, not a requirement. */
 const isLinkLine = (line: string) => /https?:\/\//.test(line) && line.replace(/https?:\/\/\S+/g, '').trim().split(/\s+/).length < 4;

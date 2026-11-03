@@ -9,7 +9,7 @@ const skillLabel = (id: string) => SKILL_BY_ID.get(id)?.label ?? id;
 function WithBlanks({ text }: { text: string }) {
   return text.split(/(\[(?:LINK|FINDING)\])/g).map((part, i) =>
     /^\[(LINK|FINDING)\]$/.test(part) ? (
-      <mark key={i} className="bg-blank px-1 font-mono text-code text-ink">
+      <mark key={i} className="bg-blank px-1 font-semibold text-ink">
         {part === '[LINK]' ? 'your link' : 'your finding'}
       </mark>
     ) : (

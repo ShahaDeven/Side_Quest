@@ -3,7 +3,7 @@ import type { BriefEntry } from '../lib/briefs';
 import { tierBreakdown, type GateReason } from '../lib/match';
 import type { MatchResult, MissingRequirement, Requirement, Role } from '../lib/types';
 import { Breakdown, ExternalIcon, strengthLabel } from './marks';
-import ReportTable from './ReportTable';
+import ReportTable, { groupRows, reportRows, requirementCount } from './ReportTable';
 import { LockedState, SideQuestCard } from './SideQuest';
 import { SKILL_BY_ID } from '../lib/skills';
 
@@ -104,9 +104,9 @@ function Candidate({
       <div className="mt-5 flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
         <p className="text-lg">
           <span className="tnum font-semibold">
-            {n} of {total} requirements
+            {n} of {total} skills
           </span>{' '}
-          shown in the code.
+          named in the role's {requirementCount(match.covered, match.missing)} requirements are shown in the code.
           {match.cappedBy === 'few-requirements' && (
             <span className="text-slate"> This description names only {total} skills Side Quest can read, too few to call the evidence strong.</span>
           )}
@@ -159,13 +159,17 @@ function Asks({ requirements }: { requirements: Requirement[] }) {
         </p>
       )}
       <ol className={requirements.length ? 'mt-4 border-t border-ink' : 'hidden'}>
-        {requirements.slice(0, 12).map((r, i) => (
-          <li key={r.skill} className="grid grid-cols-[2.5rem_1fr] gap-x-3 border-b border-rule py-3.5 md:grid-cols-[2.5rem_1fr_14rem]">
-            <span className="report-head tnum text-lg text-slate">A{i + 1}</span>
-            <p className="text-base leading-snug font-medium">“{r.quote}”</p>
-            <p className="col-start-2 text-sm text-slate md:col-start-3 md:text-right">{label(r.skill)}</p>
-          </li>
-        ))}
+        {groupRows(reportRows([], requirements.map((r) => ({ ...r, evidence: null }))))
+          .slice(0, 12)
+          .map((g, i) => (
+            <li key={g.rows[0].skill} className="ref-grid grid gap-x-3 border-b border-rule py-3.5">
+              <span className="report-head tnum text-lg text-slate">A{i + 1}</span>
+              <div>
+                <p className="text-base leading-snug font-medium">“{g.quote}”</p>
+                <p className="mt-1 text-sm text-slate">{g.rows.map((r) => label(r.skill)).join(', ')}</p>
+              </div>
+            </li>
+          ))}
       </ol>
     </section>
   );

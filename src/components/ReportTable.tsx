@@ -1,6 +1,6 @@
 /**
  * The requirement table: the core of every candidate report (app and proof pages).
- * Each row reads founder's words → evidence level → the code that answers it. No hooks, so it renders on
+ * Each row reads the founder's sentence → each skill it names, with its evidence level → the code that answers it. No hooks, so it renders on
  * the server for proof pages too.
  */
 import { SKILL_BY_ID } from '../lib/skills';
@@ -26,6 +26,34 @@ export function reportRows(covered: CoveredRequirement[], missing: MissingRequir
   );
 }
 
+/** Ellipses mark where a long line was cut; ignore them when matching two quotes of the same sentence. */
+const bare = (q: string) => q.replace(/…/g, '').trim();
+
+export interface RowGroup {
+  /** The founder's sentence, shown once. When two skills quote different cuts of one line, the longer cut. */
+  quote: string;
+  rows: Row[];
+}
+
+/** One group per founder sentence: a line naming Python and TypeScript is one requirement with two skills. */
+export function groupRows(rows: Row[]): RowGroup[] {
+  const groups: RowGroup[] = [];
+  for (const r of rows) {
+    const q = bare(r.quote);
+    const g = groups.find((x) => bare(x.quote).includes(q) || q.includes(bare(x.quote)));
+    if (!g) groups.push({ quote: r.quote, rows: [r] });
+    else {
+      g.rows.push(r);
+      if (q.length > bare(g.quote).length) g.quote = r.quote;
+    }
+  }
+  return groups;
+}
+
+/** Distinct founder sentences behind a set of skills. */
+export const requirementCount = (covered: CoveredRequirement[], missing: MissingRequirement[]) =>
+  groupRows(reportRows(covered, missing)).length;
+
 interface Props {
   covered: CoveredRequirement[];
   missing: MissingRequirement[];
@@ -36,78 +64,104 @@ interface Props {
 }
 
 export default function ReportTable({ covered, missing, openSkill = null, openTitle = null }: Props) {
-  const rows = reportRows(covered, missing);
+  const groups = groupRows(reportRows(covered, missing));
   return (
     <div className="mt-6">
-      <dl className="grid gap-x-6 gap-y-1.5 border-y border-rule py-3 text-sm sm:grid-cols-2 xl:grid-cols-4" aria-label="Evidence levels">
-        {LEVELS.slice()
-          .reverse()
-          .map((l) => (
-            <div key={l.tier} className="flex flex-col">
-              <dt className="font-semibold">{l.label}</dt>
-              <dd className="text-slate">{l.meaning}</dd>
-            </div>
-          ))}
-      </dl>
-
-      <table className="mt-2 w-full border-collapse text-left md:table-fixed">
-        <caption className="sr-only">The role's requirements and the evidence for each, heaviest requirement first</caption>
+      <table className="w-full border-collapse text-left md:table-fixed">
+        <caption className="sr-only">
+          The role's requirements in its own words, heaviest first, with the evidence for each skill they name
+        </caption>
         <colgroup className="hidden md:table-column-group">
           <col className="w-12" />
           <col className="w-2/5" />
-          <col className="w-48" />
+          <col className="w-52" />
           <col />
         </colgroup>
         <thead className="hidden md:table-header-group">
           <tr className="border-b border-ink">
             <th scope="col" className="field-label py-2.5 pr-3 font-semibold">Ref</th>
             <th scope="col" className="field-label py-2.5 pr-6 font-semibold">Requirement, in the role's words</th>
-            <th scope="col" className="field-label py-2.5 pr-6 font-semibold">Evidence level</th>
+            <th scope="col" className="field-label py-2.5 pr-6 font-semibold">Skill and evidence level</th>
             <th scope="col" className="field-label py-2.5 font-semibold">Evidence in the code</th>
           </tr>
         </thead>
-        <tbody>
-          {rows.map((r, i) => {
-            const open = r.skill === openSkill;
-            const e = r.evidence;
-            return (
-              <tr
-                key={r.skill}
-                id={`req-${r.skill}`}
-                className={`grid grid-cols-[2.5rem_1fr] gap-x-3 gap-y-2 border-b py-4 md:table-row md:py-0 ${open ? 'border-alert bg-open' : 'border-rule'}`}
-              >
-                <td className={`report-head tnum text-lg md:py-4 md:pr-3 md:align-top ${open ? 'text-alert' : 'text-slate'}`}>A{i + 1}</td>
-                <td className="md:py-4 md:pr-6 md:align-top">
-                  <p className="text-base leading-snug font-medium">“{r.quote}”</p>
-                  <p className="mt-1 text-sm text-slate">
-                    {label(r.skill)}, {SECTION_WORD[r.section]}
-                  </p>
-                </td>
-                <td className="col-start-2 md:col-auto md:py-4 md:pr-6 md:align-top">
-                  <EvidenceLevel tier={e?.tier ?? null} open={open} />
-                </td>
-                <td className="col-start-2 min-w-0 md:col-auto md:py-4 md:align-top">
-                  {open && (
-                    <p className="mb-1.5 text-sm font-semibold text-alert">
-                      Open requirement{openTitle ? `: the side quest “${openTitle}” closes it` : ''}
-                    </p>
-                  )}
-                  {e && r.covered ? (
-                    <Trail repo={e.repo} url={e.url} reasons={e.reasons} />
-                  ) : e ? (
-                    <div className="text-sm text-slate">
-                      <p>Closest evidence:</p>
-                      <Trail repo={e.repo ?? 'resume'} url={e.url} reasons={e.reasons.slice(0, 1)} />
-                    </div>
-                  ) : (
-                    <p className="text-sm text-slate">No evidence in the repos read.</p>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
+        {groups.map((g, gi) => {
+          const groupOpen = g.rows.some((r) => r.skill === openSkill);
+          const n = g.rows.length;
+          return (
+            <tbody key={g.rows[0].skill} className={groupOpen ? 'border-y-2 border-alert bg-open' : 'border-b border-rule'}>
+              {g.rows.map((r, ri) => {
+                const open = r.skill === openSkill;
+                const e = r.evidence;
+                const first = ri === 0;
+                const last = ri === n - 1;
+                // Skills inside one sentence sit close; the sentence's rule and padding frame the group.
+                const cell = `md:align-top ${first ? 'md:pt-4' : 'md:pt-1'} ${last ? 'md:pb-4' : 'md:pb-1'}`;
+                return (
+                  <tr key={r.skill} id={`req-${r.skill}`} className={`ref-grid grid gap-x-3 gap-y-2 md:table-row ${first ? 'pt-4' : 'pt-3'} ${last ? 'pb-4' : ''}`}>
+                    {first && (
+                      <>
+                        <td rowSpan={n} className={`report-head tnum text-lg md:py-4 md:pr-3 md:align-top ${groupOpen ? 'text-alert' : 'text-slate'}`}>
+                          A{gi + 1}
+                        </td>
+                        <td rowSpan={n} className="md:py-4 md:pr-6 md:align-top">
+                          <p className="text-base leading-snug font-medium">“{g.quote}”</p>
+                        </td>
+                      </>
+                    )}
+                    <td className={`col-start-2 md:col-auto md:pr-6 ${cell}`}>
+                      <p className="mb-1 text-sm">
+                        <span className="font-semibold">{label(r.skill)}</span>
+                        <span className="text-slate">, {SECTION_WORD[r.section]}</span>
+                      </p>
+                      <EvidenceLevel tier={e?.tier ?? null} open={open} />
+                    </td>
+                    <td className={`col-start-2 min-w-0 md:col-auto ${cell}`}>
+                      {open && (
+                        <p className="mb-1.5 text-sm font-semibold text-alert">
+                          Open requirement{openTitle ? `: the side quest “${openTitle}” closes it` : ''}
+                        </p>
+                      )}
+                      {e && r.covered ? (
+                        <Trail repo={e.repo} url={e.url} reasons={e.reasons} />
+                      ) : e ? (
+                        <div className="text-sm text-slate">
+                          <p>Closest evidence:</p>
+                          <Trail repo={e.repo ?? 'resume'} url={e.url} reasons={e.reasons.slice(0, 1)} />
+                        </div>
+                      ) : (
+                        <p className="text-sm text-slate">No evidence in the repos read.</p>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          );
+        })}
       </table>
+
+      <section aria-labelledby="levels-heading" className="mt-6 border-t border-rule pt-3">
+        <h4 id="levels-heading" className="field-label">
+          How to read the evidence level
+        </h4>
+        <dl className="mt-2 grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2 xl:grid-cols-5">
+          {[...LEVELS].reverse().map((l) => (
+            <div key={l.tier}>
+              <dt>
+                <EvidenceLevel tier={l.tier} />
+              </dt>
+              <dd className="mt-0.5 text-slate">{l.meaning}</dd>
+            </div>
+          ))}
+          <div>
+            <dt>
+              <EvidenceLevel tier={null} />
+            </dt>
+            <dd className="mt-0.5 text-slate">Nothing in the repos read answers it yet.</dd>
+          </div>
+        </dl>
+      </section>
     </div>
   );
 }

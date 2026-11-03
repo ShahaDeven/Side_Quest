@@ -51,7 +51,7 @@ export default function RoleList({ roles, matches, optedIn, selectedId, onSelect
           <span className={`block leading-snug font-semibold ${selected ? 'underline decoration-1 underline-offset-4' : ''}`}>{r.title}</span>
           {(m || showLocation) && (
             <span className="tnum block text-sm text-slate">
-              {m && `${m.covered.length} of ${m.covered.length + m.missing.length} requirements shown`}
+              {m && `${m.covered.length} of ${m.covered.length + m.missing.length} skills shown`}
               {m && showLocation && ', '}
               {showLocation && r.location}
             </span>
@@ -68,7 +68,7 @@ export default function RoleList({ roles, matches, optedIn, selectedId, onSelect
           <h2 id="roles-heading" className="report-head text-xl">
             Roles
           </h2>
-          <p className="tnum text-sm text-slate">{matches ? `${roles.length}, ranked by evidence` : `${roles.length}, newest first`}</p>
+          <p className="tnum text-sm text-slate">{matches ? `${roles.length}, strongest evidence first` : `${roles.length}, newest first`}</p>
         </div>
         <label htmlFor="role-search" className="sr-only">
           Filter roles
