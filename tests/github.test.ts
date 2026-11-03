@@ -131,10 +131,35 @@ describe('fetchProfileFacts', () => {
     const notFound = vi.fn(async () => new Response('', { status: 404 })) as unknown as typeof fetch;
     await expect(fetchProfileFacts('ghost', { fetch: notFound })).rejects.toMatchObject({ kind: 'not-found' });
 
-    const limited = vi.fn(async () => new Response('', { status: 403, headers: { 'x-ratelimit-reset': '1793600000' } })) as unknown as typeof fetch;
+    const limited = vi.fn(
+      async () => new Response('', { status: 403, headers: { 'x-ratelimit-remaining': '0', 'x-ratelimit-reset': '1793600000' } }),
+    ) as unknown as typeof fetch;
     const err = await fetchProfileFacts('dev', { fetch: limited }).catch((e) => e);
     expect(err).toBeInstanceOf(GitHubError);
     expect(err).toMatchObject({ kind: 'rate-limited' });
     expect(err.resetAt).toMatch(/^2026-/);
+
+    const secondary = vi.fn(
+      async () => new Response('{"message":"You have exceeded a secondary rate limit."}', { status: 403, headers: { 'x-ratelimit-remaining': '4000' } }),
+    ) as unknown as typeof fetch;
+    await expect(fetchProfileFacts('dev', { fetch: secondary })).rejects.toMatchObject({ kind: 'rate-limited' });
+  });
+
+  it('treats any other 403 as one refused resource, not a rate limit', async () => {
+    // torvalds/linux: "The history or contributor list is too large to list contributors for this repository via the API."
+    const { f: base } = fakeGitHub([repo('linux')]);
+    const f = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) =>
+      String(input).includes('/contributors')
+        ? new Response('{"message":"The history or contributor list is too large to list contributors for this repository via the API."}', {
+            status: 403,
+            headers: { 'x-ratelimit-remaining': '4848' },
+          })
+        : base(input, init),
+    ) as unknown as typeof fetch;
+
+    const out = await fetchProfileFacts('dev', { fetch: f });
+    expect(out.repos).toHaveLength(1);
+    expect(out.repos[0].manifests[0].deps).toEqual(['langgraph']); // the rest of the evidence still reads
+    expect(out.repos[0].summary.contributors).toBeNull();
   });
 });

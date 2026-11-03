@@ -54,6 +54,16 @@ export interface ApiRepo {
   default_branch: string;
 }
 
+/** A 403 is a rate limit only when GitHub says so: no calls left, or a (secondary) rate-limit message. */
+async function isRateLimit(res: Response): Promise<boolean> {
+  if (res.headers.get('x-ratelimit-remaining') === '0') return true;
+  const body = await res
+    .clone()
+    .text()
+    .catch(() => '');
+  return /rate limit/i.test(body);
+}
+
 function client(opts: GitHubOptions) {
   const f = opts.fetch ?? fetch;
   return async function gh(path: string, accept = 'application/vnd.github+json'): Promise<Response | null> {
@@ -70,10 +80,13 @@ function client(opts: GitHubOptions) {
         },
       });
       if (res.status === 404 || res.status === 409 /* empty repo */) return null;
-      if (res.status === 403 || res.status === 429) {
+      if (res.status === 429 || (res.status === 403 && (await isRateLimit(res)))) {
         const reset = res.headers.get('x-ratelimit-reset');
         throw new GitHubError('rate-limited', 'GitHub rate limit reached', reset ? new Date(Number(reset) * 1000).toISOString() : null);
       }
+      // Any other 403 refuses this one resource, e.g. "contributor list is too large" on torvalds/linux.
+      // Skip that piece of evidence instead of failing the whole profile.
+      if (res.status === 403) return null;
       if (!res.ok) throw new GitHubError('failed', `GitHub ${res.status} for ${path}`);
       return res;
     } finally {
