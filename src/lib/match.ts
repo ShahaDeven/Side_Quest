@@ -69,16 +69,22 @@ const isLinkLine = (line: string) => /https?:\/\//.test(line) && line.replace(/h
 /**
  * Weight: title +3 · requirements +2 · role (responsibilities, stack) +1 · nice-to-have +0.5
  *         · +1 per mention (max 3).
- * Skills mentioned only in intro/benefits text stay at weight 1 and rarely matter.
+ *
+ * When the JD has recognisable sections, a skill named only in intro/about/benefits text is not a
+ * requirement at all: speedrun's own posting would otherwise "ask for" AI agents because its company blurb
+ * mentions an MCP server for AI agents. A JD with no detectable sections keeps every mention, so it never
+ * comes back empty.
  */
 export function extractRequirements(role: Pick<Role, 'title' | 'description'>, skills: Skill[] = SKILLS): Requirement[] {
   const lines = sectionLines(role.description);
+  const hasSections = lines.some((l) => l.section !== 'other');
   const out: Requirement[] = [];
 
   for (const skill of skills) {
     const inTitle = findSkill(skill, role.title) >= 0;
     const hits = lines.filter((l) => !isLinkLine(l.text) && findSkill(skill, l.text) >= 0);
     if (!inTitle && hits.length === 0) continue;
+    if (!inTitle && hasSections && hits.every((l) => l.section === 'other')) continue;
 
     const mentions = Math.min(3, hits.reduce((n, l) => n + countSkill(skill, l.text), 0));
     const inReq = hits.find((l) => l.section === 'requirements');
@@ -184,4 +190,29 @@ export function sideQuestGate(match: MatchResult, optedIn: boolean): { reason: G
   if (match.strength !== 'strong') return { reason: 'needs-stronger-proof', target: null };
   const target = match.missing.find((m) => m.section !== 'other') ?? match.missing[0] ?? null;
   return target ? { reason: 'unlocked', target } : { reason: 'nothing-missing', target: null };
+}
+
+// --- evidence breakdown ------------------------------------------------------------------------
+
+export interface TierBreakdown {
+  shipped: number;
+  demonstrated: number;
+  described: number;
+  mentioned: number;
+  /** Requirements with no evidence at all. */
+  none: number;
+}
+
+/**
+ * How the role's requirements split across evidence levels. Shown next to the strength label everywhere, so
+ * a reader sees the spread of evidence, never a single score standing in for it.
+ */
+export function tierBreakdown(match: Pick<MatchResult, 'covered' | 'missing'>): TierBreakdown {
+  const out: TierBreakdown = { shipped: 0, demonstrated: 0, described: 0, mentioned: 0, none: 0 };
+  for (const c of match.covered) out[c.evidence.tier]++;
+  for (const m of match.missing) {
+    if (m.evidence) out[m.evidence.tier]++;
+    else out.none++;
+  }
+  return out;
 }

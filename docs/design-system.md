@@ -1,148 +1,93 @@
 # Side Quest design system
 
-Source of truth: [`src/styles/global.css`](../src/styles/global.css). This page explains it.
-Rule for every component: **use semantic utilities and the component utilities below; never raw hex,
-`[arbitrary]` values or `/opacity` tints.** If something is missing, add a token here first.
+**Direction: an engineering assessment report.** Each founder requirement, in the role's own words, is answered with
+the files that show it. The interface refuses the dashboard card grid, match percentages and any athlete-style grading:
+evidence is described per requirement, never scored per person.
 
-Direction: a native feature of the speedrun talent site. Warm off-white, true-black grotesk, the purple→blue
-gradient in exactly one place (the side-quest card edge). Monospace only for literal code and data (repo
-names, file paths, packages), so mono marks the proof trail. Evidence strength is shown by ink weight, not
-traffic-light colour.
+- Direction contract: `.impeccable/surfaces/src-pages-index-astro.md`
+- Tokens: `src/styles/global.css` (the only place raw values live)
+- Product rules this design serves: `PRODUCT.md`
 
 ## Token layers
 
-```
-Primitives   --sq-stone-100, --sq-black, --sq-blue-600 …   raw values, no utilities generated
-    ↓
-Semantic     --paper, --ink, --muted, --field, --focus …   purpose; the only layer dark mode changes
-    ↓        exposed via @theme inline → bg-paper, text-ink, border-line, border-field …
-Component    --shell-list-width, --row-hover, --control-radius …   + @utility classes (btn, field, layout-*)
-```
+1. **Primitives** (`--sq-*`): raw colours and font stacks. No utilities are generated from them.
+2. **Semantic**: purpose names. Dark mode (`prefers-color-scheme`) swaps only this layer.
+3. **Component**: layout widths, control radius, touch size, as variables and small `@utility` classes.
 
 ## Semantic colours
 
-| Token | Use | Light | Dark | Contrast (WCAG) |
-|---|---|---|---|---|
-| `paper` | Page background | `#eae8e3` | `#0f0f11` | n/a |
-| `surface` | Raised panels, selected row, side-quest fill | `#f4f3ef` | `#18181b` | n/a |
-| `ink` | Text, solid controls, Shipped badge | `#000000` | `#f2f0eb` | 17.2 on paper / 16.8 dark |
-| `muted` | Secondary text, placeholders | `#66645f` | `#9b988f` | 4.8 on paper / 6.6 dark (AA) |
-| `line` | Decorative hairlines and dividers only | `#d5d2ca` | `#2c2c31` | 1.2 (decorative, exempt) |
-| `field` | Input borders (identify a control) | `#85827a` | `#6b6963` | ≥ 3.1 / ≥ 3.2 (1.4.11) |
-| `focus` | Focus ring | `#2563eb` | `#3b82f6` | 4.2 / 5.2 |
-| `accent-from` → `accent-to` | Side-quest edge and headline accent only | `#8b5cf6` → `#3b82f6` | same | decorative |
-| `wash` | Row hover tint | 60% `surface` | same rule | n/a |
-| `blank` | `[LINK]` / `[FINDING]` blanks in the founder note | 10% `ink` | same rule | n/a |
+| Token | Light | Dark | Use |
+|---|---|---|---|
+| `ground` | stock `#e8edf1` | `#0d1624` | the page, the role index |
+| `sheet` | white | `#142033` | the report sheet, selected role |
+| `ink` | navy `#14233c` | mist `#e6ecf2` | text, heavy rules, primary buttons |
+| `slate` | `#55657a` | `#9dadc0` | secondary text (≥5:1) |
+| `rule` | `#c5ced8` | `#2a3a52` | hairlines between rows (decorative) |
+| `field` | `#7a8798` | `#5f7190` | control boundaries (≥3:1) |
+| `alert` | red `#b3362a` | `#f07a6e` | **only** the open requirement and its side quest |
+| `focus` | blue `#1f5fbf` | `#7fb0ff` | focus ring |
+| `head`, `head-ink`, `head-muted` | navy band | | masthead |
 
-Do not use `line` for anything a user must notice to operate (inputs, toggles): use `field`.
+Red is reserved. If something is red, it is the one requirement a side quest closes.
 
 ## Type
 
-| Role | Utility | Notes |
-|---|---|---|
-| Display (landing hero) | `text-4xl sm:text-6xl font-extrabold tracking-tight leading-display` | `leading-display` = 1.05 |
-| Display (compact hero, profile loaded) | `text-xl sm:text-3xl font-extrabold tracking-tight` | |
-| Role title | `text-3xl sm:text-4xl font-extrabold tracking-tight` | |
-| Side-quest title | `text-2xl sm:text-3xl font-extrabold tracking-tight` | |
-| Section heading | `text-lg font-bold` | sentence case, no eyebrow labels |
-| Body | `text-base`, long text `max-w-prose leading-relaxed` | keep lines under ~80 characters |
-| Secondary | `text-sm text-muted` | |
-| Code and data | `font-mono` + `text-code` (0.85em) | repos, paths, packages, stack lists only |
-
-Families: Inter Tight Variable (`font-sans`), JetBrains Mono Variable (`font-mono`), both self-hosted.
+- **Barlow Condensed** (`report-head`, `field-label`): report headings (uppercase) and field labels. The landing
+  headline uses it in sentence case (`font-report`).
+- **Source Sans 3**: requirements, prose, controls. `text-reading` (15px / 1.6) for report prose.
+- **JetBrains Mono**: only repo names, paths, packages and usernames. `Path` adds a break opportunity after each `/`.
+- `tnum` on every count that sits in a column.
 
 ## Layout
 
-| Utility | Value | Where |
-|---|---|---|
-| `lg:layout-shell` | `--shell-list-width` (22rem) + fluid | Role list beside detail |
-| `sm:layout-row` | `--row-label-width` (13rem) + fluid | Evidence rows, requirement rows |
-| `layout-mark` | `--mark-col` (1.25rem) + fluid | Strength glyph + role text in list rows |
-| `sm:layout-defs` | auto + fluid | "How evidence is graded" definitions |
-| `lg:list-viewport` | `100dvh − 2 × --sticky-gap` | Sticky, scrollable role list |
+- Navy masthead: wordmark, the unofficial note, and the two views of the selected role as tabs
+  (*What the founder sees* / *Candidate report*). `?demo=1` opens on the founder view.
+- Below it, a ruled strip says whose code is read. Then `layout-shell`: a quiet 19rem role index on the ground, and the
+  report on a white sheet. Under `lg`, the index collapses behind an "All N roles" button above the report.
+- Skip links: to the report, to the roles.
 
-Below `lg` the detail renders **before** the list, so a shared link shows the result first.
+## Components
 
-## Components and states
+### Field row
+A `dl` ruled top and bottom in ink: Company, Location, Evidence (or Side quests in the founder view), Posting.
 
-State priority (highest first): disabled → focus → hover → default. The focus ring is global
-(`:focus-visible`, 2px `focus`, 2px offset) and must never be removed without a replacement.
+### Requirement table (`ReportTable`)
+Ref (A1…) | requirement in quotes, with skill and section | evidence level | evidence in the code (repo link, then
+reasons with paths in mono). Heaviest requirement first. A visible legend defines the four levels above the table.
+The open requirement row takes `bg-open`, a red rule and the side-quest title. On mobile each row becomes a two-column
+grid.
 
-### Button: `btn` + size + variant
+### Evidence level (`EvidenceLevel`)
+Four square cells filled to the level (Mentioned → Described → Demonstrated → Shipped), always followed by the level in
+words. Not yet shown = four empty cells. It describes one requirement's evidence, never the person.
 
-Compose exactly one size and one variant: `btn btn-md btn-primary`. No two of these set the same property.
+### Strength and breakdown
+`Strong / Some / Thin evidence` is always read next to `Breakdown` ("Shipped 7 / Demonstrated 1 / …"), never alone.
 
-| Variant | Default | Hover | Disabled | Use |
-|---|---|---|---|---|
-| `btn-primary` | `ink` fill, `paper` text | fill mixes 18% toward `paper` | 40% opacity, not-allowed | The one main action in a group ("Read my GitHub") |
-| `btn-secondary` | 1px `ink` border | `surface` fill | same | Alternative actions ("See the demo", "Copy note") |
-| `btn-quiet` | 1px `line` border | `ink` border | same | Low-priority action next to a secondary one |
+### Founder view
+A table of candidates ranked by evidence for this role: candidate (with "Real public GitHub" or "Demo candidate,
+fictional"), strength and breakdown, the strongest evidence (requirement quote → repo → reason), the open requirement,
+side-quest status and Shortlist. The simulated opt-in switch sits above it.
 
-Sizes: `btn-md` (0.5rem × 1rem, 14px) for page controls; `btn-sm` (0.25rem × 0.75rem, 12px) inside cards.
-Button text says what happens: "Read my GitHub", "Copy note" → "Copied".
+### Side quest
+A ruled section opened by a 2px red rule: title, why the founder cares, parts with field labels, the note to the
+founder with blanks, risks in a `details`.
 
-### Field: `field`
+### Send this report
+One primary action (the link for this company), one secondary (the talent-team link), each with "Preview the page
+first" (`/p/preview`, built on the server, never saved). Created links show copy actions and the one-time delete link.
 
-Applied to the input itself, or to a wrapper around an input with a prefix ("github.com/").
+### Buttons and fields
+`btn` + `btn-md`/`btn-sm` + `btn-primary`/`btn-secondary`/`btn-quiet`. 2px corners, 44px minimum height at both sizes.
+`field` for inputs: 3:1 boundary, ink on focus, focus ring via `:has(:focus-visible)`.
 
-| State | Look |
-|---|---|
-| Default | 1px `field` border, `paper` fill |
-| Focus | `ink` border + focus ring (wrapper draws the ring via `:has(:focus-visible)`) |
-| Placeholder | `muted` at full opacity (never fade it: 70% failed contrast at 2.8:1) |
-
-### Role row (list)
-
-| State | Look |
-|---|---|
-| Default | Company (muted), title (semibold), "Shows N of M asks" (xs, muted), strength glyph |
-| Hover | `bg-wash` |
-| Selected | `bg-surface`, title underlined (2px), `aria-current="true"` |
-| Opted in | "side quests open" at the right, xs muted |
-
-Selecting moves focus to the detail heading.
-
-### Evidence tier badge
-
-Ink weight, strongest to weakest. Never colour-coded.
-
-| Tier | Style | Meaning |
-|---|---|---|
-| Shipped | solid `ink` pill, `paper` text | Demonstrated + tests, CI or a live deploy in the same repo |
-| Demonstrated | 1px `ink` outline | Manifest lists it and matching source files exist |
-| Described | 1px dashed `muted` outline, muted text | README talks about it |
-| Mentioned | no border, muted text | Tag, repo language or resume only |
-
-### Strength mark
-
-● Strong · ◐ Some · ○ Thin, with a visually hidden label in lists and a visible label in the detail. When a
-high score is capped (too few readable asks), the sentence after it says why.
-
-### Side-quest card
-
-The only element with the gradient: `edge-accent` (1.5px gradient border over `surface`), `rounded-2xl`.
-Contains: target skill line, title, why, JD quote (2px `ink` left rule), scope / numbers / done / stack /
-data, founder note panel (`paper` fill, `line` border) with `blank`-styled placeholders and a `btn-sm
-btn-secondary` copy button, "What could backfire" disclosure.
-
-### Locked state
-
-Dashed `line` border, no fill, title + one muted paragraph that says why and what to do instead.
-
-### Join CTA
-
-`ink` block with `paper` text and an inverted `btn btn-md` (`paper` fill). Appears once, at the end of
-every role detail.
+## Not in this system
+Gradients, gradient text, glassy or glowing cards, pill badges, emoji or sparkle icons, Inter, rounded bordered boxes
+around every section, grey-on-grey, sports or scouting vocabulary, percentages.
 
 ## Motion
-
-Transitions only on colour, background and border (`--duration-fast`, 150ms) in response to the user.
-No entrance animations. `prefers-reduced-motion` reduces all durations to ~0.
+Colour transitions on controls only (`--duration-fast`, 150ms). Reduced motion removes them.
 
 ## Checking compliance
-
-- `grep -rnoE "(text|w|h|grid-cols|max-h|leading|top)-\[[^]]+\]|(bg|text|border)-[a-z]+/[0-9]+" src/components`
-  must return nothing.
-- The ui-ux-pro-max `validate-tokens.cjs` flags only `global.css`, where primitives are meant to live.
-- Contrast numbers above were computed with the WCAG 2.x relative-luminance formula; recompute if a
-  primitive changes.
+`impeccable detect --json src/components src/pages src/layouts` should return `[]`. No arbitrary Tailwind values
+outside grid track lists.

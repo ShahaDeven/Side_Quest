@@ -1,0 +1,56 @@
+---
+/**
+ * Read-only preview of a proof link: the same document the create endpoint would store, built on the server
+ * from the same public inputs, with nothing written to the database and no delete link.
+ *   /p/preview?kind=role&demo=1&roles=<roleId>
+ *   /p/preview?kind=network&user=<login>&roles=<id>,<id>
+ */
+import Base from '../../layouts/Base.astro';
+import Masthead from '../../components/Masthead.astro';
+import ProofPage from '../../components/ProofPage.astro';
+import { proofTitle, type ProofKind } from '../../lib/proof';
+import { buildProofFor, validate, type ProofBuild } from '../../server/proof';
+
+export const prerender = false;
+
+const q = Astro.url.searchParams;
+const demo = q.get('demo') === '1';
+const login = q.get('user')?.trim() ?? '';
+const k = q.get('kind');
+const kind: ProofKind | null = k === 'role' || k === 'network' ? k : null;
+const roleIds = [...new Set((q.get('roles') ?? '').split(',').map((s) => s.trim()).filter(Boolean))];
+
+const req = { login, demo, kind, roleIds };
+const built: ProofBuild = validate(req) ?? (await buildProofFor(req));
+if (!built.ok) Astro.response.status = built.status;
+Astro.response.headers.set('cache-control', 'no-store');
+
+const title = built.ok ? `Preview: ${proofTitle(built.doc)}` : 'Preview unavailable · Side Quest';
+const url = `${Astro.url.origin}/p/preview`;
+---
+
+<Base title={title} noindex>
+  <Masthead />
+  <main class="mx-auto max-w-5xl px-4 pt-6 pb-16 sm:px-8">
+    <p role="note" class="mb-6 border-y border-ink py-3 text-sm">
+      <span class="font-semibold">Preview, not saved.</span>{" "}
+      <span class="text-slate">
+        This is the page the link would show. Nothing is stored until you create the link in Side Quest; close this tab to go back.
+      </span>
+    </p>
+
+    {
+      built.ok ? (
+        <ProofPage doc={built.doc} url={url} preview />
+      ) : (
+        <section class="bg-sheet px-5 py-8 sm:px-8">
+          <h1 class="report-head text-4xl leading-none">Preview unavailable</h1>
+          <p class="mt-3 max-w-prose text-reading text-slate">{built.message}</p>
+          <a href="/" class="btn btn-md btn-primary mt-6">
+            Back to Side Quest
+          </a>
+        </section>
+      )
+    }
+  </main>
+</Base>

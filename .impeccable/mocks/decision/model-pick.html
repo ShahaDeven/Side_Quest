@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Scouting Report · Side Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--stock:#E8EDF1;--navy:#14233C;--card:#FFFFFF;--pencil:#C0392B;--slate:#5B6B7F;--rule:#B9C3CE}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1440px;height:900px;overflow:hidden;background:var(--stock);color:var(--navy);font-family:'Source Sans 3',sans-serif}
+.top{height:60px;display:flex;align-items:center;gap:36px;padding:0 32px;background:var(--navy);color:#DCE4EE}
+.top b{font:800 24px 'Barlow Condensed';letter-spacing:.04em;text-transform:uppercase;color:#fff}
+.top .t{font:600 15px 'Source Sans 3';color:#9DB0C6}.top .t.on{color:#fff;border-bottom:3px solid var(--pencil);padding-bottom:4px}
+.top .r{margin-left:auto;font:500 14px 'Source Sans 3'}
+.shell{display:grid;grid-template-columns:300px 1fr;height:840px}
+.rail{padding:20px 0;border-right:1px solid var(--rule)}
+.rail h3{font:700 14px 'Barlow Condensed';letter-spacing:.06em;text-transform:uppercase;color:var(--slate);padding:0 24px 10px}
+.role{padding:11px 24px;border-top:1px solid #D3DAE2;display:flex;justify-content:space-between}
+.role p{font:500 13px 'Source Sans 3';color:var(--slate)}.role h4{font:600 15px 'Source Sans 3'}
+.role .g{font:700 18px 'Barlow Condensed';color:var(--slate)}
+.role.sel{background:var(--card)}.role.sel .g{color:var(--pencil)}
+.main{padding:24px 40px}
+.card{background:var(--card);border:1.5px solid var(--navy);height:780px}
+.fields{display:grid;grid-template-columns:2fr 1fr 1fr 1.3fr;border-bottom:1.5px solid var(--navy)}
+.fields div{padding:12px 18px;border-right:1px solid var(--rule)}.fields div:last-child{border-right:0}
+.fields label{display:block;font:700 12px 'Barlow Condensed';letter-spacing:.08em;text-transform:uppercase;color:var(--slate)}
+.fields span{font:600 20px 'Source Sans 3'}.fields .proj{font:800 26px 'Barlow Condensed';color:var(--pencil);text-transform:uppercase;letter-spacing:.02em}
+.sum{padding:16px 18px;border-bottom:1px solid var(--rule);display:flex;gap:28px;align-items:baseline}
+.sum h1{font:800 34px 'Barlow Condensed';text-transform:uppercase;letter-spacing:.01em}
+.sum p{font:500 16px 'Source Sans 3';color:var(--slate)}
+.grid{display:grid;grid-template-columns:200px 220px 1fr;}
+.hd{font:700 12px 'Barlow Condensed';letter-spacing:.08em;text-transform:uppercase;color:var(--slate);padding:10px 18px;border-bottom:1px solid var(--rule)}
+.cell{padding:12px 18px;border-bottom:1px solid #DCE2E9}
+.tool{font:700 19px 'Barlow Condensed';text-transform:uppercase;letter-spacing:.02em}
+.scale{display:flex;gap:6px;align-items:center}
+.scale i{width:38px;height:12px;border:1.5px solid var(--navy)}.scale i.f{background:var(--navy)}
+.scale em{font:600 13px 'Source Sans 3';font-style:normal;margin-left:8px;color:var(--slate)}
+.note{font:500 15px/1.4 'Source Sans 3'}.note code{font:400 13px 'JetBrains Mono';color:#2B3A52}
+.note q{color:var(--slate);display:block;font-size:13px;margin-top:3px}
+.gap .tool{color:var(--pencil)}.gap .scale i{border-color:var(--pencil)}
+.gap .note{color:var(--pencil);font-weight:600}
+</style></head><body>
+<div class="top"><b>Side Quest</b><span class="t on">Scout's card</span><span class="t">What the founder sees</span><span class="r">Deven Shah · github.com/ShahaDeven · unofficial demo</span></div>
+<div class="shell">
+<aside class="rail"><h3>97 roles scouted</h3>
+<div class="role sel"><div><p>Sekai</p><h4>AI Agent Engineer</h4></div><div class="g">8/10</div></div>
+<div class="role"><div><p>General Magic</p><h4>AI/ML Engineer</h4></div><div class="g">5/5</div></div>
+<div class="role"><div><p>Corlen</p><h4>Founding Engineer</h4></div><div class="g">4/4</div></div>
+<div class="role"><div><p>Nexxa AI</p><h4>Senior SDET, QA – AI</h4></div><div class="g">9/12</div></div>
+<div class="role"><div><p>Tenera</p><h4>Founding MTS</h4></div><div class="g">12/15</div></div>
+<div class="role"><div><p>Darwin</p><h4>Member of Technical Staff</h4></div><div class="g">6/8</div></div>
+</aside>
+<main class="main"><div class="card">
+<div class="fields"><div><label>Role</label><span>AI Agent Engineer (Coding Agent)</span></div><div><label>Club</label><span>Sekai</span></div><div><label>Location</label><span>San Francisco</span></div><div><label>Projects as</label><span class="proj">Strong fit</span></div></div>
+<div class="sum"><h1>8 of 10 tools seen in the code</h1><p>Graded from 9 public repos. Notes cite the file.</p></div>
+<div class="grid">
+<div class="hd">Tool</div><div class="hd">Grade: mentioned → shipped</div><div class="hd">Scout's note</div>
+<div class="cell tool">AI agents</div><div class="cell scale"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><em>Shipped</em></div><div class="cell note"><code>Market_Pulse</code> pyproject.toml lists langgraph, 40 source files, tests and CI<q>Asks: tool use, orchestration, retry/repair loops</q></div>
+<div class="cell tool">LLM evaluation</div><div class="cell scale"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><em>Shipped</em></div><div class="cell note"><code>Meeting_Insight_Trust</code> 8 files in evals/, 7 test files, CI<q>Asks: eval harnesses, regression testing, failure taxonomies</q></div>
+<div class="cell tool">Fine-tuning</div><div class="cell scale"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><em>Demonstrated</em></div><div class="cell note"><code>SQL-Forge</code> requirements-grpo.txt lists trl, peft</div>
+<div class="cell tool">Observability</div><div class="cell scale"><i class="f"></i><i class="f"></i><i></i><i></i><em>Described</em></div><div class="cell note"><code>AI_SQL_Agent</code> README describes an observability dashboard</div>
+<div class="cell tool gap">Distributed</div><div class="cell scale gap"><i></i><i></i><i></i><i></i><em style="white-space:nowrap">Not seen</em></div><div class="cell note gap">Work on: Durable job queue with a chaos test (one-day side quest)</div>
+</div></div></main></div>
+</body></html>

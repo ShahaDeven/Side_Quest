@@ -404,7 +404,7 @@
     "repo": "AI_SQL_Agent",
     "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
     "reasons": [
-     "README: “📈 Observability Dashboard”"
+     "README: “Observability Dashboard”"
     ]
    },
    {
@@ -424,7 +424,7 @@
     "repo": "Rossman_sales_project",
     "url": "https://github.com/ShahaDeven/Rossman_sales_project",
     "reasons": [
-     "README: “…served via a REST API with a real-time monitoring dashboard.…”"
+     "README: “…served via a REST API with a real-time monitoring dashboard.”"
     ]
    }
   ],
@@ -556,7 +556,7 @@
     "repo": "Meeting_Insight_Trust",
     "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
     "reasons": [
-     "README: “…ation built in: agents with LangGraph, RAG and GraphRAG, fine-tuning (a Qwen2.5-Coder-7B text-to-SQL model), and eval ha…”"
+     "README: “…built in: agents with LangGraph, RAG and GraphRAG, fine-tuning (a Qwen2.5-Coder-7B text-to-SQL model), and eval…”"
     ]
    },
    {
@@ -578,7 +578,7 @@
     "repo": "AI_SQL_Agent",
     "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
     "reasons": [
-     "README: “Hybrid Search Retriever: BM25 + Semantic Search (ChromaDB) with 99.1% table recall — maps vague user terms to specific d…”"
+     "README: “Hybrid Search Retriever: BM25 + Semantic Search (ChromaDB) with 99.1% table recall — maps vague user terms to specific…”"
     ]
    }
   ],
@@ -867,7 +867,7 @@
     "repo": "Meeting_Insight_Trust",
     "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
     "reasons": [
-     "README: “…ents with LangGraph, RAG and GraphRAG, fine-tuning (a Qwen2.5-Coder-7B text-to-SQL model), and eval harnesses like this…”"
+     "README: “…with LangGraph, RAG and GraphRAG, fine-tuning (a Qwen2.5-Coder-7B text-to-SQL model), and eval harnesses like this…”"
     ]
    },
    {
@@ -889,7 +889,7 @@
     "repo": "Meeting_Insight_Trust",
     "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
     "reasons": [
-     "README: “…peakers deliberately mixed up, headset speech recognition, and a single room microphone.…”"
+     "README: “…deliberately mixed up, headset speech recognition, and a single room microphone.”"
     ]
    },
    {
@@ -904,6 +904,6 @@
    }
   ]
  },
- "reposConsidered": 16,
- "fetchedAt": "2026-11-02T18:06:30.764Z"
+ "reposConsidered": 17,
+ "fetchedAt": "2026-11-02T23:49:13.421Z"
 }

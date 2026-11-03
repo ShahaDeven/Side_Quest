@@ -31,6 +31,9 @@ export interface Skill {
   minFiles?: number;
 }
 
+/** Words that make a generic term ("evaluation", "benchmark") specifically about LLM/agent work. Not "model": ML models are everywhere. */
+const AI_CONTEXT = String.raw`\b(?:llms?|agents?|agentic|prompts?|genai|generative ai|language models?|chatbots?|rag|copilots?|ai)\b`;
+
 export const SKILLS: Skill[] = [
   // --- languages ---
   { id: 'python', label: 'Python', category: 'language', aliases: ['python'], languages: ['Python', 'Jupyter Notebook'], exts: ['.py', '.ipynb'] },
@@ -106,7 +109,13 @@ export const SKILLS: Skill[] = [
   },
   {
     id: 'evals', label: 'LLM evaluation', category: 'ai',
-    aliases: ['eval', 'evals', 'evaluation', 'evaluations', 'eval harness', 'eval harnesses', 'benchmark', 'benchmarks', 'benchmarking', 'llm-as-a-judge', 'llm judge', 'llm-judge', 'quality gates', 'failure taxonomies', 'regression suites'],
+    // "evaluation" and "benchmark" are everyday words in ML/recsys/analytics JDs ("online/offline evaluation"
+    // of a recommender is not LLM evals). They count only with an LLM/agent/AI word nearby in the same sentence.
+    aliases: ['eval', 'evals', 'eval harness', 'eval harnesses', 'llm-as-a-judge', 'llm judge', 'llm-judge', 'quality gates', 'failure taxonomies', 'regression suites'],
+    patterns: [
+      new RegExp(`${AI_CONTEXT}[^.\\n]{0,60}?\\b(?:evaluations?|benchmark(?:s|ing)?)\\b`, 'i'),
+      new RegExp(`\\b(?:evaluations?|benchmark(?:s|ing)?)\\b[^.\\n]{0,60}?${AI_CONTEXT}`, 'i'),
+    ],
     packages: ['ragas', 'deepeval', 'promptfoo', 'inspect-ai', 'langsmith', 'braintrust', 'lm-eval', 'openai-evals'],
     paths: [/(^|\/)(evals?|evaluation|evaluations|benchmarks?)\/[^/]+\.(py|ts|json|jsonl|yaml)$/, /(^|\/)(eval|evaluate|benchmark)[^/]*\.(py|ts)$/],
   },

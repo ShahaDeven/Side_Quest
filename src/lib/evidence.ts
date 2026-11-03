@@ -16,7 +16,7 @@ import { tierRank, type CandidateProfile, type EvidenceItem, type RepoSummary, t
  * Bump whenever repo selection, the taxonomy or tier rules change. It is part of every cache key, so a
  * deploy never serves evidence computed by older rules (it happened: a 6-repo profile outlived the 9-repo change).
  */
-export const EVIDENCE_VERSION = 3;
+export const EVIDENCE_VERSION = 5;
 
 export interface RepoFacts {
   summary: RepoSummary;
@@ -61,18 +61,35 @@ export function readmeText(md: string): string {
     .replace(/[ \t]+/g, ' ');
 }
 
-/** The sentence or line around `index`, trimmed to ~`max` chars. */
+/** Emoji and pictographs from READMEs and descriptions: decoration, not evidence. */
+const PICTOGRAPHS = /[\p{Extended_Pictographic}\u{1F1E6}-\u{1F1FF}]️?‍?/gu;
+
+/**
+ * The sentence or line around `index`, trimmed to ~`max` chars. Trimming happens at word boundaries: a quote
+ * cut mid-word ("…ong software engineering") reads as careless extraction, which a credibility product can't afford.
+ */
 export function snippet(text: string, index: number, max = 120): string {
   const before = text.slice(0, index);
   const start = Math.max(before.lastIndexOf('\n'), before.search(/[.!?]\s[^.!?]*$/) + 1, 0);
   const tail = text.slice(index);
   const endRel = tail.search(/[.!?](\s|$)|\n/);
-  let s = text.slice(start, endRel === -1 ? text.length : index + endRel + 1).replace(/\s+/g, ' ').trim();
-  if (s.length > max) {
-    const at = Math.max(0, index - start - Math.floor(max / 3));
-    s = (at > 0 ? '…' : '') + s.slice(at, at + max).trim() + '…';
+  const raw = text.slice(start, endRel === -1 ? text.length : index + endRel + 1);
+  // Position of the match inside the cleaned sentence, so the window stays centred on it.
+  const lead = raw.slice(0, index - start).replace(PICTOGRAPHS, '').replace(/\s+/g, ' ').trimStart().length;
+  const s = raw.replace(PICTOGRAPHS, '').replace(/\s+/g, ' ').trim();
+  if (s.length <= max) return s;
+
+  let from = Math.max(0, lead - Math.floor(max / 3));
+  let to = Math.min(s.length, from + max);
+  if (from > 0) {
+    const space = s.indexOf(' ', from);
+    from = space === -1 || space > lead ? from : space + 1;
   }
-  return s;
+  if (to < s.length) {
+    const space = s.lastIndexOf(' ', to);
+    to = space > from ? space : to;
+  }
+  return `${from > 0 ? '…' : ''}${s.slice(from, to).trim()}${to < s.length ? '…' : ''}`;
 }
 
 // --- per-repo ----------------------------------------------------------------------------------

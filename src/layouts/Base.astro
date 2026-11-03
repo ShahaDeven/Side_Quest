@@ -4,11 +4,14 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  /** Personal pages (proof links) stay out of search engines. */
+  noindex?: boolean;
 }
 
 const {
   title = 'Side Quest · evidence for the speedrun Talent Network',
   description = 'Speedrun already connects founders with exceptional talent. Side Quest helps them see what that talent can actually build.',
+  noindex = false,
 } = Astro.props;
 ---
 
@@ -20,6 +23,7 @@ const {
     <meta name="color-scheme" content="light dark" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />

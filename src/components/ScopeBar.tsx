@@ -10,16 +10,16 @@ export default function ScopeBar({ set, via }: { set: RoleSet; via: 'api' | 'bun
   const more = next.length - shown.length;
 
   return (
-    <div className="mb-6 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+    <div className="mb-4 flex text-sm flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
       <p>
         <span className="font-semibold">
           {n} {humanize(set.fn)} roles evaluated
         </span>
-        {set.total !== n && <span className="text-muted"> (speedrun lists {set.total})</span>}
-        <span className="text-muted">, {freshness(set, via)}</span>
+        {set.total !== n && <span className="text-slate"> (speedrun lists {set.total})</span>}
+        <span className="text-slate">, {freshness(set, via)}</span>
       </p>
       {shown.length > 0 && (
-        <p className="text-sm text-muted">
+        <p className="text-sm text-slate">
           Coming next: {shown.map((c) => `${humanize(c.fn)} (${c.n})`).join(', ')}
           {more > 0 && ` and ${more} more`}
         </p>

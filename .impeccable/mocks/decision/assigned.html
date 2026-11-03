@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Splits Board · Side Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=Public+Sans:wght@400;500;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#F2F3EF;--run:#0E3B2C;--ink:#11161D;--muted:#55606B;--rule:#C9CEC6;--gold:#8A6A00;--ahead:#1E7A46;--behind:#B3261E;--sheet:#FFFFFF}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1440px;height:900px;overflow:hidden;background:var(--ground);color:var(--ink);font-family:'Public Sans',sans-serif}
+.band{height:64px;background:var(--run);color:#EAF1EC;display:flex;align-items:center;padding:0 32px;gap:40px}
+.mark{font:700 22px 'Archivo Narrow';letter-spacing:.01em}
+.mark small{font:500 13px 'Public Sans';color:#9FBFAF;margin-left:10px}
+.tabs{display:flex;gap:28px;height:64px;align-items:stretch}
+.tabs span{display:flex;align-items:center;font:600 15px 'Public Sans';color:#9FBFAF;border-bottom:3px solid transparent}
+.tabs .on{color:#fff;border-color:#E3C25A}
+.who{margin-left:auto;font:500 14px 'Public Sans';color:#CFE0D6}
+.who b{color:#fff;font-weight:600}.who code{font:400 13px 'JetBrains Mono';color:#9FBFAF;margin-left:8px}
+.shell{display:grid;grid-template-columns:300px 1fr;height:836px}
+.rail{border-right:1px solid var(--rule);padding:22px 0}
+.rail h3{font:600 13px 'Public Sans';color:var(--muted);padding:0 24px 12px}
+.role{display:grid;grid-template-columns:1fr auto;padding:12px 24px;border-top:1px solid #E1E4DD}
+.role p{font:500 13px 'Public Sans';color:var(--muted)}.role h4{font:600 15px 'Public Sans';margin-top:2px}
+.role .n{font:700 20px 'Archivo Narrow';font-variant-numeric:tabular-nums;align-self:center;color:var(--muted)}
+.role.sel{background:var(--sheet);box-shadow:inset 3px 0 0 var(--run)}.role.sel .n{color:var(--ink)}
+.main{padding:28px 44px 0}
+.head{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.head p{font:500 16px 'Public Sans';color:var(--muted)}
+.head h1{font:800 40px/1.05 'Public Sans';letter-spacing:-.015em;margin-top:6px}
+.count{text-align:right}
+.count .big{font:700 92px/0.85 'Archivo Narrow';font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.count .big span{color:var(--muted)}
+.count p{font:600 15px 'Public Sans';color:var(--ahead)}
+table{width:100%;border-collapse:collapse;margin-top:6px}
+th{font:600 12px 'Public Sans';color:var(--muted);text-align:left;padding:12px 10px 8px;border-bottom:1px solid var(--rule)}
+td{padding:10px;border-bottom:1px solid #E1E4DD;vertical-align:top}
+.ref{font:700 15px 'Archivo Narrow';color:var(--muted);width:44px}
+.ask{font:500 16px/1.35 'Public Sans';width:42%}
+.ask .skill{display:block;font:500 12px 'Public Sans';color:var(--muted);margin-top:3px}
+.w{display:block;height:4px;background:var(--ink);margin-top:7px}
+.ev{font:400 13px/1.5 'JetBrains Mono';color:#2E3740}.ev b{font-weight:600;color:var(--ink)}
+.res{font:700 17px 'Archivo Narrow';text-align:right;white-space:nowrap;width:130px}
+.shipped{color:var(--gold)}.demo{color:var(--ahead)}.desc{color:var(--muted)}.none{color:var(--behind)}
+tr.quest td{background:#FFF8E2;border-bottom:2px solid var(--gold)}
+tr.quest .ask{font-weight:600}
+.practice{font:600 14px 'Public Sans';color:var(--ink)}.practice em{font-style:normal;color:var(--gold)}
+</style></head><body>
+<div class="band"><div class="mark">Side Quest<small>unofficial concept · demo</small></div>
+<div class="tabs"><span class="on">Your proof</span><span>What the founder sees</span></div>
+<div class="who"><b>Deven Shah</b><code>github.com/ShahaDeven</code> · 9 repos read</div></div>
+<div class="shell">
+<aside class="rail"><h3>97 engineering roles, ranked by evidence</h3>
+<div class="role sel"><div><p>Sekai</p><h4>AI Agent Engineer (Coding Agent)</h4></div><div class="n">8/10</div></div>
+<div class="role"><div><p>General Magic, Toronto</p><h4>AI/ML Engineer</h4></div><div class="n">5/5</div></div>
+<div class="role"><div><p>Corlen</p><h4>Founding Engineer</h4></div><div class="n">4/4</div></div>
+<div class="role"><div><p>Nexxa AI, SF Bay area</p><h4>Senior SDET, QA – AI Systems</h4></div><div class="n">9/12</div></div>
+<div class="role"><div><p>Tenera</p><h4>Founding Member of Technical Staff</h4></div><div class="n">12/15</div></div>
+<div class="role"><div><p>Darwin</p><h4>Member of Technical Staff</h4></div><div class="n">6/8</div></div>
+<div class="role"><div><p>Aghanim</p><h4>Founding ML Engineer, Post-Training</h4></div><div class="n">8/10</div></div>
+</aside>
+<main class="main">
+<div class="head"><div><p>Sekai, San Francisco</p><h1>AI Agent Engineer (Coding Agent)</h1></div>
+<div class="count"><div class="big">8<span>/10</span></div><p>Strong proof: shipped or demonstrated</p></div></div>
+<table>
+<tr><th>Ref</th><th>The role asks</th><th>Evidence in the code</th><th style="text-align:right">Result</th></tr>
+<tr><td class="ref">A1</td><td class="ask">“Tool use, orchestration, retry/repair loops, context management”<span class="skill">AI agents</span><span class="w" style="width:92%"></span></td><td class="ev"><b>Market_Pulse</b> pyproject.toml lists langgraph · 40 source files · 2 test files · CI</td><td class="res shipped">Shipped</td></tr>
+<tr><td class="ref">A2</td><td class="ask">“Eval harnesses, regression testing, and failure taxonomies”<span class="skill">LLM evaluation</span><span class="w" style="width:58%"></span></td><td class="ev"><b>Meeting_Insight_Trust</b> 8 files in evals/ · 7 test files in tests/ · CI</td><td class="res shipped">Shipped</td></tr>
+<tr><td class="ref">A3</td><td class="ask">“Designed MCP-style tool protocols for LLM systems”<span class="skill">MCP</span><span class="w" style="width:30%"></span></td><td class="ev"><b>Market_Pulse</b> pyproject.toml lists fastmcp · agent/mcp_client.py</td><td class="res shipped">Shipped</td></tr>
+<tr><td class="ref">A4</td><td class="ask">“Experience training and/or fine-tuning LLMs”<span class="skill">Fine-tuning</span><span class="w" style="width:30%"></span></td><td class="ev"><b>SQL-Forge</b> requirements-grpo.txt lists trl, peft · 18 source files</td><td class="res demo">Demonstrated</td></tr>
+<tr><td class="ref">A5</td><td class="ask">“Creating debuggable agent systems with tracing, metrics, alerts”<span class="skill">Observability</span><span class="w" style="width:42%"></span></td><td class="ev"><b>AI_SQL_Agent</b> README: “Observability Dashboard”</td><td class="res desc">Described</td></tr>
+<tr class="quest"><td class="ref">A6</td><td class="ask">“Experience with distributed / real-time systems”<span class="skill">Distributed systems</span><span class="w" style="width:42%"></span></td><td class="ev practice">Practise this split: <em>Durable job queue with a chaos test</em>, one day</td><td class="res none">Not run</td></tr>
+</table>
+</main></div>
+</body></html>

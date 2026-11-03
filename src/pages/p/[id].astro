@@ -1,0 +1,74 @@
+---
+import { env } from 'cloudflare:workers';
+import Base from '../../layouts/Base.astro';
+import Masthead from '../../components/Masthead.astro';
+import ProofPage from '../../components/ProofPage.astro';
+import { isProofId, proofKind, proofTitle, type ProofDoc } from '../../lib/proof';
+
+export const prerender = false;
+
+const id = Astro.params.id ?? '';
+const deleteToken = Astro.url.searchParams.get('delete');
+const justDeleted = Astro.url.searchParams.get('deleted') === '1';
+
+let doc: ProofDoc | null = null;
+if (isProofId(id)) {
+  const row = await env.DB.prepare('SELECT evidence_json FROM proofs WHERE id = ?').bind(id).first<{ evidence_json: string }>();
+  doc = row ? (JSON.parse(row.evidence_json) as ProofDoc) : null;
+}
+if (!doc) Astro.response.status = 404;
+Astro.response.headers.set('cache-control', 'no-store');
+
+const url = `${Astro.url.origin}/p/${id}`;
+const who = doc ? (doc.candidate.name ?? doc.candidate.login) : '';
+const title = doc ? proofTitle(doc) : 'Proof link not found · Side Quest';
+const description = doc
+  ? proofKind(doc) === 'role'
+    ? `What ${who}'s public GitHub shows, checked against ${doc.roles[0].company}'s own requirements for this role.`
+    : `What ${who}'s public GitHub shows, checked against ${doc.roles.length} speedrun roles.`
+  : undefined;
+---
+
+<Base title={title} description={description} noindex>
+  <Masthead />
+  <main class="mx-auto max-w-5xl px-4 pt-8 pb-16 sm:px-8">
+    {
+      !doc && (
+        <section class="bg-sheet px-5 py-8 sm:px-8">
+          <h1 class="report-head text-4xl leading-none">{justDeleted ? 'Proof link deleted' : 'This proof link does not exist'}</h1>
+          <p class="mt-3 max-w-prose text-reading text-slate">
+            {justDeleted
+              ? 'The page and its stored evidence are gone. Anyone who opens the link now sees this message.'
+              : 'It may have been deleted by the person who created it, or the address is mistyped.'}
+          </p>
+          <a href="/" class="btn btn-md btn-primary mt-6">
+            Read your own GitHub
+          </a>
+        </section>
+      )
+    }
+
+    {
+      doc && deleteToken && (
+        <section aria-labelledby="delete-title" class="mb-6 border-t-2 border-alert bg-sheet px-5 py-5 sm:px-8">
+          <h2 id="delete-title" class="report-head text-2xl">
+            Delete this proof link?
+          </h2>
+          <p class="mt-1 text-reading text-slate">The page and its stored evidence are removed for everyone. This can't be undone.</p>
+          <form method="post" action="/api/proof/delete" class="mt-4 flex flex-wrap gap-2">
+            <input type="hidden" name="id" value={id} />
+            <input type="hidden" name="token" value={deleteToken} />
+            <button type="submit" class="btn btn-md btn-primary">
+              Delete proof link
+            </button>
+            <a href={`/p/${id}`} class="btn btn-md btn-secondary">
+              Keep it
+            </a>
+          </form>
+        </section>
+      )
+    }
+
+    {doc && <ProofPage doc={doc} url={url} />}
+  </main>
+</Base>

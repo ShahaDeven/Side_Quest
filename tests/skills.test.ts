@@ -36,6 +36,16 @@ describe('text matching', () => {
     expect(finds('cpp', 'Runs on a CUDA 12.8 GPU pod in 16 minutes')).toBe(false);
   });
 
+  it('counts "evaluation"/"benchmark" as LLM evals only with an LLM, agent or AI word nearby', () => {
+    // A recommender's offline evaluation is not LLM evaluation (seen on Sekai's recsys role).
+    expect(finds('evals', 'Strong practical experience with two-tower models, embedding retrieval, ranking, and online/offline evaluation.')).toBe(false);
+    expect(finds('evals', 'Ran A/B benchmarks for the pricing page')).toBe(false);
+    expect(finds('evals', 'Develop sandboxed tests, benchmarks, and outcome measurements that establish what agents can actually do.')).toBe(true);
+    expect(finds('evals', 'Familiarity with AI evaluation frameworks')).toBe(true);
+    expect(finds('evals', 'Build evaluation harnesses for LLM-based agents')).toBe(true);
+    expect(finds('evals', 'Extend our evals and guardrails')).toBe(true);
+  });
+
   it('does not read "queues" the verb as distributed systems', () => {
     expect(finds('distributed', 'Approving a quote writes the new prices and queues the reply')).toBe(false);
     expect(finds('distributed', 'Experience with message queues and Kafka')).toBe(true);

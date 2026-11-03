@@ -1,0 +1,90 @@
+{
+  "title": "Choose Side Quest's visual world",
+  "question": "The roll assigned the Splits Board. Keep it, take Impeccable's pick or the category standard, or re-roll.",
+  "options": [
+    {
+      "id": "assigned",
+      "kind": "assigned",
+      "label": "Splits Board",
+      "kicker": "THE ROLL",
+      "lineage": "speedrunners' split timers: one row per segment, results coloured gold, ahead, behind",
+      "thesis": "The role is the run: each ask is a split, the evidence is the result, and the side quest is the one split to practise.",
+      "palette": ["#F2F3EF", "#0E3B2C", "#11161D", "#8A6A00", "#1E7A46", "#B3261E"],
+      "materials": ["tabular split column", "run-green shell band", "gold / ahead / behind result colours"],
+      "viewport": "Run-green header with the role and a large '8 / 10 asks' counter; the asks set as a splits table (ask, evidence path, result word); the one unrun split highlighted as the side quest to practise.",
+      "risk": "Splits normally mean time against rivals: it must never read as a race between candidates or a time score. Translated onto a light ground for a daytime desk review, never black-and-neon.",
+      "raised": [
+        { "from": "challenger-specimen", "raise": "Hierarchy by scale contrast alone: the run counter is the one large figure; boxes and outlines go." },
+        { "from": "challenger-bitmap", "raise": "One row grammar at every scale: the same split row is the list item, the detail row and the proof-page line." },
+        { "from": "challenger-atlas", "raise": "Importance on a fixed ramp: each ask's weight is drawn as a consistent bar length, never hidden." },
+        { "from": "challenger-catalog", "raise": "Stable references: every ask carries a number (A1 to A10) used in the detail, founder view, proof page and Markdown." },
+        { "from": "challenger-transit", "raise": "Focus the chosen corridor: the selected role stays full size while the list keeps context; nothing shrinks to a miniature." },
+        { "from": "challenger-wallet", "raise": "Nothing disappears, it cancels: a deleted proof link leaves a stamped VOID record; side quests show run and not-run states." }
+      ],
+      "html": ".impeccable/mocks/decision/assigned.html"
+    },
+    {
+      "id": "model-pick",
+      "kind": "pick",
+      "label": "Scouting Report",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "the talent scout's report card: tool grades, measurables, the scout's notes, 'projects as'",
+      "thesis": "Hiring is scouting: every role gets a scout's card for the candidate, graded tool by tool with the evidence as the scout's notes.",
+      "palette": ["#E8EDF1", "#14233C", "#FFFFFF", "#C0392B", "#5B6B7F"],
+      "materials": ["card-stock form ruled into fields", "pencil-red scout marks", "condensed form headers"],
+      "viewport": "A scout card per role: header fields (role, company, 'projects as'), then a tool-grade row per ask with a four-step scale and the scout's note citing the file.",
+      "risk": "The obvious metaphor for a hiring product, so it is where most runs would land; grade scales can drift into scoring people instead of evidence.",
+      "html": ".impeccable/mocks/decision/model-pick.html"
+    },
+    {
+      "id": "challenger-specimen", "kind": "challenger", "catalogId": "variable-font-specimen", "label": "Variable Type Specimen", "verdict": "declined",
+      "lineage": "interactive variable-font specimens", "thesis": "Proof strength as a live type axis.", "palette": ["#FAFAF8", "#000000", "#E03E1A"],
+      "materials": ["flat paper", "giant display glyph"], "viewport": "One huge glyph with an axis slider over a glyph grid.", "risk": "A type showcase, not a review tool.",
+      "case": "Fuses poorly: reviewers do not identify with type specimens, and the evidence becomes ornament.", "kept": "Hierarchy by scale contrast alone."
+    },
+    {
+      "id": "challenger-bitmap", "kind": "challenger", "catalogId": "emigre-bitmap-specimen", "label": "Bitmap Specimen", "verdict": "declined",
+      "lineage": "Emigre bitmap type specimens", "thesis": "Low-resolution letterforms as the aesthetic.", "palette": ["#F7F7F2", "#111111", "#2BB673"],
+      "materials": ["dot matrix", "halftone"], "viewport": "A pixel headline over dense justified columns.", "risk": "Retro novelty on a credibility product.",
+      "case": "Fuses poorly on both axes.", "kept": "One form repeated at every scale."
+    },
+    {
+      "id": "challenger-atlas", "kind": "challenger", "catalogId": "notation-diagram-systems-star-atlas", "label": "Star Atlas", "verdict": "declined",
+      "lineage": "celestial star charts", "thesis": "Candidates as stars, proof strength as magnitude.", "palette": ["#14213D", "#F4F4F0", "#D4603A"],
+      "materials": ["navy chart ground", "magnitude dots"], "viewport": "A chart plate of roles with candidates plotted by strength.", "risk": "Dot sizes are less exact than file-level reasons.",
+      "case": "Fuses poorly: it trades exact evidence for atmosphere.", "kept": "Importance on a fixed ramp."
+    },
+    {
+      "id": "challenger-catalog", "kind": "challenger", "catalogId": "brand-identity-canon-saville-catalog-sleeve", "label": "Catalogue Sleeve", "verdict": "declined",
+      "lineage": "Factory Records catalogue identity", "thesis": "Every artifact gets a catalogue number.", "palette": ["#121212", "#FFFFFF", "#E94E1B", "#2E86AB"],
+      "materials": ["matte black", "hairline plot", "colour-code strip"], "viewport": "A fac-numbered index as the only map.", "risk": "Codes replace words, hiding the evidence.",
+      "case": "Fuses poorly: names become codes the reviewer must decode.", "kept": "Stable references used everywhere."
+    },
+    {
+      "id": "challenger-transit", "kind": "challenger", "catalogId": "wayfinding-cartography-signage-midnight-transit-diagram", "label": "Transit Diagram", "verdict": "declined",
+      "lineage": "metro line diagrams", "thesis": "Asks as stations, roles as lines.", "palette": ["#14254A", "#F5F2EA", "#D7263D", "#2E5BBA", "#F2A541"],
+      "materials": ["enamel ground", "45-degree lines"], "viewport": "Roles drawn as coloured lines through skill stations.", "risk": "An over-metaphor for a review task.",
+      "case": "Fuses poorly: the map is harder to read than the list it replaces.", "kept": "Focus the chosen corridor, keep context."
+    },
+    {
+      "id": "challenger-wallet", "kind": "challenger", "catalogId": "vernacular-ephemera-jet-age-ticket-wallet", "label": "Ticket Wallet", "verdict": "declined",
+      "lineage": "jet-age airline ticket wallets", "thesis": "Proof links as coupons in a wallet.", "palette": ["#1B2A4A", "#C8102E", "#FFFFFF", "#6B4E9B"],
+      "materials": ["carbon coupons", "VOID stamps"], "viewport": "A coupon per role link, the network link as the wallet.", "risk": "Costume of a paper ticket on a working screen.",
+      "case": "Loses on audience; nearly holds clarity for the share flow.", "kept": "Nothing disappears, it cancels."
+    }
+  ],
+  "reroll": { "registers": ["safer", "bolder"] },
+  "buildPath": { "value": "code" },
+  "canon": true,
+  "canonCard": {
+    "kind": "canon",
+    "label": "The category standard",
+    "thesis": "A clean hiring-tool interface, executed at the level of the best in the category.",
+    "palette": ["#FFFFFF", "#0F172A", "#64748B", "#2563EB"],
+    "materials": ["white panels", "slate text", "one blue accent"],
+    "viewport": "Left role list, right detail with a match summary, evidence cards and actions.",
+    "risk": "Indistinguishable from other hiring tools by design.",
+    "html": ".impeccable/mocks/decision/canon.html"
+  },
+  "steer": true
+}

@@ -15,6 +15,7 @@ interface Props {
   onResume: (text: string) => void;
 }
 
+/** Whose code is being read, and the controls to change it. A ruled strip of the report, not a card. */
 export default function ProofBar({ state, resume, onRead, onDemo, onResume }: Props) {
   const [login, setLogin] = useState(state.kind === 'ready' && !state.demo ? state.profile.login : '');
   const [showResume, setShowResume] = useState(resume.length > 0);
@@ -31,7 +32,7 @@ export default function ProofBar({ state, resume, onRead, onDemo, onResume }: Pr
   };
 
   return (
-    <section aria-label="Your proof" className="rounded-xl border border-line bg-surface p-4 sm:p-5">
+    <section aria-label="Whose code is read" className="border-b border-ink py-3">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <Who state={state} />
 
@@ -42,7 +43,7 @@ export default function ProofBar({ state, resume, onRead, onDemo, onResume }: Pr
                 GitHub username
               </label>
               <div className="field flex items-center">
-                <span className="pl-3 text-sm text-muted" aria-hidden>
+                <span className="pl-3 font-mono text-sm text-slate" aria-hidden>
                   github.com/
                 </span>
                 <input
@@ -56,11 +57,7 @@ export default function ProofBar({ state, resume, onRead, onDemo, onResume }: Pr
                   className="w-36 bg-transparent py-2 pr-3 font-mono text-sm outline-none"
                 />
               </div>
-              <button
-                type="submit"
-                disabled={busy || !login.trim()}
-                className="btn btn-md btn-primary"
-              >
+              <button type="submit" disabled={busy || !login.trim()} className="btn btn-md btn-primary">
                 {busy ? 'Reading…' : 'Read my GitHub'}
               </button>
               {!isDemo && (
@@ -84,44 +81,42 @@ export default function ProofBar({ state, resume, onRead, onDemo, onResume }: Pr
           <button
             type="button"
             aria-expanded={showResume}
-            aria-controls="resume-box"
+            aria-controls={showResume ? 'resume-box' : undefined}
             onClick={() => setShowResume((v) => !v)}
-            className="px-2 py-2 text-sm text-muted underline decoration-line underline-offset-4 hover:text-ink"
+            className="min-h-11 px-2 text-sm text-slate underline decoration-rule underline-offset-4 hover:text-ink hover:decoration-ink"
           >
-            {showResume ? 'Hide resume' : 'Add resume text'}
+            {showResume ? 'Hide resume text' : 'Add resume text'}
           </button>
         </form>
       </div>
 
       {state.kind === 'error' && (
         <p role="alert" className="mt-3 text-sm">
-          {state.message}{' '}
-          <button type="button" onClick={onDemo} className="underline underline-offset-4">
+          <span className="font-semibold">{state.message}</span>{' '}
+          <button type="button" onClick={onDemo} className="min-h-11 underline underline-offset-4">
             Open the demo profile instead
           </button>
         </p>
       )}
 
       {showResume && (
-        <div id="resume-box" className="mt-4">
-          <label htmlFor="resume" className="text-sm font-semibold">
-            Resume text <span className="font-normal text-muted">(optional)</span>
+        <div id="resume-box" className="mt-4 max-w-3xl">
+          <label htmlFor="resume" className="field-label">
+            Resume text, optional
           </label>
           <textarea
             id="resume"
             value={resume}
             onChange={(e) => onResume(e.target.value)}
             rows={5}
-            placeholder="Paste your resume. Skills found here count as mentioned, never as proven."
+            placeholder="Paste your resume. Skills found here count as mentioned, never as shown in code."
             className="field mt-1.5 w-full p-3 text-sm"
           />
-          <p className="mt-1.5 text-xs text-muted">Resume text stays in this browser. It is never sent or saved.</p>
+          <p className="mt-1.5 text-sm text-slate">Resume text stays in this browser. It is never sent or saved.</p>
         </div>
       )}
 
-      <p className="mt-3 text-xs text-muted">
-        Only public repos are read. Results are cached for 6 hours to stay within GitHub's limits.
-      </p>
+      {editing && <p className="mt-3 text-sm text-slate">Only public repos are read. Results are cached for 6 hours to stay within GitHub's limits.</p>}
     </section>
   );
 }
@@ -131,16 +126,18 @@ function Who({ state }: { state: ProfileState }) {
     const p = state.profile;
     return (
       <div className="flex min-w-0 items-center gap-3">
-        {p.avatarUrl && <img src={p.avatarUrl} alt="" width={40} height={40} className="size-10 rounded-full border border-line" />}
+        {p.avatarUrl && <img src={p.avatarUrl} alt="" width={40} height={40} className="size-10 border border-rule" />}
         <div className="min-w-0">
-          <p className="truncate font-semibold">
+          <p className="field-label">{state.demo ? 'Demo: a real public GitHub; founder opt-ins are simulated' : 'Public GitHub read'}</p>
+          <h1 className="truncate text-lg leading-snug font-semibold">
+            <span className="sr-only">Evidence report for </span>
             {p.name ?? p.login}{' '}
-            <a href={p.profileUrl} target="_blank" rel="noopener" className="font-mono text-sm font-normal text-muted hover:text-ink">
+            <a href={p.profileUrl} target="_blank" rel="noopener" className="font-mono text-sm font-normal text-slate underline decoration-rule underline-offset-4 hover:text-ink">
               github.com/{p.login}
             </a>
-          </p>
-          <p className="text-sm text-muted">
-            Read {p.repos.length} of {p.reposConsidered} public repos in depth
+          </h1>
+          <p className="tnum text-sm text-slate">
+            {p.repos.length} of {p.reposConsidered} public repos read in depth
             {state.demo && `, captured ${new Date(p.fetchedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`}
           </p>
         </div>
@@ -155,8 +152,8 @@ function Who({ state }: { state: ProfileState }) {
     );
   return (
     <div>
-      <p className="font-semibold">Start with your GitHub</p>
-      <p className="text-sm text-muted">We match what your repos actually show against every role's requirements.</p>
+      <p className="font-semibold">Start with a GitHub profile</p>
+      <p className="text-sm text-slate">Each role's requirements are checked against what the public repos actually contain.</p>
     </div>
   );
 }

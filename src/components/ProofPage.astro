@@ -1,0 +1,59 @@
+---
+/**
+ * The frame around a proof document: masthead, the document, the Markdown copy and the footer.
+ * Used by stored links (/p/:id) and by the read-only preview (/p/preview).
+ */
+import ProofView from './ProofView';
+import { proofToMarkdown, type ProofDoc } from '../lib/proof';
+
+interface Props {
+  doc: ProofDoc;
+  /** Where the Markdown says the full page lives. */
+  url: string;
+  preview?: boolean;
+}
+
+const { doc, url, preview = false } = Astro.props;
+const markdown = proofToMarkdown(doc, url);
+---
+
+<ProofView doc={doc} />
+
+{
+  !preview && (
+    <section class="mt-8 border-t border-ink pt-4">
+      <details>
+        <summary class="field-label min-h-11 cursor-pointer py-3">Copy as Markdown</summary>
+        <p class="text-sm text-slate">For application forms, emails and READMEs.</p>
+        <label for="proof-md" class="sr-only">
+          This page as Markdown
+        </label>
+        <textarea id="proof-md" readonly rows="10" class="field mt-2 w-full p-3 font-mono text-sm">{markdown}</textarea>
+        <button type="button" id="copy-md" class="btn btn-sm btn-secondary mt-2">
+          Copy Markdown
+        </button>
+        <span id="copy-md-status" role="status" class="ml-2 text-sm text-slate" />
+      </details>
+    </section>
+  )
+}
+
+<footer class="mt-10 flex flex-col gap-3 border-t-2 border-ink pt-4 sm:flex-row sm:items-center sm:justify-between">
+  <p class="max-w-md text-sm text-slate">
+    Built with Side Quest, an unofficial concept on speedrun's public API: evidence from real repositories, checked against each
+    role's own requirements.
+  </p>
+  <a href="/" class="btn btn-md btn-secondary shrink-0">Read your own GitHub</a>
+</footer>
+
+<script is:inline>
+  document.getElementById('copy-md')?.addEventListener('click', async () => {
+    const status = document.getElementById('copy-md-status');
+    try {
+      await navigator.clipboard.writeText(document.getElementById('proof-md').value);
+      status.textContent = 'Copied';
+    } catch {
+      status.textContent = 'Select the text above and copy it.';
+    }
+  });
+</script>

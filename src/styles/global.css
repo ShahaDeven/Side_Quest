@@ -1,98 +1,114 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/inter-tight';
+@import '@fontsource/barlow-condensed/500.css';
+@import '@fontsource/barlow-condensed/600.css';
+@import '@fontsource/barlow-condensed/700.css';
+@import '@fontsource-variable/source-sans-3/wght.css';
 @import '@fontsource-variable/jetbrains-mono';
 
 /*
- * Side Quest design tokens: three layers. Spec and rationale: docs/design-system.md
+ * Side Quest design tokens: an engineering assessment report.
+ * Direction contract: .impeccable/surfaces/src-pages-index-astro.md. Rationale: docs/design-system.md.
  *
- *   1. Primitives  raw values, named by what they are. Plain CSS variables: no utilities are generated,
- *                  so components cannot reach a raw colour.
- *   2. Semantic    named by purpose (paper, ink, muted…). The ONLY layer dark mode changes.
- *                  Exposed to Tailwind via @theme inline → bg-paper, text-ink, border-line, …
- *   3. Component   layout widths, tints and control states, as variables + small @utility classes.
+ *   1. Primitives  raw values; no utilities are generated, so components cannot reach a raw colour.
+ *   2. Semantic    purpose names (ground, sheet, ink, slate, rule, field, alert, focus); dark mode swaps only these.
+ *   3. Component   layout widths, row rhythm and control states, as variables + small @utility classes.
  *
- * Direction: a native feature of the speedrun talent site. Warm off-white, true-black grotesk, the
- * purple→blue gradient in exactly one place (the side-quest edge). Mono only for literal code/data.
- * Evidence strength is ink weight, not traffic-light colour.
+ * Report-stock ground, white sheets ruled in navy hairlines, navy ink. Assessor red marks only the open
+ * requirement and its side quest. Condensed grotesk for report headings and field labels, a humanist sans for
+ * requirements and prose, mono only for repos, paths and packages. No gradients, no pills, no card chrome.
  */
 
 /* ---------- 1. Primitives ---------------------------------------------------------------------- */
 :root {
-  --sq-stone-50: #f4f3ef;
-  --sq-stone-100: #eae8e3;
-  --sq-stone-300: #d5d2ca;
-  --sq-stone-500: #85827a;
-  --sq-stone-700: #66645f;
-  --sq-night-400: #9b988f;
-  --sq-night-600: #6b6963;
-  --sq-night-700: #2c2c31;
-  --sq-night-800: #18181b;
-  --sq-night-900: #0f0f11;
-  --sq-cream: #f2f0eb;
-  --sq-black: #000000;
-  --sq-violet-500: #8b5cf6;
-  --sq-blue-500: #3b82f6;
-  --sq-blue-600: #2563eb;
+  --sq-stock-100: #e8edf1;
+  --sq-white: #ffffff;
+  --sq-navy-900: #14233c;
+  --sq-navy-950: #091120;
+  --sq-slate-600: #55657a;
+  --sq-slate-300: #9dadc0;
+  --sq-rule-200: #c5ced8;
+  --sq-field-500: #7a8798;
+  --sq-red-700: #b3362a;
+  --sq-red-300: #f07a6e;
+  --sq-blue-700: #1f5fbf;
+  --sq-blue-300: #7fb0ff;
+  --sq-night-900: #0d1624;
+  --sq-night-800: #142033;
+  --sq-night-600: #2a3a52;
+  --sq-night-500: #5f7190;
+  --sq-mist-100: #e6ecf2;
+  --sq-mist-400: #a9b8ca;
 
-  --sq-font-grotesk: 'Inter Tight Variable', ui-sans-serif, system-ui, sans-serif;
+  --sq-font-text: 'Source Sans 3 Variable', ui-sans-serif, system-ui, sans-serif;
+  --sq-font-report: 'Barlow Condensed', ui-sans-serif, system-ui, sans-serif;
   --sq-font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 }
 
-/* ---------- 2. Semantic (light; dark swaps this block only) ----------------------------------- */
+/* ---------- 2. Semantic (light: a daytime desk review; dark swaps this block only) ------------- */
 :root {
-  --paper: var(--sq-stone-100); /* page background */
-  --surface: var(--sq-stone-50); /* raised panels, selected rows */
-  --ink: var(--sq-black); /* text, solid controls; 17.2:1 on paper */
-  --muted: var(--sq-stone-700); /* secondary text; 4.8:1 on paper */
-  --line: var(--sq-stone-300); /* decorative hairlines only */
-  --field: var(--sq-stone-500); /* input borders; ≥3.1:1 (WCAG 1.4.11) */
-  --focus: var(--sq-blue-600); /* focus ring; 4.2:1 on paper */
-  --accent-from: var(--sq-violet-500);
-  --accent-to: var(--sq-blue-500);
+  --ground: var(--sq-stock-100); /* page: report stock */
+  --sheet: var(--sq-white); /* the report sheet itself */
+  --ink: var(--sq-navy-900); /* 13.3:1 on ground, 15.7:1 on sheet */
+  --slate: var(--sq-slate-600); /* secondary text; ≥5.05:1 */
+  --rule: var(--sq-rule-200); /* hairline rules between rows (decorative) */
+  --field: var(--sq-field-500); /* control boundaries; ≥3.1:1 (WCAG 1.4.11) */
+  --alert: var(--sq-red-700); /* the open requirement and its side quest only; ≥5.1:1 */
+  --focus: var(--sq-blue-700); /* focus ring; ≥5.1:1 */
+  --head: var(--sq-navy-900); /* the header band */
+  --head-ink: var(--sq-mist-100); /* 13.2:1 on head */
+  --head-muted: var(--sq-mist-400); /* 7.8:1 on head */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: var(--sq-night-900);
-    --surface: var(--sq-night-800);
-    --ink: var(--sq-cream); /* 16.8:1 */
-    --muted: var(--sq-night-400); /* 6.6:1 */
-    --line: var(--sq-night-700);
-    --field: var(--sq-night-600); /* ≥3.2:1 */
-    --focus: var(--sq-blue-500); /* 5.2:1 */
+    --ground: var(--sq-night-900);
+    --sheet: var(--sq-night-800);
+    --ink: var(--sq-mist-100);
+    --slate: var(--sq-slate-300);
+    --rule: var(--sq-night-600);
+    --field: var(--sq-night-500);
+    --alert: var(--sq-red-300);
+    --focus: var(--sq-blue-300);
+    --head: var(--sq-navy-950);
+    --head-ink: var(--sq-mist-100);
+    --head-muted: var(--sq-mist-400);
   }
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-surface: var(--surface);
+  --color-ground: var(--ground);
+  --color-sheet: var(--sheet);
   --color-ink: var(--ink);
-  --color-muted: var(--muted);
-  --color-line: var(--line);
+  --color-slate: var(--slate);
+  --color-rule: var(--rule);
   --color-field: var(--field);
-  --color-accent-from: var(--accent-from);
-  --color-accent-to: var(--accent-to);
-  /* component tints, defined below */
+  --color-alert: var(--alert);
+  --color-head: var(--head);
+  --color-head-ink: var(--head-ink);
+  --color-head-muted: var(--head-muted);
   --color-wash: var(--row-hover);
   --color-blank: var(--blank-bg);
+  --color-open: var(--open-bg);
 
-  --font-sans: var(--sq-font-grotesk);
+  --font-sans: var(--sq-font-text);
+  --font-report: var(--sq-font-report);
   --font-mono: var(--sq-font-mono);
 
-  /* type roles beyond Tailwind's default scale */
-  --text-code: 0.85em; /* relative: code sits inside running text */
-  --leading-display: 1.05; /* tight display headings */
+  --text-code: 0.85em;
+  --text-reading: 0.9375rem; /* 15px report prose: side quests, locked states, notes */
+  --text-reading--line-height: 1.6;
+  --leading-display: 1.05;
 }
 
 /* ---------- 3. Component tokens ---------------------------------------------------------------- */
 :root {
-  --shell-list-width: 22rem; /* role list column (lg+) */
-  --row-label-width: 13rem; /* skill column in evidence / requirement rows (sm+) */
-  --mark-col: 1.25rem; /* strength glyph column in list rows */
-  --sticky-gap: 1.5rem; /* top offset of the sticky role list */
-  --row-hover: color-mix(in oklab, var(--surface) 60%, transparent);
+  --shell-list-width: 19rem; /* role index (lg+) */
+  --sticky-gap: 1.5rem;
+  --row-hover: color-mix(in oklab, var(--sheet) 70%, transparent);
   --blank-bg: color-mix(in oklab, var(--ink) 10%, transparent); /* [LINK]/[FINDING] blanks */
-  --control-radius: 0.5rem;
+  --open-bg: color-mix(in oklab, var(--alert) 7%, var(--sheet)); /* the open requirement row */
+  --control-radius: 2px; /* report forms: square corners, not pills */
+  --touch: 2.75rem; /* 44px minimum target */
   --duration-fast: 150ms;
 }
 
@@ -100,74 +116,89 @@
 @utility layout-shell {
   grid-template-columns: var(--shell-list-width) minmax(0, 1fr);
 }
-@utility layout-row {
-  grid-template-columns: var(--row-label-width) minmax(0, 1fr);
-}
-@utility layout-mark {
-  grid-template-columns: var(--mark-col) minmax(0, 1fr);
-}
-@utility layout-defs {
-  grid-template-columns: auto minmax(0, 1fr);
-}
 @utility list-viewport {
   max-height: calc(100dvh - 2 * var(--sticky-gap));
 }
 
-/* Buttons: default / hover / focus-visible (global ring) / disabled. Spec: docs/design-system.md */
-/* Compose as: btn + one size (btn-md | btn-sm) + one variant (btn-primary | btn-secondary | btn-quiet).
-   No two of these set the same property, so their order in the stylesheet never matters. */
+/* Report typography */
+@utility report-head {
+  font-family: var(--sq-font-report);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+@utility field-label {
+  font-family: var(--sq-font-report);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+@utility tnum {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Buttons: btn + one size (btn-md | btn-sm) + one variant (btn-primary | btn-secondary | btn-quiet).
+   No two of these set the same property, so their order in the stylesheet never matters.
+   Both sizes meet the 44px touch target; btn-sm is visually smaller, not smaller to hit. */
 @utility btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  min-height: var(--touch);
   border: 1px solid transparent;
   border-radius: var(--control-radius);
+  font-family: var(--sq-font-text);
   font-weight: 600;
   text-align: center;
   transition-property: color, background-color, border-color;
   transition-duration: var(--duration-fast);
   &:disabled {
-    opacity: 0.4;
+    opacity: 0.45;
     cursor: not-allowed;
   }
 }
 @utility btn-md {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  padding: 0.5rem 1.125rem;
+  font-size: 0.9375rem;
   line-height: 1.25rem;
 }
 @utility btn-sm {
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.8125rem;
   line-height: 1rem;
 }
 @utility btn-primary {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--sheet);
   &:hover:not(:disabled) {
-    background: color-mix(in oklab, var(--ink) 82%, var(--paper));
+    background: color-mix(in oklab, var(--ink) 84%, var(--sheet));
   }
 }
 @utility btn-secondary {
   border-color: var(--ink);
+  color: var(--ink);
+  background: var(--sheet);
   &:hover:not(:disabled) {
-    background: var(--surface);
+    background: var(--ground);
   }
 }
 @utility btn-quiet {
-  border-color: var(--line);
+  border-color: var(--field);
+  color: var(--ink);
   &:hover:not(:disabled) {
     border-color: var(--ink);
   }
 }
 
-/* Text inputs: border meets 3:1. On focus: ink border, plus the focus ring. A wrapper that contains
-   the real <input> (e.g. the "github.com/" prefix field) draws the ring itself via :has(). */
+/* Inputs: boundary meets 3:1; on focus an ink border plus the focus ring (a wrapper draws it via :has()). */
 @utility field {
+  min-height: var(--touch);
   border: 1px solid var(--field);
   border-radius: var(--control-radius);
-  background: var(--paper);
+  background: var(--sheet);
   transition: border-color var(--duration-fast);
   &:focus-within,
   &:focus {
@@ -179,33 +210,37 @@
   }
 }
 
-/* The one gradient moment: a 1.5px gradient edge, like speedrun's "Get started" button. */
-@utility edge-accent {
-  border: 1.5px solid transparent;
-  background:
-    linear-gradient(var(--surface), var(--surface)) padding-box,
-    linear-gradient(120deg, var(--accent-from), var(--accent-to)) border-box;
-}
-
-@utility text-accent {
-  background-image: linear-gradient(90deg, var(--accent-from), var(--accent-to));
-  background-clip: text;
-  color: transparent;
+/* Expandable rows (<details>) that carry their own text instead of the browser's triangle. */
+@utility summary-plain {
+  list-style: none;
+  &::-webkit-details-marker {
+    display: none;
+  }
 }
 
 @layer base {
   html {
-    background: var(--paper);
+    background: var(--ground);
     color: var(--ink);
-    font-family: var(--sq-font-grotesk);
+    font-family: var(--sq-font-text);
+    font-size: 100%;
     -webkit-font-smoothing: antialiased;
+    caret-color: var(--focus);
+    scrollbar-color: var(--field) var(--ground);
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--focus) 28%, transparent);
+    color: var(--ink);
   }
   code {
     font-family: var(--sq-font-mono);
     font-size: 0.85em;
   }
+  a {
+    text-underline-offset: 0.2em;
+  }
   ::placeholder {
-    color: var(--muted);
+    color: var(--slate);
     opacity: 1;
   }
   :focus-visible {

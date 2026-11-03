@@ -1,20 +1,16 @@
-import { forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 import type { BriefEntry } from '../lib/briefs';
-import type { GateReason } from '../lib/match';
-import { SKILL_BY_ID } from '../lib/skills';
-import type { CoveredRequirement, MatchResult, MissingRequirement, Requirement, Role } from '../lib/types';
-import { Inline, StrengthMark, TierBadge } from './marks';
+import { tierBreakdown, type GateReason } from '../lib/match';
+import type { MatchResult, MissingRequirement, Requirement, Role } from '../lib/types';
+import { Breakdown, ExternalIcon, strengthLabel } from './marks';
+import ReportTable from './ReportTable';
 import { LockedState, SideQuestCard } from './SideQuest';
+import { SKILL_BY_ID } from '../lib/skills';
 
 const JOIN_URL = 'https://speedrun-talent-network.com/join/';
 const label = (id: string) => SKILL_BY_ID.get(id)?.label ?? id;
 
-const SECTION_WORD: Record<Requirement['section'], string> = {
-  requirements: 'listed as a requirement',
-  role: 'part of the day-to-day',
-  'nice-to-have': 'nice to have',
-  other: 'mentioned in passing',
-};
+export type DetailView = 'candidate' | 'founder';
 
 interface Props {
   role: Role;
@@ -22,193 +18,155 @@ interface Props {
   match: MatchResult | null;
   gate: { reason: GateReason; target: MissingRequirement | null } | null;
   brief: BriefEntry | null;
+  view: DetailView;
+  /** Whether the role is open to side quests (the demo's simulated founder setting). */
+  optedIn: boolean;
+  /** The share panel, placed after the evidence. */
+  children?: ReactNode;
+  /** The founder view's content. */
+  founder: ReactNode;
 }
 
-const RoleDetail = forwardRef<HTMLHeadingElement, Props>(function RoleDetail({ role, requirements, match, gate, brief }, headingRef) {
+/** One role as an assessment report: the field row, then either the candidate's evidence or the founder's view. */
+const RoleDetail = forwardRef<HTMLHeadingElement, Props>(function RoleDetail(
+  { role, requirements, match, gate, brief, view, optedIn, children, founder },
+  headingRef,
+) {
   return (
-    <article aria-labelledby="role-title" className="min-w-0">
-      <header className="flex flex-col gap-3 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-muted">
-            {role.company}
-            {role.location && <span>, {role.location}</span>}
-          </p>
-          <h2 id="role-title" ref={headingRef} tabIndex={-1} className="mt-1 text-3xl leading-tight font-extrabold tracking-tight outline-none sm:text-4xl">
-            {role.title}
-          </h2>
-        </div>
-        <a
-          href={role.url}
-          target="_blank"
-          rel="noopener"
-          className="shrink-0 text-sm font-semibold underline decoration-line underline-offset-4 hover:decoration-ink"
-        >
-          Open the role on speedrun ↗
-        </a>
+    <article aria-labelledby="role-title" className="min-w-0 bg-sheet px-5 pt-6 pb-8 sm:px-8">
+      <header>
+        <h2 id="role-title" ref={headingRef} tabIndex={-1} className="report-head text-4xl leading-none sm:text-5xl">
+          {role.title}
+        </h2>
+        <dl className="mt-5 grid grid-cols-2 border-y border-ink sm:grid-cols-4">
+          <Field term="Company">{role.company}</Field>
+          <Field term="Location">{role.location ?? 'Not stated'}</Field>
+          {view === 'founder' ? (
+            <Field term="Side quests">{optedIn ? 'Open (simulated)' : 'Closed'}</Field>
+          ) : (
+            <Field term="Evidence">{match ? strengthLabel(match.strength) : 'No profile read yet'}</Field>
+          )}
+          <Field term="Posting">
+            <a href={role.url} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 font-semibold whitespace-nowrap underline decoration-rule underline-offset-4 hover:decoration-ink">
+              Open on speedrun <ExternalIcon />
+              <span className="sr-only">(opens speedrun in a new tab)</span>
+            </a>
+          </Field>
+        </dl>
       </header>
 
-      {match ? <Matched role={role} match={match} total={requirements.length} gate={gate} brief={brief} /> : <Unmatched requirements={requirements} />}
-
-      <footer className="mt-10 flex flex-col gap-3 rounded-2xl bg-ink p-5 text-paper sm:flex-row sm:items-center sm:justify-between sm:p-6">
-        <p className="max-w-md text-sm leading-relaxed">
-          Founders in the speedrun network hire from one shared talent profile. Bring this proof with you.
-        </p>
-        <a href={JOIN_URL} target="_blank" rel="noopener" className="btn btn-md shrink-0 bg-paper text-ink hover:bg-surface">
-          Bring this proof to your speedrun profile
-        </a>
-      </footer>
+      <div id="role-panel" role="tabpanel" aria-labelledby={`tab-${view}`}>
+        {view === 'founder' ? (
+          founder
+        ) : match ? (
+          <Candidate role={role} match={match} total={requirements.length} gate={gate} brief={brief}>
+            {children}
+          </Candidate>
+        ) : (
+          <Asks requirements={requirements} />
+        )}
+      </div>
     </article>
   );
 });
 export default RoleDetail;
 
-function Matched({ role, match, total, gate, brief }: { role: Role; match: MatchResult; total: number; gate: Props['gate']; brief: BriefEntry | null }) {
-  const n = match.covered.length;
+function Field({ term, children }: { term: string; children: ReactNode }) {
+  return (
+    <div className="border-rule py-2.5 pr-4 not-first:sm:border-l not-first:sm:pl-4 [&:nth-child(n+3)]:border-t [&:nth-child(n+3)]:sm:border-t-0">
+      <dt className="field-label">{term}</dt>
+      <dd className="mt-0.5 text-base font-semibold">{children}</dd>
+    </div>
+  );
+}
+
+function Candidate({
+  role,
+  match,
+  total,
+  gate,
+  brief,
+  children,
+}: {
+  role: Role;
+  match: MatchResult;
+  total: number;
+  gate: Props['gate'];
+  brief: BriefEntry | null;
+  children?: ReactNode;
+}) {
   const unlocked = gate?.reason === 'unlocked' && brief;
   const lockedReason = gate && gate.reason !== 'unlocked' ? gate.reason : 'no-brief';
+  const n = match.covered.length;
 
   return (
     <>
-      <div className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <StrengthMark strength={match.strength} withLabel />
-        <p className="text-muted">
-          {n} of {total} things this role asks for are backed by work you've demonstrated or shipped.
-          {match.cappedBy === 'few-requirements' &&
-            ` This description names only ${total} skill${total === 1 ? '' : 's'} we can read, too few to call the match strong.`}
-          {match.cappedBy === 'few-core-covered' &&
-            " Most of that is from the day-to-day or nice-to-haves; too little of the role's core requirements is shown to call it strong."}
+      <div className="mt-5 flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+        <p className="text-lg">
+          <span className="tnum font-semibold">
+            {n} of {total} requirements
+          </span>{' '}
+          shown in the code.
+          {match.cappedBy === 'few-requirements' && (
+            <span className="text-slate"> This description names only {total} skills Side Quest can read, too few to call the evidence strong.</span>
+          )}
+          {match.cappedBy === 'few-core-covered' && (
+            <span className="text-slate"> Most of it answers day-to-day items, not the core requirements, so it isn't called strong.</span>
+          )}
         </p>
-        {unlocked && (
-          <a href="#side-quest" className="text-sm font-semibold underline underline-offset-4">
-            Side quest unlocked for {label(brief.targetSkill)}
-          </a>
-        )}
+        <Breakdown b={tierBreakdown(match)} className="text-sm text-slate" />
       </div>
-
-      <section aria-labelledby="proven" className="mt-8">
-        <h3 id="proven" className="text-lg font-bold">
-          What your work already shows
-        </h3>
-        {match.covered.length ? (
-          <ul className="mt-3 divide-y divide-line rounded-xl border border-line bg-surface">
-            {match.covered.map((c) => (
-              <EvidenceRow key={c.skill} item={c} />
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-2 text-sm text-muted">Nothing this role asks for is demonstrated in the repos we read yet.</p>
-        )}
-        <details className="mt-3 text-sm text-muted">
-          <summary className="cursor-pointer">How evidence is graded</summary>
-          <dl className="mt-2 grid gap-x-4 gap-y-2 sm:layout-defs">
-            {(['shipped', 'demonstrated', 'described', 'mentioned'] as const).map((t) => (
-              <div key={t} className="contents">
-                <dt>
-                  <TierBadge tier={t} />
-                </dt>
-                <dd className="self-center">{TIER_TEXT[t]}</dd>
-              </div>
-            ))}
-          </dl>
-        </details>
-      </section>
-
-      {match.missing.length > 0 && (
-        <section aria-labelledby="missing" className="mt-8">
-          <h3 id="missing" className="text-lg font-bold">
-            Not shown yet
-          </h3>
-          <ul className="mt-3 space-y-3">
-            {match.missing.map((m) => (
-              <MissingRow key={m.skill} item={m} isTarget={!!unlocked && brief.targetSkill === m.skill} />
-            ))}
-          </ul>
-        </section>
+      {unlocked && (
+        <p className="mt-2 text-sm">
+          <a href="#side-quest" className="font-semibold text-alert underline underline-offset-4">
+            One open requirement, {label(brief.targetSkill)}, has a one-day side quest
+          </a>
+        </p>
       )}
 
-      <div className="mt-8">{unlocked ? <SideQuestCard entry={brief} /> : <LockedState reason={lockedReason} company={role.company} />}</div>
+      <ReportTable covered={match.covered} missing={match.missing} openSkill={unlocked ? brief.targetSkill : null} openTitle={unlocked ? brief.brief.title : null} />
+
+      <div className="mt-10">{unlocked ? <SideQuestCard entry={brief} /> : <LockedState reason={lockedReason} company={role.company} />}</div>
+
+      {children}
+
+      <p className="mt-10 border-t border-rule pt-4 text-sm text-slate">
+        Side Quest is an unofficial concept built on speedrun's public API, not affiliated with a16z.{' '}
+        <a href={JOIN_URL} target="_blank" rel="noopener" className="inline-flex items-center gap-1 font-semibold text-ink underline decoration-rule underline-offset-4 hover:decoration-ink">
+          The speedrun Talent Network <ExternalIcon />
+        </a>{' '}
+        is where founders hire from one shared profile.
+      </p>
     </>
   );
 }
 
-const TIER_TEXT = {
-  shipped: 'Demonstrated, and the same repo has tests, CI or a live deploy.',
-  demonstrated: 'A dependency file lists it and matching source files exist.',
-  described: "The README talks about it. The code wasn't checked for it.",
-  mentioned: 'Only a repo tag, the repo language or your resume names it.',
-} as const;
-
-function EvidenceRow({ item }: { item: CoveredRequirement }) {
-  const e = item.evidence;
-  return (
-    <li className="grid gap-2 p-4 sm:layout-row sm:gap-5">
-      <div className="flex items-start justify-between gap-2 sm:flex-col sm:justify-start">
-        <span className="font-semibold">{label(item.skill)}</span>
-        <TierBadge tier={e.tier} />
-      </div>
-      <div className="min-w-0 text-sm">
-        {e.repo && (
-          <a href={e.url} target="_blank" rel="noopener" className="font-mono font-semibold underline decoration-line underline-offset-4 hover:decoration-ink">
-            {e.repo}
-          </a>
-        )}
-        <ul className="mt-1 space-y-0.5 text-muted">
-          {e.reasons.map((r) => (
-            <li key={r} className="break-words">
-              <Inline text={r} />
-            </li>
-          ))}
-        </ul>
-        <p className="mt-2 text-xs text-muted">
-          The role asks: “{item.quote}”
-        </p>
-      </div>
-    </li>
-  );
-}
-
-function MissingRow({ item, isTarget }: { item: MissingRequirement; isTarget: boolean }) {
-  const e = item.evidence;
-  return (
-    <li className={`rounded-xl border p-4 text-sm ${isTarget ? 'border-ink' : 'border-line'}`}>
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <span className="font-semibold">
-          {label(item.skill)} <span className="font-normal text-muted">({SECTION_WORD[item.section]})</span>
-        </span>
-        {isTarget && <span className="text-xs font-semibold">The side quest below closes this</span>}
-      </div>
-      <p className="mt-1 text-muted">The role asks: “{item.quote}”</p>
-      <p className="mt-1.5">
-        {e ? (
-          <>
-            Closest evidence: <TierBadge tier={e.tier} /> in <span className="font-mono">{e.repo ?? 'your resume'}</span>, <Inline text={e.reasons[0]} />
-          </>
-        ) : (
-          <span className="text-muted">No evidence in the repos we read.</span>
-        )}
-      </p>
-    </li>
-  );
-}
-
-function Unmatched({ requirements }: { requirements: Requirement[] }) {
+/** No profile yet: what the role asks for, read from the job description. */
+function Asks({ requirements }: { requirements: Requirement[] }) {
   return (
     <section aria-labelledby="asks" className="mt-6">
-      <h3 id="asks" className="text-lg font-bold">
-        What this role asks for
+      <h3 id="asks" className="report-head text-2xl">
+        What this role requires
       </h3>
-      <p className="mt-1 text-sm text-muted">Read from the job description, heaviest first. Add your GitHub to see which of these your work already shows.</p>
-      <ul className="mt-3 divide-y divide-line rounded-xl border border-line bg-surface">
-        {requirements.slice(0, 12).map((r) => (
-          <li key={r.skill} className="grid gap-1 p-4 text-sm sm:layout-row sm:gap-5">
-            <span className="font-semibold">
-              {label(r.skill)}
-              <span className="block text-xs font-normal text-muted">{SECTION_WORD[r.section]}</span>
-            </span>
-            <span className="text-muted">“{r.quote}”</span>
+      {requirements.length === 0 ? (
+        <p className="mt-1 max-w-prose text-reading text-slate">
+          Side Quest found no engineering skills it can read in this description, so there is nothing to check code against. The
+          posting on speedrun has the full text.
+        </p>
+      ) : (
+        <p className="mt-1 max-w-prose text-reading text-slate">
+          Read from the job description, heaviest first. Read a GitHub profile to see which of these the code already answers.
+        </p>
+      )}
+      <ol className={requirements.length ? 'mt-4 border-t border-ink' : 'hidden'}>
+        {requirements.slice(0, 12).map((r, i) => (
+          <li key={r.skill} className="grid grid-cols-[2.5rem_1fr] gap-x-3 border-b border-rule py-3.5 md:grid-cols-[2.5rem_1fr_14rem]">
+            <span className="report-head tnum text-lg text-slate">A{i + 1}</span>
+            <p className="text-base leading-snug font-medium">“{r.quote}”</p>
+            <p className="col-start-2 text-sm text-slate md:col-start-3 md:text-right">{label(r.skill)}</p>
           </li>
         ))}
-      </ul>
+      </ol>
     </section>
   );
 }
