@@ -1,11 +1,19 @@
 # Side Quest
 
+> **TL;DR**\
+> A resume is a claim nobody has time to check, and founders fill the gap with unpaid take-homes.\
+> Side Quest reads a candidate's public GitHub and answers each live speedrun role's requirements with the files that show them.\
+> Try it: https://side-quest.deven-rshaha.workers.dev/?demo=1
+
+Built in about 8 hours with Claude Code.
+
 **An evidence layer for the speedrun Talent Network.** Side Quest reads a candidate's public GitHub, checks it
 against each live speedrun engineering role in the founder's own words, and shows the files behind every claim.
 When a founder has opened a role to it and the evidence is already strong, it offers a one-day *side quest* that
 closes the single requirement the code doesn't show yet.
 
-**Live:** https://side-quest.deven-rshaha.workers.dev/?demo=1 (opens on what a founder sees; no sign-in)
+**Live, no sign-in:** [what the founder sees](https://side-quest.deven-rshaha.workers.dev/?demo=1) ·
+[the candidate report](https://side-quest.deven-rshaha.workers.dev/?demo=1&view=candidate)
 
 > An unofficial concept I built for my application to the a16z speedrun talent team's Product Engineer role. It is
 > not affiliated with or endorsed by a16z or speedrun. It uses speedrun's public jobs API and links back to every
@@ -45,7 +53,7 @@ both sides:
 |---|---|---|
 | 1 | [`/?demo=1`](https://side-quest.deven-rshaha.workers.dev/?demo=1) | **What the founder sees** for Sekai's AI Agent Engineer role: seven candidates ranked by evidence for *this* role. One is my real public GitHub; six are fictional and labelled. A fictional agent-infrastructure candidate ranks above me, and the ranking isn't tuned to make me win. |
 | 2 | **Inspect all 10 skills** on any row | A sheet opens over the shortlist: every requirement with its level and repository, the weakest part of the evidence, and what the side quest would test. Shortlist from inside it; Esc closes it. |
-| 3 | **Candidate report** tab | The same role from my side: each founder sentence, the skills it names, the evidence level, and the files that show it. |
+| 3 | **Candidate report** tab, or [`/?demo=1&view=candidate`](https://side-quest.deven-rshaha.workers.dev/?demo=1&view=candidate) | The same role from my side: each founder sentence, the skills it names, the evidence level, and the files that show it. |
 | 4 | The red row and **Side quest** section | The one open requirement (distributed systems) and the one-day brief that closes it. |
 | 5 | **Preview the page first**, under *Send this report* | The proof link a founder would receive: one company only, the same evidence recomputed on the server, nothing saved. |
 | 6 | **Open this role to side quests** (founder view) | Toggle a founder's opt-in and watch the side-quest state change on both sides. |
@@ -109,6 +117,10 @@ has real sections.
   descriptions from reading as Strong on generic Python and LLM matches.
 - **Some:** weighted credit ≥ 30% (Mentioned 0.15 · Described 0.4 · Declared 0.6 · Demonstrated or Shipped 1).
 - **Thin:** below that.
+
+Strong, Some and Thin are rule-based evidence classifications, not predictions of hiring success or overall engineering
+ability. The skill counts shown in the UI are descriptive; the classification uses requirement weights and coverage
+thresholds.
 
 When a role isn't Strong, the report says why ("too few readable skills", "mostly day-to-day items, not the core
 requirements").
@@ -277,10 +289,14 @@ only.
 
 ```bash
 pnpm install
-cp .dev.vars.example .dev.vars      # add GITHUB_TOKEN: a fine-grained token, public read only, no scopes
+cp .dev.vars.example .dev.vars      # add GITHUB_TOKEN and IP_HASH_SECRET (see below)
 pnpm db:migrate:local               # create the local D1 tables
 pnpm dev                            # http://localhost:4321/?demo=1
 ```
+
+- `GITHUB_TOKEN`: a fine-grained personal access token with Repository access: Public repositories (read-only) and
+  no additional permissions. It is used for both the REST calls and the GraphQL request that reads code.
+- `IP_HASH_SECRET`: any long random string. Proof-link creation refuses to run without it.
 
 Without `GITHUB_TOKEN` the app still works: it reads with GitHub's anonymous limit (60 requests an hour) and reads no
 code, so evidence stops at Declared.
@@ -324,8 +340,8 @@ Every push to `main` deploys after the tests pass. Pushes to other branches get 
   invisible to it.
 - **Engineering roles only**, with a ~35-skill taxonomy. Anything outside it reads as not yet shown, and the page says
   which other functions aren't covered yet.
-- **The weights and thresholds are hand-calibrated** against the 96 engineering roles live on 2026-11-02, not learned
-  from outcomes.
+- **The weights and thresholds are hand-calibrated** against the 96-role engineering snapshot from 2026-11-02, not
+  learned from outcomes. The live count (95 when this was written) changes as speedrun roles open and close.
 - **Side quests exist for 4 demo roles** (13 reviewed briefs). Opt-ins are simulated, and nobody can accept or submit a
   side quest yet.
 - **Ownership is approximated** from the contributors list and commit share. GitHub refuses that list for very large
@@ -347,5 +363,5 @@ apply to; side-quest acceptance and completion; and how many completed side ques
 
 ---
 
-Built by [Deven Shah](https://github.com/ShahaDeven), with Claude Code. Screenshots are from the local build of this
+Built by [Deven Shah](https://github.com/ShahaDeven). Screenshots are from the local build of this
 repository on 2026-11-02, using my public GitHub as the demo profile.

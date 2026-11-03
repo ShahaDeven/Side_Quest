@@ -280,7 +280,7 @@ function Intro() {
   return (
     <section aria-labelledby="intro" className="pt-8 pb-2">
       <h1 id="intro" className="max-w-4xl font-report text-4xl leading-display font-bold sm:text-5xl">
-        Speedrun already connects founders with exceptional talent. Side Quest helps them see what that talent can actually build.
+        speedrun already connects founders with exceptional talent. Side Quest helps them see what that talent can actually build.
       </h1>
       <p className="mt-3 max-w-prose text-reading text-slate">
         It reads a public GitHub and answers each live engineering role's requirements with the files that show them. Every claim

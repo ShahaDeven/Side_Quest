@@ -27,7 +27,7 @@ grades what the code actually shows for each live speedrun engineering role, and
 match. When a founder has opened a role to side quests and the candidate's existing proof is already strong, it
 offers one small (≤ 1 day) project brief that would close the remaining gap.
 
-Positioning line: *Speedrun already connects founders with exceptional talent. Side Quest helps them see what
+Positioning line: *speedrun already connects founders with exceptional talent. Side Quest helps them see what
 that talent can actually build.*
 
 Success, now: the reviewer gets the idea and finds it credible within ~5 minutes, which supports Deven's
