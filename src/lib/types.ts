@@ -23,8 +23,16 @@ export interface Role {
 
 // --- evidence (PLAN.md §5) ---------------------------------------------------------------------
 
-/** Ordered weakest → strongest. Resume-only claims never get past `mentioned`. */
-export const TIERS = ['mentioned', 'described', 'demonstrated', 'shipped'] as const;
+/**
+ * Ordered weakest → strongest. Each level claims only what was checked:
+ *   mentioned     a repo tag, the repo language, the description, or a resume line names it
+ *   described     the README talks about it
+ *   declared      a dependency file lists it, or matching files exist; no file read shows it in use
+ *   demonstrated  files that were read use it (import it, or contain the skill's own code)
+ *   shipped       demonstrated, and GitHub records a release, a successful deployment or a Pages site
+ * Resume-only claims never get past `mentioned`. Tests and CI are practice notes; they never raise a level.
+ */
+export const TIERS = ['mentioned', 'described', 'declared', 'demonstrated', 'shipped'] as const;
 export type Tier = (typeof TIERS)[number];
 
 export const tierRank = (t: Tier) => TIERS.indexOf(t);
@@ -37,8 +45,22 @@ export interface EvidenceItem {
   /** Repo name, for `source: 'repo'`. */
   repo?: string;
   url?: string;
-  /** Human-readable facts, strongest first, e.g. `pyproject.toml lists langgraph`, `tests in tests/`. */
+  /** Why it reached this level, strongest first, e.g. `imported in 3 of 6 files read, e.g. agent/graph.py`. */
   reasons: string[];
+  /**
+   * Context that never raises the level: tests that import the same package, the repo's CI and test suite, a
+   * declared deploy URL (not checked), ownership. Absent on evidence read before notes existed.
+   */
+  notes?: string[];
+}
+
+/** What GitHub itself records about delivery. Free signals: no URL is ever requested to check a deploy. */
+export interface Delivery {
+  releases: number;
+  latestRelease: string | null;
+  /** Deployments whose latest status is success (Vercel, Netlify and Cloudflare integrations record these). */
+  deployments: number;
+  pages: boolean;
 }
 
 /** Public facts about a repo, shown next to its evidence. */
@@ -67,6 +89,8 @@ export interface CandidateProfile {
   evidence: Record<string, EvidenceItem[]>;
   /** How many public non-fork repos exist vs how many were read in depth. */
   reposConsidered: number;
+  /** Whether source files were read. False (no token, or the request failed): nothing passes Declared. */
+  codeRead?: boolean;
   fetchedAt: string;
 }
 

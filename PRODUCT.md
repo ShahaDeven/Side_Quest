@@ -53,8 +53,9 @@ signups, founder adoption of side quests.
 
 ## Capabilities and Constraints
 
-- **Built (Stage 1):** live role list with snapshot fallback; GitHub evidence engine with four tiers (Mentioned,
-  Described, Demonstrated, Shipped) and file-level reasons; per-role proof strength (Strong, Some, Thin) with
+- **Built (Stage 1):** live role list with snapshot fallback; GitHub evidence engine with five levels (Mentioned,
+  Described, Declared, Demonstrated, Shipped) that claim only what was checked: Demonstrated means code that was read
+  uses the skill; tests and CI are notes, never a level; Shipped needs a GitHub release or deployment and is a bonus; per-role proof strength (Strong, Some, Thin) with
   explained caps; 13 hand-reviewed side-quest briefs for 4 demo opt-in roles; proof links (role and network) with
   one-time delete links; founder view with fictional demo candidates and a per-browser shortlist; opt-in toggle.
 - **Planned:** Stage 1.7 polish and deploy on Cloudflare Workers; Stage 2 GitHub sign-in, saved profiles, side-quest

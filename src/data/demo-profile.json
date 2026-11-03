@@ -225,60 +225,57 @@
   "python": [
    {
     "skill": "python",
-    "tier": "shipped",
-    "source": "repo",
-    "repo": "Meeting_Insight_Trust",
-    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
-    "reasons": [
-     "42 .py files",
-     "7 test files in `tests/`",
-     "CI in `.github/workflows/`"
-    ]
-   },
-   {
-    "skill": "python",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "AI_SQL_Agent",
     "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
     "reasons": [
-     "16 .py files",
-     "CI in `.github/workflows/`"
+     "15 .py files, 123 KB; sole contributor; 8 files read"
+    ],
+    "notes": [
+     "Repo runs CI in `.github/workflows/`"
     ]
    },
    {
     "skill": "python",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "storeroom-slip-validator",
     "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
     "reasons": [
-     "12 .py files",
-     "3 test files in `tests/`"
+     "8 .py files, 69 KB; sole contributor; 2 files read"
+    ],
+    "notes": [
+     "Repo has 3 test files in `tests/`"
+    ]
+   },
+   {
+    "skill": "python",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "30 .py files, 268 KB; sole contributor; 8 files read"
+    ],
+    "notes": [
+     "Repo has 2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
     ]
    }
   ],
   "sql": [
    {
     "skill": "sql",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "AI_SQL_Agent",
     "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
     "reasons": [
-     "`requirements.txt` lists duckdb · 16 source files",
-     "CI in `.github/workflows/`"
-    ]
-   },
-   {
-    "skill": "sql",
-    "tier": "shipped",
-    "source": "repo",
-    "repo": "Market_Pulse",
-    "url": "https://github.com/ShahaDeven/Market_Pulse",
-    "reasons": [
-     "4 .sql files",
-     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+     "SQL statements in 4 of 12 files read, e.g. `src/agent_graph.py`",
+     "`requirements.txt` lists duckdb"
+    ],
+    "notes": [
+     "Repo runs CI in `.github/workflows/`"
     ]
    },
    {
@@ -288,65 +285,75 @@
     "repo": "SQL-Forge",
     "url": "https://github.com/ShahaDeven/SQL-Forge",
     "reasons": [
-     "`sqlforge/requirements-grpo.txt` lists duckdb · 18 source files"
+     "SQL statements in 1 of 8 files read, in `sqlforge/eval/`",
+     "`sqlforge/requirements-grpo.txt` lists duckdb"
+    ]
+   },
+   {
+    "skill": "sql",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "SQL statements in 5 of 13 files read, e.g. `mcp_servers/yelp_events_mcp/tools.py`"
+    ],
+    "notes": [
+     "Repo has 2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
     ]
    }
   ],
   "docker": [
    {
     "skill": "docker",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "AI_SQL_Agent",
     "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
     "reasons": [
-     "2 files `Dockerfile`, `docker-compose.yml`",
-     "CI in `.github/workflows/`"
+     "a Dockerfile that builds an image, a compose file defining services in 2 of 12 files read, `Dockerfile`, `docker-compose.yml`"
+    ],
+    "notes": [
+     "Repo runs CI in `.github/workflows/`"
     ]
    },
    {
     "skill": "docker",
-    "tier": "shipped",
-    "source": "repo",
-    "repo": "Market_Pulse",
-    "url": "https://github.com/ShahaDeven/Market_Pulse",
-    "reasons": [
-     "1 file `docker-compose.yml`",
-     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
-    ]
-   },
-   {
-    "skill": "docker",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "Rossman_sales_project",
     "url": "https://github.com/ShahaDeven/Rossman_sales_project",
     "reasons": [
-     "3 files `Dockerfile`, `Dockerfile.monitoring`, `docker-compose.yml`",
-     "CI in `.github/workflows/`"
+     "a Dockerfile that builds an image in 2 of 10 files read, `Dockerfile`, `Dockerfile.monitoring`"
+    ],
+    "notes": [
+     "Repo runs CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "docker",
+    "tier": "declared",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "1 file `docker-compose.yml`"
+    ],
+    "notes": [
+     "Not seen in use in the 13 files read",
+     "Repo has 2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
     ]
    }
   ],
   "ci-cd": [
    {
     "skill": "ci-cd",
-    "tier": "shipped",
-    "source": "repo",
-    "repo": "Meeting_Insight_Trust",
-    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
-    "reasons": [
-     "1 workflow in `.github/workflows/`",
-     "7 test files in `tests/`"
-    ]
-   },
-   {
-    "skill": "ci-cd",
     "tier": "demonstrated",
     "source": "repo",
     "repo": "AI_SQL_Agent",
     "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
     "reasons": [
-     "1 workflow in `.github/workflows/`"
+     "a workflow that runs jobs in 1 of 12 files read, in `.github/workflows/`"
     ]
    },
    {
@@ -356,32 +363,37 @@
     "repo": "Rossman_sales_project",
     "url": "https://github.com/ShahaDeven/Rossman_sales_project",
     "reasons": [
-     "1 workflow in `.github/workflows/`"
+     "a workflow that runs jobs in 1 of 10 files read, in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "ci-cd",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "a workflow that runs jobs in 1 of 11 files read, in `.github/workflows/`"
+    ],
+    "notes": [
+     "Repo has 7 test files in `tests/`"
     ]
    }
   ],
   "testing": [
    {
     "skill": "testing",
-    "tier": "shipped",
-    "source": "repo",
-    "repo": "Meeting_Insight_Trust",
-    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
-    "reasons": [
-     "`pyproject.toml` lists pytest · 42 source files",
-     "7 files in `tests/`",
-     "CI in `.github/workflows/`"
-    ]
-   },
-   {
-    "skill": "testing",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "AI_SQL_Agent",
     "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
     "reasons": [
-     "`requirements.txt` lists pytest · 16 source files",
-     "CI in `.github/workflows/`"
+     "pytest imported in 1 of 12 files read, in `tests/`",
+     "test cases in 1 of 12 files read, in `tests/`",
+     "`requirements.txt` lists pytest"
+    ],
+    "notes": [
+     "Repo runs CI in `.github/workflows/`"
     ]
    },
    {
@@ -391,8 +403,21 @@
     "repo": "storeroom-slip-validator",
     "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
     "reasons": [
-     "`requirements.txt` lists pytest · 12 source files",
-     "3 files in `tests/`"
+     "pytest imported in 2 of 10 files read, in `tests/`",
+     "test cases in 2 of 10 files read, in `tests/`",
+     "`requirements.txt` lists pytest"
+    ]
+   },
+   {
+    "skill": "testing",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "Market_Pulse",
+    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "reasons": [
+     "pytest imported in 2 of 13 files read, `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`",
+     "test cases in 2 of 13 files read, `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`",
+     "`pyproject.toml` lists pytest"
     ]
    }
   ],
@@ -431,122 +456,147 @@
   "llm": [
    {
     "skill": "llm",
-    "tier": "shipped",
-    "source": "repo",
-    "repo": "Meeting_Insight_Trust",
-    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
-    "reasons": [
-     "`pyproject.toml` lists anthropic · 42 source files",
-     "7 test files in `tests/`",
-     "CI in `.github/workflows/`"
-    ]
-   },
-   {
-    "skill": "llm",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "AI_SQL_Agent",
     "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
     "reasons": [
-     "`requirements.txt` lists langchain, langchain-community, langchain-core · 16 source files",
-     "CI in `.github/workflows/`"
+     "langchain_core, langchain_anthropic, langchain_google_genai imported in 3 of 12 files read, `src/agent_graph.py`, `src/retriever.py`, `check_models.py`",
+     "`requirements.txt` lists langchain, langchain-community, langchain-core"
+    ],
+    "notes": [
+     "Repo runs CI in `.github/workflows/`"
     ]
    },
    {
     "skill": "llm",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
-    "repo": "storeroom-slip-validator",
-    "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
+    "repo": "Project_interface",
+    "url": "https://github.com/ShahaDeven/Project_interface",
     "reasons": [
-     "`requirements.txt` lists anthropic · 12 source files",
-     "3 test files in `tests/`"
+     "anthropic imported in 1 of 10 files read, in `cua/`",
+     "`requirements.txt` lists anthropic"
+    ],
+    "notes": [
+     "Repo has 9 test files in `tests/`"
+    ]
+   },
+   {
+    "skill": "llm",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "margin-guard",
+    "url": "https://github.com/ShahaDeven/margin-guard",
+    "reasons": [
+     "anthropic imported in 1 of 11 files read, in `evals/promotion/`",
+     "`pyproject.toml` lists anthropic"
+    ],
+    "notes": [
+     "Repo has 9 test files in `tests/`"
     ]
    }
   ],
   "agents": [
    {
     "skill": "agents",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "Market_Pulse",
     "url": "https://github.com/ShahaDeven/Market_Pulse",
     "reasons": [
-     "`pyproject.toml` lists langgraph · 40 source files",
-     "14 files e.g. `agent/audit_log.py`",
-     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+     "langgraph imported in 3 of 13 files read, `agent/cli.py`, `agent/graph.py`, `evals/runner.py`",
+     "`pyproject.toml` lists langgraph"
+    ],
+    "notes": [
+     "Repo has 2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
     ]
    },
    {
     "skill": "agents",
-    "tier": "shipped",
+    "tier": "declared",
     "source": "repo",
     "repo": "AI_SQL_Agent",
     "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
     "reasons": [
-     "2 files `src/agent_graph.py`, `tests/test_agent.py`",
-     "CI in `.github/workflows/`"
+     "2 files `src/agent_graph.py`, `tests/test_agent.py`"
+    ],
+    "notes": [
+     "Not seen in use in the 12 files read",
+     "Repo runs CI in `.github/workflows/`"
     ]
    },
    {
     "skill": "agents",
-    "tier": "shipped",
+    "tier": "declared",
     "source": "repo",
     "repo": "Project_interface",
     "url": "https://github.com/ShahaDeven/Project_interface",
     "reasons": [
-     "3 files in `cua/agent/`",
-     "9 test files in `tests/`"
+     "3 files in `cua/agent/`"
+    ],
+    "notes": [
+     "Not seen in use in the 10 files read",
+     "Repo has 9 test files in `tests/`"
     ]
    }
   ],
   "evals": [
    {
     "skill": "evals",
-    "tier": "shipped",
-    "source": "repo",
-    "repo": "Meeting_Insight_Trust",
-    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
-    "reasons": [
-     "8 files in `evals/`",
-     "7 test files in `tests/`",
-     "CI in `.github/workflows/`"
-    ]
-   },
-   {
-    "skill": "evals",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "AI_SQL_Agent",
     "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
     "reasons": [
-     "4 files in `eval/`",
-     "CI in `.github/workflows/`"
+     "scoring functions in 1 of 12 files read, in `eval/`"
+    ],
+    "notes": [
+     "Repo runs CI in `.github/workflows/`"
     ]
    },
    {
     "skill": "evals",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "Market_Pulse",
     "url": "https://github.com/ShahaDeven/Market_Pulse",
     "reasons": [
-     "2 files in `evals/`",
-     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+     "scoring functions in 1 of 13 files read, in `evals/`"
+    ],
+    "notes": [
+     "Repo has 2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+    ]
+   },
+   {
+    "skill": "evals",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "scoring functions in 2 of 11 files read, in `evals/`"
+    ],
+    "notes": [
+     "Repo has 7 test files in `tests/`",
+     "Repo runs CI in `.github/workflows/`"
     ]
    }
   ],
   "rag": [
    {
     "skill": "rag",
-    "tier": "shipped",
+    "tier": "declared",
     "source": "repo",
     "repo": "AI_SQL_Agent",
     "url": "https://github.com/ShahaDeven/AI_SQL_Agent",
     "reasons": [
-     "`requirements.txt` lists sentence-transformers · 16 source files",
-     "2 files `eval/retrieval_eval.py`, `src/retriever.py`",
-     "CI in `.github/workflows/`"
+     "`requirements.txt` lists sentence-transformers",
+     "2 files `eval/retrieval_eval.py`, `src/retriever.py`"
+    ],
+    "notes": [
+     "Not seen in use in the 12 files read",
+     "Repo runs CI in `.github/workflows/`"
     ]
    },
    {
@@ -585,75 +635,90 @@
   "typescript": [
    {
     "skill": "typescript",
-    "tier": "shipped",
-    "source": "repo",
-    "repo": "Meeting_Insight_Trust",
-    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
-    "reasons": [
-     "`web/package.json` lists typescript · 13 source files",
-     "13 .ts/.tsx files",
-     "7 test files in `tests/`",
-     "CI in `.github/workflows/`"
-    ]
-   },
-   {
-    "skill": "typescript",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "storeroom-slip-validator",
     "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
     "reasons": [
-     "`frontend/package.json` lists typescript · 12 source files",
-     "12 .ts/.tsx files",
-     "3 test files in `tests/`"
+     "12 .ts/.tsx files, 86 KB; sole contributor; 6 files read",
+     "`frontend/package.json` lists typescript"
+    ],
+    "notes": [
+     "Repo has 3 test files in `tests/`"
     ]
    },
    {
     "skill": "typescript",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
-    "repo": "Market_Pulse",
-    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
     "reasons": [
-     "`frontend/package.json` lists typescript · 11 source files",
-     "11 .ts/.tsx files",
-     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+     "13 .ts/.tsx files, 92 KB; sole contributor; 1 file read",
+     "`web/package.json` lists typescript"
+    ],
+    "notes": [
+     "Repo has 7 test files in `tests/`",
+     "Repo runs CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "typescript",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "margin-guard",
+    "url": "https://github.com/ShahaDeven/margin-guard",
+    "reasons": [
+     "16 .ts/.tsx files, 76 KB; sole contributor; 2 files read",
+     "`frontend/package.json` lists typescript"
+    ],
+    "notes": [
+     "Repo has 9 test files in `tests/`"
     ]
    }
   ],
   "react": [
    {
     "skill": "react",
-    "tier": "shipped",
-    "source": "repo",
-    "repo": "Meeting_Insight_Trust",
-    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
-    "reasons": [
-     "`web/package.json` lists react, react-dom · 13 source files",
-     "7 test files in `tests/`",
-     "CI in `.github/workflows/`"
-    ]
-   },
-   {
-    "skill": "react",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "storeroom-slip-validator",
     "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
     "reasons": [
-     "`frontend/package.json` lists react, react-dom · 12 source files",
-     "3 test files in `tests/`"
+     "react, react-dom imported in 5 of 10 files read, in `frontend/src/`",
+     "`frontend/package.json` lists react, react-dom"
+    ],
+    "notes": [
+     "Repo has 3 test files in `tests/`"
     ]
    },
    {
     "skill": "react",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
-    "repo": "Market_Pulse",
-    "url": "https://github.com/ShahaDeven/Market_Pulse",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
     "reasons": [
-     "`frontend/package.json` lists react, react-dom · 11 source files",
-     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+     "react, react-dom imported in 1 of 11 files read, in `web/src/`",
+     "`web/package.json` lists react, react-dom"
+    ],
+    "notes": [
+     "Repo has 7 test files in `tests/`",
+     "Repo runs CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "react",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "margin-guard",
+    "url": "https://github.com/ShahaDeven/margin-guard",
+    "reasons": [
+     "react, react-dom imported in 2 of 11 files read, in `frontend/src/`",
+     "`frontend/package.json` lists react, react-dom"
+    ],
+    "notes": [
+     "Repo has 9 test files in `tests/`"
     ]
    }
   ],
@@ -692,35 +757,46 @@
   "python-backend": [
    {
     "skill": "python-backend",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "storeroom-slip-validator",
     "url": "https://github.com/ShahaDeven/storeroom-slip-validator",
     "reasons": [
-     "`requirements.txt` lists fastapi · 12 source files",
-     "3 test files in `tests/`"
+     "fastapi imported in 2 of 10 files read, `slipcheck/api.py`, `tests/test_api.py`",
+     "`requirements.txt` lists fastapi"
+    ],
+    "notes": [
+     "Tested: in `tests/` imports it",
+     "Repo has 3 test files in `tests/`"
     ]
    },
    {
     "skill": "python-backend",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "Rossman_sales_project",
     "url": "https://github.com/ShahaDeven/Rossman_sales_project",
     "reasons": [
-     "`requirements.txt` lists fastapi · 9 source files",
-     "CI in `.github/workflows/`"
+     "fastapi imported in 2 of 10 files read, `api/main.py`, `tests/test_api.py`",
+     "`requirements.txt` lists fastapi"
+    ],
+    "notes": [
+     "Tested: in `tests/` imports it",
+     "Repo runs CI in `.github/workflows/`"
     ]
    },
    {
     "skill": "python-backend",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "Project_interface",
     "url": "https://github.com/ShahaDeven/Project_interface",
     "reasons": [
-     "`requirements.txt` lists Flask · 41 source files",
-     "9 test files in `tests/`"
+     "flask imported in 1 of 10 files read, in `target_app/`",
+     "`requirements.txt` lists Flask"
+    ],
+    "notes": [
+     "Repo has 9 test files in `tests/`"
     ]
    }
   ],
@@ -739,13 +815,16 @@
   "browser-automation": [
    {
     "skill": "browser-automation",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "Project_interface",
     "url": "https://github.com/ShahaDeven/Project_interface",
     "reasons": [
-     "`requirements.txt` lists playwright · 41 source files",
-     "9 test files in `tests/`"
+     "playwright imported in 1 of 10 files read, in `cua/`",
+     "`requirements.txt` lists playwright"
+    ],
+    "notes": [
+     "Repo has 9 test files in `tests/`"
     ]
    },
    {
@@ -762,79 +841,108 @@
   "postgres": [
    {
     "skill": "postgres",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "Market_Pulse",
     "url": "https://github.com/ShahaDeven/Market_Pulse",
     "reasons": [
-     "`pyproject.toml` lists psycopg · 40 source files",
-     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+     "psycopg imported in 1 of 13 files read, in `mcp_servers/yelp_events_mcp/`",
+     "`pyproject.toml` lists psycopg"
+    ],
+    "notes": [
+     "Repo has 2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
     ]
    }
   ],
   "mcp": [
    {
     "skill": "mcp",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "Market_Pulse",
     "url": "https://github.com/ShahaDeven/Market_Pulse",
     "reasons": [
-     "`pyproject.toml` lists fastmcp · 40 source files",
-     "6 files e.g. `agent/mcp_client.py`",
-     "2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
+     "mcp imported in 1 of 13 files read, in `mcp_servers/yelp_events_mcp/`",
+     "`pyproject.toml` lists fastmcp"
+    ],
+    "notes": [
+     "Repo has 2 test files `mcp_servers/yelp_events_mcp/tests/test_tools.py`, `tests/test_backend_stream.py`"
     ]
    }
   ],
   "deep-learning": [
    {
     "skill": "deep-learning",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "Rossman_sales_project",
     "url": "https://github.com/ShahaDeven/Rossman_sales_project",
     "reasons": [
-     "`requirements.txt` lists torch · 9 source files",
-     "CI in `.github/workflows/`"
+     "torch imported in 4 of 10 files read, e.g. `api/main.py`",
+     "`requirements.txt` lists torch"
+    ],
+    "notes": [
+     "Tested: in `tests/` imports it",
+     "Repo runs CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "deep-learning",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "SQL-Forge",
+    "url": "https://github.com/ShahaDeven/SQL-Forge",
+    "reasons": [
+     "torch imported in 2 of 8 files read, in `sqlforge/train/`"
     ]
    }
   ],
   "ml": [
    {
     "skill": "ml",
-    "tier": "shipped",
-    "source": "repo",
-    "repo": "Meeting_Insight_Trust",
-    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
-    "reasons": [
-     "`pyproject.toml` lists scikit-learn, xgboost · 42 source files",
-     "7 test files in `tests/`",
-     "CI in `.github/workflows/`"
-    ]
-   },
-   {
-    "skill": "ml",
-    "tier": "shipped",
+    "tier": "demonstrated",
     "source": "repo",
     "repo": "Rossman_sales_project",
     "url": "https://github.com/ShahaDeven/Rossman_sales_project",
     "reasons": [
-     "`requirements.txt` lists scikit-learn · 9 source files",
-     "CI in `.github/workflows/`"
+     "sklearn imported in 3 of 10 files read, `api/main.py`, `model/train.py`, `tests/test_api.py`",
+     "`requirements.txt` lists scikit-learn"
+    ],
+    "notes": [
+     "Tested: in `tests/` imports it",
+     "Repo runs CI in `.github/workflows/`"
+    ]
+   },
+   {
+    "skill": "ml",
+    "tier": "demonstrated",
+    "source": "repo",
+    "repo": "Meeting_Insight_Trust",
+    "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
+    "reasons": [
+     "scipy imported in 1 of 11 files read, in `pipeline/`",
+     "`pyproject.toml` lists scikit-learn, xgboost"
+    ],
+    "notes": [
+     "Repo has 7 test files in `tests/`",
+     "Repo runs CI in `.github/workflows/`"
     ]
    }
   ],
   "data-pipelines": [
    {
     "skill": "data-pipelines",
-    "tier": "shipped",
+    "tier": "declared",
     "source": "repo",
     "repo": "Meeting_Insight_Trust",
     "url": "https://github.com/ShahaDeven/Meeting_Insight_Trust",
     "reasons": [
-     "6 files in `pipeline/`",
-     "7 test files in `tests/`",
-     "CI in `.github/workflows/`"
+     "6 files in `pipeline/`"
+    ],
+    "notes": [
+     "Not seen in use in the 11 files read",
+     "Repo has 7 test files in `tests/`",
+     "Repo runs CI in `.github/workflows/`"
     ]
    },
    {
@@ -856,8 +964,8 @@
     "repo": "SQL-Forge",
     "url": "https://github.com/ShahaDeven/SQL-Forge",
     "reasons": [
-     "`sqlforge/requirements-grpo.txt` lists trl, peft · 18 source files",
-     "10 files in `sqlforge/`"
+     "peft, trl imported in 2 of 8 files read, in `sqlforge/train/`",
+     "`sqlforge/requirements-grpo.txt` lists trl, peft"
     ]
    },
    {
@@ -905,5 +1013,6 @@
   ]
  },
  "reposConsidered": 17,
- "fetchedAt": "2026-11-02T23:49:13.421Z"
+ "codeRead": true,
+ "fetchedAt": "2026-11-03T03:26:45.233Z"
 }

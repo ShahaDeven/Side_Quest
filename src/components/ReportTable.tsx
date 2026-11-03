@@ -61,9 +61,11 @@ interface Props {
   openSkill?: string | null;
   /** Title of the side quest that closes the open requirement. */
   openTitle?: string | null;
+  /** The level legend after the table. Off where one legend already sits on the page (expanded founder rows). */
+  legend?: boolean;
 }
 
-export default function ReportTable({ covered, missing, openSkill = null, openTitle = null }: Props) {
+export default function ReportTable({ covered, missing, openSkill = null, openTitle = null, legend = true }: Props) {
   const groups = groupRows(reportRows(covered, missing));
   return (
     <div className="mt-6">
@@ -123,11 +125,11 @@ export default function ReportTable({ covered, missing, openSkill = null, openTi
                         </p>
                       )}
                       {e && r.covered ? (
-                        <Trail repo={e.repo} url={e.url} reasons={e.reasons} />
+                        <Trail repo={e.repo} url={e.url} reasons={e.reasons} notes={e.notes} />
                       ) : e ? (
                         <div className="text-sm text-slate">
                           <p>Closest evidence:</p>
-                          <Trail repo={e.repo ?? 'resume'} url={e.url} reasons={e.reasons.slice(0, 1)} />
+                          <Trail repo={e.repo ?? 'resume'} url={e.url} reasons={e.reasons.slice(0, 2)} notes={e.notes?.slice(0, 1)} />
                         </div>
                       ) : (
                         <p className="text-sm text-slate">No evidence in the repos read.</p>
@@ -141,32 +143,43 @@ export default function ReportTable({ covered, missing, openSkill = null, openTi
         })}
       </table>
 
-      <section aria-labelledby="levels-heading" className="mt-6 border-t border-rule pt-3">
-        <h4 id="levels-heading" className="field-label">
-          How to read the evidence level
-        </h4>
-        <dl className="mt-2 grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2 xl:grid-cols-5">
-          {[...LEVELS].reverse().map((l) => (
-            <div key={l.tier}>
-              <dt>
-                <EvidenceLevel tier={l.tier} />
-              </dt>
-              <dd className="mt-0.5 text-slate">{l.meaning}</dd>
-            </div>
-          ))}
-          <div>
-            <dt>
-              <EvidenceLevel tier={null} />
-            </dt>
-            <dd className="mt-0.5 text-slate">Nothing in the repos read answers it yet.</dd>
-          </div>
-        </dl>
-      </section>
+      {legend && <LevelLegend />}
     </div>
   );
 }
 
-function Trail({ repo, url, reasons }: { repo?: string; url?: string; reasons: string[] }) {
+/** What each evidence level claims. One per page: the candidate report, the proof page, the founder view. */
+export function LevelLegend() {
+  return (
+    <section aria-labelledby="levels-heading" className="mt-6 border-t border-rule pt-3">
+      <h4 id="levels-heading" className="field-label">
+        How to read the evidence level
+      </h4>
+      <p className="mt-1 max-w-prose text-sm text-slate">
+        Each level claims only what was checked. Tests, CI and deploy links appear as notes beside the evidence and never raise
+        a level. Demonstrated counts in full: most good work is never released or deployed.
+      </p>
+      <dl className="mt-3 grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2 xl:grid-cols-3">
+        {[...LEVELS].reverse().map((l) => (
+          <div key={l.tier}>
+            <dt>
+              <EvidenceLevel tier={l.tier} />
+            </dt>
+            <dd className="mt-0.5 text-slate">{l.meaning}</dd>
+          </div>
+        ))}
+        <div>
+          <dt>
+            <EvidenceLevel tier={null} />
+          </dt>
+          <dd className="mt-0.5 text-slate">Nothing in the repos read answers it yet.</dd>
+        </div>
+      </dl>
+    </section>
+  );
+}
+
+function Trail({ repo, url, reasons, notes = [] }: { repo?: string; url?: string; reasons: string[]; notes?: string[] }) {
   return (
     <div className="min-w-0">
       {repo &&
@@ -184,6 +197,15 @@ function Trail({ repo, url, reasons }: { repo?: string; url?: string; reasons: s
           </li>
         ))}
       </ul>
+      {notes.length > 0 && (
+        <ul className="mt-1.5 space-y-0.5 border-l border-rule pl-2.5 text-sm leading-relaxed text-slate" aria-label="Notes, which don't change the level">
+          {notes.map((n) => (
+            <li key={n}>
+              <Inline text={n} />
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

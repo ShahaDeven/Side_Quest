@@ -34,16 +34,25 @@ export function Path({ value }: { value: string }) {
 
 export const LEVELS: { tier: Tier; label: string; meaning: string }[] = [
   { tier: 'mentioned', label: 'Mentioned', meaning: 'A repo tag, the repo language or a resume line names it.' },
-  { tier: 'described', label: 'Described', meaning: "The README talks about it; the code wasn't checked for it." },
-  { tier: 'demonstrated', label: 'Demonstrated', meaning: 'A dependency file lists it and matching source files exist.' },
-  { tier: 'shipped', label: 'Shipped', meaning: 'Demonstrated, and the same repo has tests, CI or a live deploy.' },
+  { tier: 'described', label: 'Described', meaning: 'The README talks about it.' },
+  { tier: 'declared', label: 'Declared', meaning: 'A dependency file lists it, or matching files exist. No file read shows it in use.' },
+  {
+    tier: 'demonstrated',
+    label: 'Demonstrated',
+    meaning: "Files that were read use it: they import it or contain its code. For a language, a substantial body of the candidate's own code.",
+  },
+  {
+    tier: 'shipped',
+    label: 'Shipped',
+    meaning: 'Demonstrated, and GitHub records a release, a successful deployment or a Pages site. A bonus: most good work is never deployed.',
+  },
 ];
 
 const levelIndex = (tier: Tier | null) => (tier ? LEVELS.findIndex((l) => l.tier === tier) : -1);
 export const levelLabel = (tier: Tier | null) => (tier ? LEVELS[levelIndex(tier)].label : 'Not yet shown');
 
 /**
- * How far the code proves one requirement: four ruled cells filled to the level, and the level in words.
+ * How far the code shows one requirement: five ruled cells filled to the level, and the level in words.
  * It describes the evidence for this requirement, never the person.
  */
 export function EvidenceLevel({ tier, open = false }: { tier: Tier | null; open?: boolean }) {
@@ -54,7 +63,7 @@ export function EvidenceLevel({ tier, open = false }: { tier: Tier | null; open?
         {LEVELS.map((l, i) => (
           <span
             key={l.tier}
-            className={`h-2.5 w-4 border ${open ? 'border-alert' : 'border-ink'} ${i < filled ? (open ? 'bg-alert' : 'bg-ink') : ''}`}
+            className={`h-2.5 w-3 border ${open ? 'border-alert' : 'border-ink'} ${i < filled ? (open ? 'bg-alert' : 'bg-ink') : ''}`}
           />
         ))}
       </span>
@@ -73,6 +82,7 @@ export function Breakdown({ b, className = '' }: { b: TierBreakdown; className?:
   const parts = [
     ['Shipped', b.shipped],
     ['Demonstrated', b.demonstrated],
+    ['Declared', b.declared],
     ['Described', b.described],
     ['Mentioned', b.mentioned],
     ['Not yet shown', b.none],

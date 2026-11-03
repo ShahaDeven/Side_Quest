@@ -2,13 +2,17 @@
  * GitHub public API → RepoFacts. Runs on the server (Worker or script), never in the browser.
  *
  * Budget per profile (Worker free plan allows 50 subrequests): 1 user + 1 repo list, then for up to
- * MAX_REPOS repos a tree, README and contributors call (3 each), then dependency manifests from whatever
- * is left of SUBREQUEST_BUDGET, highest-priority repos first, ≤ 2 per repo.
+ * MAX_REPOS repos a tree, README and contributors call (3 each). Then:
+ *   with a token   ONE GraphQL request reads, for every repo at once, up to 2 manifests, a sample of source,
+ *                  test and config files (code.ts), and GitHub's own release and deployment records.
+ *   without        dependency manifests over REST from what is left of SUBREQUEST_BUDGET. No code is read,
+ *                  so nothing can reach Demonstrated: an honest ceiling, not a guess.
  */
+import { MAX_SAMPLE_BYTES, pickSamples, type SourceFile } from './code';
 import { isVendored, type RepoFacts } from './evidence';
 import { manifestKind, parseManifest, type Ecosystem, type Manifest } from './manifests';
 import { SKILLS, findSkill, topicText } from './skills';
-import type { RepoSummary } from './types';
+import type { Delivery, RepoSummary } from './types';
 
 const API = 'https://api.github.com';
 export const MAX_REPOS = 9;
@@ -16,6 +20,8 @@ export const MAX_REPOS = 9;
 export const SUBREQUEST_BUDGET = 46;
 const MAX_MANIFESTS = 2;
 const README_CAP = 40_000;
+/** Total bytes of sampled files per profile, so the one GraphQL response stays small and fast. */
+const SAMPLE_BUDGET_BYTES = 1_200_000;
 
 export class GitHubError extends Error {
   readonly kind: 'not-found' | 'rate-limited' | 'failed';
@@ -52,6 +58,8 @@ export interface ApiRepo {
   archived: boolean;
   size: number;
   default_branch: string;
+  /** A GitHub Pages site is published from this repo. */
+  has_pages?: boolean;
 }
 
 /** A 403 is a rate limit only when GitHub says so: no calls left, or a (secondary) rate-limit message. */
@@ -173,8 +181,11 @@ async function readRepoCore(gh: ReturnType<typeof client>, owner: string, r: Api
     gh(`${base}/contributors?per_page=100`),
   ]);
 
-  const tree = treeRes ? ((await treeRes.json()) as { tree?: { path: string; type: string }[] }) : { tree: [] };
-  const paths = (tree.tree ?? []).filter((t) => t.type === 'blob' && !isVendored(t.path)).map((t) => t.path);
+  const tree = treeRes ? ((await treeRes.json()) as { tree?: { path: string; type: string; size?: number }[] }) : { tree: [] };
+  const blobs = (tree.tree ?? []).filter((t) => t.type === 'blob' && !isVendored(t.path));
+  const paths = blobs.map((t) => t.path);
+  const sizes: Record<string, number> = {};
+  for (const b of blobs) if (typeof b.size === 'number') sizes[b.path] = b.size;
   const readme = readmeRes ? (await readmeRes.text()).slice(0, README_CAP) : '';
 
   let contributors: number | null = null;
@@ -201,7 +212,8 @@ async function readRepoCore(gh: ReturnType<typeof client>, owner: string, r: Api
     contributors,
     ownerShare,
   };
-  return { summary, paths, readme, manifests: [] };
+  const delivery: Delivery = { releases: 0, latestRelease: null, deployments: 0, pages: r.has_pages === true };
+  return { summary, paths, sizes, readme, manifests: [], files: [], codeRead: false, delivery };
 }
 
 async function readManifest(gh: ReturnType<typeof client>, owner: string, r: ApiRepo, path: string): Promise<Manifest | null> {
@@ -227,6 +239,112 @@ export function planManifests(wanted: string[][], budget: number): string[][] {
   return plan;
 }
 
+// --- GraphQL batch: code, manifests and delivery records for every repo in one request -------------------
+
+interface BatchRepo {
+  releases?: { totalCount: number } | null;
+  latestRelease?: { tagName: string } | null;
+  deployments?: { nodes: { latestStatus: { state: string } | null }[] } | null;
+  [alias: string]: unknown;
+}
+
+export interface FilePlan {
+  manifests: string[];
+  samples: string[];
+}
+
+/** Trim the plan to `budget` bytes, dropping the largest sampled files first. Manifests always stay. */
+export function fitSamples(plans: FilePlan[], sizes: Record<string, number>[], budget = SAMPLE_BUDGET_BYTES): FilePlan[] {
+  const all = plans.flatMap((p, i) => p.samples.map((path) => ({ key: `${i}:${path}`, size: sizes[i][path] ?? MAX_SAMPLE_BYTES })));
+  let total = all.reduce((n, x) => n + x.size, 0);
+  const drop = new Set<string>();
+  for (const x of [...all].sort((a, b) => b.size - a.size)) {
+    if (total <= budget) break;
+    drop.add(x.key);
+    total -= x.size;
+  }
+  return plans.map((p, i) => ({ manifests: p.manifests, samples: p.samples.filter((path) => !drop.has(`${i}:${path}`)) }));
+}
+
+/** One query, one alias per repo (r0…) and per file (f0…). Inputs are JSON-quoted, which GraphQL strings accept. */
+export function batchQuery(owner: string, repos: ApiRepo[], plans: FilePlan[]): string {
+  const q = JSON.stringify;
+  const parts = repos.map((r, i) => {
+    const files = [...plans[i].manifests, ...plans[i].samples]
+      .map((p, j) => `f${j}: object(expression: ${q(`${r.default_branch}:${p}`)}) { ... on Blob { text isBinary } }`)
+      .join(' ');
+    return `r${i}: repository(owner: ${q(owner)}, name: ${q(r.name)}) { releases { totalCount } latestRelease { tagName } deployments(last: 20) { nodes { latestStatus { state } } } ${files} }`;
+  });
+  return `query {\n${parts.join('\n')}\n}`;
+}
+
+/** One POST to /graphql. Returns null when it can't run or fails, so the caller falls back to REST. */
+async function graphql(opts: GitHubOptions, query: string): Promise<Record<string, BatchRepo | null> | null> {
+  if (!opts.token) return null;
+  const f = opts.fetch ?? fetch;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), Math.max(opts.timeoutMs ?? 8000, 20_000));
+  try {
+    const res = await f(`${API}/graphql`, {
+      method: 'POST',
+      signal: ctrl.signal,
+      headers: { 'content-type': 'application/json', 'user-agent': 'side-quest', authorization: `Bearer ${opts.token}` },
+      body: JSON.stringify({ query }),
+    });
+    if (res.status === 429 || (res.status === 403 && (await isRateLimit(res)))) {
+      const reset = res.headers.get('x-ratelimit-reset');
+      throw new GitHubError('rate-limited', 'GitHub rate limit reached', reset ? new Date(Number(reset) * 1000).toISOString() : null);
+    }
+    if (!res.ok) return null;
+    const body = (await res.json()) as { data?: Record<string, BatchRepo | null> | null };
+    return body.data ?? null;
+  } catch (e) {
+    if (e instanceof GitHubError) throw e;
+    return null; // timeout or network: read the profile without code rather than fail it
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+const blobText = (node: unknown): string | null => {
+  const b = node as { text?: string | null; isBinary?: boolean } | null;
+  return b && !b.isBinary && typeof b.text === 'string' ? b.text : null;
+};
+
+/** Fill manifests, sampled files and delivery records from the batch. Returns false if the batch didn't run. */
+async function readBatch(opts: GitHubOptions, owner: string, chosen: ApiRepo[], repos: RepoFacts[]): Promise<boolean> {
+  const plans = fitSamples(
+    repos.map((f) => ({ manifests: pickManifests(f.paths), samples: pickSamples(f.paths, f.sizes ?? {}) })),
+    repos.map((f) => f.sizes ?? {}),
+  );
+  const data = await graphql(opts, batchQuery(owner, chosen, plans));
+  if (!data) return false;
+
+  repos.forEach((facts, i) => {
+    const node = data[`r${i}`];
+    if (!node) return;
+    const plan = plans[i];
+    const texts = [...plan.manifests, ...plan.samples].map((_, j) => blobText(node[`f${j}`]));
+    facts.manifests = plan.manifests
+      .map((p, j) => (texts[j] == null ? null : parseManifest(p, texts[j]!)))
+      .filter((m): m is Manifest => m !== null);
+    facts.files = plan.samples
+      .map((path, j): SourceFile | null => {
+        const text = texts[plan.manifests.length + j];
+        return text == null ? null : { path, text };
+      })
+      .filter((x): x is SourceFile => x !== null);
+    facts.codeRead = true;
+    facts.delivery = {
+      releases: node.releases?.totalCount ?? 0,
+      latestRelease: node.latestRelease?.tagName ?? null,
+      deployments: (node.deployments?.nodes ?? []).filter((d) => d.latestStatus?.state === 'SUCCESS').length,
+      pages: facts.delivery?.pages ?? false,
+    };
+  });
+  return true;
+}
+
 export interface FetchedProfile {
   user: { login: string; name: string | null; avatarUrl: string | null };
   repos: RepoFacts[];
@@ -246,14 +364,18 @@ export async function fetchProfileFacts(login: string, opts: GitHubOptions = {})
   const chosen = eligible.slice(0, MAX_REPOS);
   const repos = await Promise.all(chosen.map((r) => readRepoCore(gh, user.login, r)));
 
-  const left = SUBREQUEST_BUDGET - 2 - 3 * chosen.length;
-  const plan = planManifests(repos.map((f) => pickManifests(f.paths)), left);
-  await Promise.all(
-    plan.map(async (paths, i) => {
-      const ms = await Promise.all(paths.map((p) => readManifest(gh, user.login, chosen[i], p)));
-      repos[i].manifests = ms.filter((m): m is Manifest => m !== null);
-    }),
-  );
+  // With a token: one GraphQL request for code, manifests and delivery. Without one, or if it fails: REST manifests.
+  const batched = chosen.length > 0 && (await readBatch(opts, user.login, chosen, repos));
+  if (!batched) {
+    const left = SUBREQUEST_BUDGET - 2 - 3 * chosen.length;
+    const plan = planManifests(repos.map((f) => pickManifests(f.paths)), left);
+    await Promise.all(
+      plan.map(async (paths, i) => {
+        const ms = await Promise.all(paths.map((p) => readManifest(gh, user.login, chosen[i], p)));
+        repos[i].manifests = ms.filter((m): m is Manifest => m !== null);
+      }),
+    );
+  }
 
   return {
     user: { login: user.login, name: user.name, avatarUrl: user.avatar_url },

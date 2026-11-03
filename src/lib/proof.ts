@@ -10,7 +10,14 @@ import { extractRequirements, matchRole, sideQuestGate } from './match';
 import { SKILL_BY_ID } from './skills';
 import type { CandidateProfile, CoveredRequirement, MatchResult, MissingRequirement, Role, Strength } from './types';
 
-export const PROOF_VERSION = 1;
+/**
+ * 2: evidence read under the stricter levels (Declared added; Demonstrated needs code that was read to use the
+ * skill; Shipped needs a GitHub release, deployment or Pages site). Version 1 links keep their stored evidence
+ * and say they were read under the earlier, looser rules.
+ */
+export const PROOF_VERSION = 2;
+/** Links stored before the stricter evidence levels. */
+export const readUnderLooserRules = (doc: Pick<ProofDoc, 'v'>) => (doc.v ?? 1) < 2;
 /**
  * Size guard for a stored proof. Proofs are built by the server (never posted by the client), so this only
  * stops runaway growth; 8 strong roles with evidence and side quests come to ~40 KB.
@@ -61,7 +68,8 @@ export function sideQuestOf(r: ProofRole): ProofSideQuest | null {
 }
 
 export interface ProofDoc {
-  v: typeof PROOF_VERSION;
+  /** PROOF_VERSION when stored. */
+  v: number;
   /** Absent on links created before link kinds existed; read it through proofKind(). */
   kind?: ProofKind;
   createdAt: string;
@@ -142,7 +150,12 @@ export function fitProof(doc: ProofDoc): ProofDoc | null {
     ...out,
     roles: out.roles.map((r) => ({
       ...r,
-      covered: r.covered.map((c) => ({ ...c, evidence: { ...c.evidence, reasons: c.evidence.reasons.slice(0, 2) } })),
+      // Reasons say why a level was reached, so the first two stay. Notes are context: one stays, if any.
+      covered: r.covered.map((c) => ({
+        ...c,
+        evidence: { ...c.evidence, reasons: c.evidence.reasons.slice(0, 2), ...(c.evidence.notes ? { notes: c.evidence.notes.slice(0, 1) } : {}) },
+      })),
+      missing: r.missing.map((m) => (m.evidence?.notes ? { ...m, evidence: { ...m.evidence, notes: m.evidence.notes.slice(0, 1) } } : m)),
     })),
   };
   while (out.roles.length > 1 && bytes(out) > MAX_PROOF_BYTES) out = { ...out, roles: out.roles.slice(0, -1) };
@@ -152,8 +165,8 @@ export function fitProof(doc: ProofDoc): ProofDoc | null {
 // --- Markdown ----------------------------------------------------------------------------------
 
 const label = (id: string) => SKILL_BY_ID.get(id)?.label ?? id;
-const TIER_WORD = { shipped: 'Shipped', demonstrated: 'Demonstrated', described: 'Described', mentioned: 'Mentioned' } as const;
-const STRENGTH_WORD = { strong: 'Strong proof', some: 'Some proof', thin: 'Thin proof' } as const;
+const TIER_WORD = { shipped: 'Shipped', demonstrated: 'Demonstrated', declared: 'Declared', described: 'Described', mentioned: 'Mentioned' } as const;
+const STRENGTH_WORD = { strong: 'Strong evidence', some: 'Some evidence', thin: 'Thin evidence' } as const;
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
 /** One-line verdict for a role, shared by the network page's summaries and the Markdown. */

@@ -58,8 +58,19 @@ The open requirement row takes `bg-open`, a red rule and the side-quest title. O
 grid.
 
 ### Evidence level (`EvidenceLevel`)
-Four square cells filled to the level (Mentioned → Described → Demonstrated → Shipped), always followed by the level in
-words. Not yet shown = four empty cells. It describes one requirement's evidence, never the person.
+Five square cells filled to the level, always followed by the level in words. Not yet shown = five empty cells. It
+describes one requirement's evidence, never the person. Each level claims only what was checked (`src/lib/types.ts`):
+
+| Level | Means |
+|---|---|
+| Mentioned | A repo tag, the repo language, the description or a resume line names it |
+| Described | The README talks about it |
+| Declared | A dependency file lists it, or matching files exist; no file that was read shows it in use |
+| Demonstrated | Files that were read use it (import it, or contain its own code: SQL statements, a Dockerfile's `FROM`). A language needs a substantial body of the candidate's own code |
+| Shipped | Demonstrated, and GitHub records a release, a successful deployment or a Pages site |
+
+Tests, CI, a declared deploy URL and ownership are **notes**, shown under the reasons with a hairline at the left.
+They never raise a level. Shipped is a bonus: most good work is never deployed, and Demonstrated counts in full.
 
 ### Strength and breakdown
 `Strong / Some / Thin evidence` is always read next to `Breakdown` ("Shipped 7 / Demonstrated 1 / …"), never alone.

@@ -8,7 +8,7 @@
  */
 import type { ReactNode } from 'react';
 import { tierBreakdown } from '../lib/match';
-import { proofKind, roleSummary, sideQuestOf, type ProofDoc, type ProofRole } from '../lib/proof';
+import { proofKind, readUnderLooserRules, roleSummary, sideQuestOf, type ProofDoc, type ProofRole } from '../lib/proof';
 import { SKILL_BY_ID } from '../lib/skills';
 import { Breakdown, ExternalIcon, strengthLabel } from './marks';
 import ReportTable from './ReportTable';
@@ -39,11 +39,26 @@ function Candidate({ doc }: { doc: ProofDoc }) {
   );
 }
 
+/** Links stored before the stricter levels keep their evidence, and say what the labels meant then. */
+function OlderRules({ doc }: { doc: ProofDoc }) {
+  if (!readUnderLooserRules(doc)) return null;
+  return (
+    <p role="note" className="mt-4 max-w-prose border-y border-ink py-2.5 text-reading">
+      <span className="font-semibold">Read under earlier, looser rules.</span>{' '}
+      <span className="text-slate">
+        When this link was made, Demonstrated meant a dependency file listed the skill, and Shipped meant the repo also had
+        tests, CI or a deploy link. Today those count as Declared, with tests and CI as notes. A new link reads the code again
+        under the current rules.
+      </span>
+    </p>
+  );
+}
+
 const HowRead = () => (
   <p className="mt-4 max-w-prose text-reading text-slate">
-    Side Quest read these public repos and checked what the code contains: dependency files, source files, tests, CI and
-    deploys. Every line links to its source. Anyone can create this page for any public GitHub account, so it shows
-    evidence of the work, not who sent the link.
+    Side Quest read these public repos: their file lists, READMEs and dependency files, a sample of their source files,
+    and GitHub's own release and deployment records. Each level claims only what was checked, and every line links to its
+    source. Anyone can create this page for any public GitHub account, so it shows evidence of the work, not who sent the link.
   </p>
 );
 
@@ -90,6 +105,7 @@ function RoleLink({ doc }: { doc: ProofDoc }) {
           <Fields r={r} withRole />
         </div>
         <HowRead />
+        <OlderRules doc={doc} />
       </header>
       <RoleBody r={r} level={2} />
     </article>
@@ -113,6 +129,7 @@ function NetworkLink({ doc }: { doc: ProofDoc }) {
           Open a role to see each requirement and the code behind it.
         </p>
         <HowRead />
+        <OlderRules doc={doc} />
       </header>
 
       <h2 className="report-head mt-8 text-2xl">Roles</h2>

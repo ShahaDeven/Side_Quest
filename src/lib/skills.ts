@@ -1,11 +1,13 @@
 /**
  * Engineering skill taxonomy (~35 skills). PLAN.md §5.
  *
- * Each skill says how it shows up at each evidence tier:
+ * Each skill says how it shows up at each evidence level:
  *  - text (aliases / exact / patterns): JD requirements, README prose, repo topics, resume
  *  - languages: GitHub's repo `language` field (a Mentioned signal only)
- *  - packages: dependency-manifest names that, together with source files, make it Demonstrated
- *  - exts / paths: source files that make it Demonstrated on their own (languages, concept skills)
+ *  - packages: dependency names. Listed in a manifest = Declared; imported by a file that was read = Demonstrated
+ *  - exts / paths: matching files exist = Declared. Languages reach Demonstrated only on a substantial body of
+ *    the candidate's own code (evidence.ts); a file count alone never does
+ *  - code: patterns in a read file that are the skill itself (SQL statements, a Dockerfile's FROM) = Demonstrated
  */
 
 export type Category = 'language' | 'frontend' | 'backend' | 'infra' | 'ai' | 'practice';
@@ -29,6 +31,20 @@ export interface Skill {
   /** Paths that demonstrate the skill when at least `minFiles` (default 2) source files match. */
   paths?: RegExp[];
   minFiles?: number;
+  /** Code that is the skill itself, found in a file that was read. `files` limits which files it counts in. */
+  code?: CodePattern[];
+  /**
+   * False when importing a package isn't the skill: importing duckdb isn't writing SQL. Its packages then count
+   * only as Declared, and Demonstrated needs `code` (SQL statements).
+   */
+  importsDemonstrate?: false;
+}
+
+export interface CodePattern {
+  pattern: RegExp;
+  files?: RegExp;
+  /** Shown in the reason: "SQL statements in 3 files read". */
+  label: string;
 }
 
 /** Words that make a generic term ("evaluation", "benchmark") specifically about LLM/agent work. Not "model": ML models are everywhere. */
@@ -48,7 +64,10 @@ export const SKILLS: Skill[] = [
   { id: 'rust', label: 'Rust', category: 'language', aliases: [], exact: ['Rust'], languages: ['Rust'], exts: ['.rs'] },
   { id: 'java', label: 'Java', category: 'language', aliases: [], exact: ['Java'], languages: ['Java'], exts: ['.java'] },
   { id: 'cpp', label: 'C++', category: 'language', aliases: ['c++'], languages: ['C++', 'Cuda'], exts: ['.cpp', '.cc', '.hpp', '.cu'] },
-  { id: 'sql', label: 'SQL', category: 'language', aliases: ['sql', 'text-to-sql', 'mysql', 'sqlite'], packages: ['duckdb', 'sqlglot', 'sqlalchemy', 'sqlite3'], exts: ['.sql'], minFiles: 2 },
+  { id: 'sql', label: 'SQL', category: 'language', aliases: ['sql', 'text-to-sql', 'mysql', 'sqlite'], packages: ['duckdb', 'sqlglot', 'sqlalchemy', 'sqlite3'], exts: ['.sql'], minFiles: 2, importsDemonstrate: false,
+    // Upper-case keywords only: "select the best one from…" in a docstring is prose, not a query.
+    code: [{ pattern: /\bSELECT\b[\s\S]{1,300}?\bFROM\b|\bINSERT\s+INTO\b|\bCREATE\s+(?:TABLE|VIEW|INDEX)\b|\bUPDATE\s+\w+\s+SET\b/, label: 'SQL statements' }],
+  },
   { id: 'ios', label: 'iOS / Swift', category: 'language', aliases: ['ios', 'swiftui', 'uikit', 'xcode'], exact: ['Swift'], languages: ['Swift'], exts: ['.swift'] },
   { id: 'android', label: 'Android / Kotlin', category: 'language', aliases: ['android', 'kotlin', 'jetpack compose'], languages: ['Kotlin'], exts: ['.kt'] },
 
@@ -69,18 +88,34 @@ export const SKILLS: Skill[] = [
   },
 
   // --- infra & practice ---
-  { id: 'docker', label: 'Docker', category: 'infra', aliases: ['docker', 'containers', 'containerization', 'containerized'], paths: [/(^|\/)Dockerfile[^/]*$/, /(^|\/)(docker-)?compose\.ya?ml$/], minFiles: 1 },
+  { id: 'docker', label: 'Docker', category: 'infra', aliases: ['docker', 'containers', 'containerization', 'containerized'], paths: [/(^|\/)Dockerfile[^/]*$/, /(^|\/)(docker-)?compose\.ya?ml$/], minFiles: 1,
+    code: [
+      { pattern: /^\s*FROM\s+\S+/m, files: /(^|\/)Dockerfile[^/]*$/, label: 'a Dockerfile that builds an image' },
+      { pattern: /^services:\s*$/m, files: /(^|\/)(docker-)?compose\.ya?ml$/, label: 'a compose file defining services' },
+    ],
+  },
   // Not a bare `charts/` folder: that is usually plots. A Helm chart has a Chart.yaml.
-  { id: 'kubernetes', label: 'Kubernetes', category: 'infra', aliases: ['kubernetes', 'k8s', 'helm', 'eks', 'gke'], packages: ['kubernetes'], paths: [/(^|\/)(k8s|kubernetes|helm)\/[^/]+\.ya?ml$/, /(^|\/)Chart\.ya?ml$/, /(^|\/)kustomization\.ya?ml$/], minFiles: 1 },
+  { id: 'kubernetes', label: 'Kubernetes', category: 'infra', aliases: ['kubernetes', 'k8s', 'helm', 'eks', 'gke'], packages: ['kubernetes'], paths: [/(^|\/)(k8s|kubernetes|helm)\/[^/]+\.ya?ml$/, /(^|\/)Chart\.ya?ml$/, /(^|\/)kustomization\.ya?ml$/], minFiles: 1,
+    code: [{ pattern: /^kind:\s*(?:Deployment|Service|StatefulSet|DaemonSet|Job|CronJob|Ingress|ConfigMap)\b/m, files: /\.ya?ml$/, label: 'Kubernetes manifests' }],
+  },
   { id: 'aws', label: 'AWS', category: 'infra', aliases: ['aws', 'amazon web services', 's3', 'ec2', 'ecs', 'dynamodb'], exact: ['Lambda'], packages: ['boto3', 'aws-cdk-lib', '@aws-sdk/*', 'aws-cdk'] },
   { id: 'gcp', label: 'Google Cloud', category: 'infra', aliases: ['gcp', 'google cloud', 'bigquery', 'cloud run', 'vertex ai'], packages: ['google-cloud-*', '@google-cloud/*'] },
-  { id: 'ci-cd', label: 'CI/CD', category: 'practice', aliases: ['ci/cd', 'continuous integration', 'github actions', 'deployment pipelines'], exact: ['CI'], paths: [/^\.github\/workflows\/[^/]+\.ya?ml$/, /^\.gitlab-ci\.yml$/, /^\.circleci\//], minFiles: 1 },
+  { id: 'ci-cd', label: 'CI/CD', category: 'practice', aliases: ['ci/cd', 'continuous integration', 'github actions', 'deployment pipelines'], exact: ['CI'], paths: [/^\.github\/workflows\/[^/]+\.ya?ml$/, /^\.gitlab-ci\.yml$/, /^\.circleci\//], minFiles: 1,
+    code: [{ pattern: /^jobs:\s*$[\s\S]*?^\s+steps:/m, files: /^\.github\/workflows\//, label: 'a workflow that runs jobs' }],
+  },
   {
     id: 'testing', label: 'Testing & QA', category: 'practice',
     aliases: ['testing', 'unit tests', 'integration tests', 'end-to-end tests', 'e2e tests', 'test automation', 'test suites', 'test frameworks', 'regression testing', 'tdd', 'pytest', 'jest'],
     exact: ['QA'],
     packages: ['pytest', 'vitest', 'jest', 'mocha', 'hypothesis', '@playwright/test'],
     paths: [/(^|\/)(tests?|__tests__|spec)\/.+\.\w+$/, /(^|\/)test_[^/]+\.py$/, /_test\.(py|go)$/, /\.(test|spec)\.[jt]sx?$/], minFiles: 3,
+    code: [
+      {
+        pattern: /^\s*(?:async\s+)?def\s+test_\w+|\b(?:it|test|describe)\(\s*['"`]|#\[test\]|\bfunc\s+Test\w+\(/m,
+        files: /(^|\/)(tests?|__tests__|spec)\/|(^|\/)test_[^/]+\.py$|_test\.(py|go)$|\.(test|spec)\.[jt]sx?$|\.rs$/,
+        label: 'test cases',
+      },
+    ],
   },
   {
     id: 'observability', label: 'Observability', category: 'practice',
@@ -118,6 +153,15 @@ export const SKILLS: Skill[] = [
     ],
     packages: ['ragas', 'deepeval', 'promptfoo', 'inspect-ai', 'langsmith', 'braintrust', 'lm-eval', 'openai-evals'],
     paths: [/(^|\/)(evals?|evaluation|evaluations|benchmarks?)\/[^/]+\.(py|ts|json|jsonl|yaml)$/, /(^|\/)(eval|evaluate|benchmark)[^/]*\.(py|ts)$/],
+    // A hand-written harness imports no eval library. A function that scores, grades or judges outputs, in an
+    // evals file, is the harness itself.
+    code: [
+      {
+        pattern: /^\s*(?:async\s+)?(?:def|function|export\s+(?:async\s+)?function|const)\s+\w*(?:score|grade|judge|metric|evaluate|rubric)\w*/im,
+        files: /(^|\/)(evals?|evaluation|evaluations|benchmarks?)\/[^/]+\.(py|ts)$|(^|\/)(eval|evaluate|benchmark)[^/]*\.(py|ts)$/,
+        label: 'scoring functions',
+      },
+    ],
   },
   {
     id: 'rag', label: 'RAG & retrieval', category: 'ai',

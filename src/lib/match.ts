@@ -118,7 +118,7 @@ const SECTION_RANK: Record<Section, number> = { requirements: 0, role: 1, 'nice-
 // --- matching ----------------------------------------------------------------------------------
 
 /** Credit per tier when scoring. Only demonstrated+ counts toward "strong". */
-const CREDIT = { mentioned: 0.15, described: 0.4, demonstrated: 1, shipped: 1 } as const;
+const CREDIT = { mentioned: 0.15, described: 0.4, declared: 0.6, demonstrated: 1, shipped: 1 } as const;
 
 export const STRONG_DEMO_SHARE = 0.7;
 export const SOME_CREDIT_SHARE = 0.3;
@@ -210,6 +210,7 @@ export function sideQuestGate(match: MatchResult, optedIn: boolean): { reason: G
 export interface TierBreakdown {
   shipped: number;
   demonstrated: number;
+  declared: number;
   described: number;
   mentioned: number;
   /** Requirements with no evidence at all. */
@@ -221,7 +222,7 @@ export interface TierBreakdown {
  * a reader sees the spread of evidence, never a single score standing in for it.
  */
 export function tierBreakdown(match: Pick<MatchResult, 'covered' | 'missing'>): TierBreakdown {
-  const out: TierBreakdown = { shipped: 0, demonstrated: 0, described: 0, mentioned: 0, none: 0 };
+  const out: TierBreakdown = { shipped: 0, demonstrated: 0, declared: 0, described: 0, mentioned: 0, none: 0 };
   for (const c of match.covered) out[c.evidence.tier]++;
   for (const m of match.missing) {
     if (m.evidence) out[m.evidence.tier]++;

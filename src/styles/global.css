@@ -104,6 +104,7 @@
 :root {
   --shell-list-width: 19rem; /* role index (lg+) */
   --sticky-gap: 1.5rem;
+  --dialog-width: 68rem; /* candidate evidence sheet */
   --row-hover: color-mix(in oklab, var(--sheet) 70%, transparent);
   --blank-bg: color-mix(in oklab, var(--ink) 10%, transparent); /* [LINK]/[FINDING] blanks */
   --open-bg: color-mix(in oklab, var(--alert) 7%, var(--sheet)); /* the open requirement row */
@@ -213,6 +214,31 @@
   }
 }
 
+/* A modal report sheet (native <dialog>): the founder inspects a candidate without leaving the shortlist.
+   The sheet scrolls inside itself; the page behind it is locked (see base). Full height on phones. */
+@utility dialog-sheet {
+  width: min(var(--dialog-width), calc(100% - 2rem));
+  max-width: none;
+  height: auto;
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  border: 1px solid var(--ink);
+  overflow: hidden;
+  &[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  &::backdrop {
+    background: color-mix(in oklab, var(--sq-navy-950) 62%, transparent);
+  }
+  @media (max-width: 40rem) {
+    width: 100%;
+    max-height: 100dvh;
+    height: 100dvh;
+    border: 0;
+  }
+}
+
 /* Expandable rows (<details>) that carry their own text instead of the browser's triangle. */
 @utility summary-plain {
   list-style: none;
@@ -230,6 +256,10 @@
     -webkit-font-smoothing: antialiased;
     caret-color: var(--focus);
     scrollbar-color: var(--field) var(--ground);
+  }
+  /* While a modal sheet is open, only the sheet scrolls. */
+  html:has(dialog[open]) {
+    overflow: hidden;
   }
   ::selection {
     background: color-mix(in oklab, var(--focus) 28%, transparent);

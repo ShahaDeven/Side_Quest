@@ -95,7 +95,7 @@ describe('fetchProfileFacts', () => {
       const json = (b: unknown) => new Response(JSON.stringify(b));
       if (path === '/users/dev') return json({ login: 'dev', name: 'Dev', avatar_url: null });
       if (path === '/users/dev/repos') return json(repos);
-      if (path.includes('/git/trees/')) return json({ tree: tree.map((p) => ({ path: p, type: 'blob' })) });
+      if (path.includes('/git/trees/')) return json({ tree: tree.map((p) => ({ path: p, type: 'blob', size: 2_000 })) });
       if (path.endsWith('/readme')) return new Response('', { status: 404 });
       if (path.endsWith('/contributors')) return json([{ login: 'dev', contributions: 8 }, { login: 'pal', contributions: 2 }]);
       if (path.endsWith('/contents/pyproject.toml')) return new Response('[project]\ndependencies = ["langgraph"]');
@@ -161,5 +161,78 @@ describe('fetchProfileFacts', () => {
     expect(out.repos).toHaveLength(1);
     expect(out.repos[0].manifests[0].deps).toEqual(['langgraph']); // the rest of the evidence still reads
     expect(out.repos[0].summary.contributors).toBeNull();
+  });
+});
+
+describe('code reading (GraphQL batch, with a token)', () => {
+  const tree = ['pyproject.toml', 'agents/graph.py', 'tests/test_graph.py'];
+
+  /** REST as fakeGitHub, plus /graphql answering every `object(expression: "branch:path")` the query asks for. */
+  function withGraphQL(repos: ApiRepo[], graphql: (query: string) => Response) {
+    const calls: string[] = [];
+    const f = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = new URL(String(input)).pathname;
+      calls.push(path);
+      const json = (b: unknown) => new Response(JSON.stringify(b));
+      if (path === '/graphql') return graphql(JSON.parse(String(init?.body)).query);
+      if (path === '/users/dev') return json({ login: 'dev', name: 'Dev', avatar_url: null });
+      if (path === '/users/dev/repos') return json(repos);
+      if (path.includes('/git/trees/')) return json({ tree: tree.map((p) => ({ path: p, type: 'blob', size: 2_000 })) });
+      if (path.endsWith('/contributors')) return json([{ login: 'dev', contributions: 8 }]);
+      if (path.endsWith('/contents/pyproject.toml')) return new Response('[project]\ndependencies = ["langgraph"]');
+      return new Response('', { status: 404 });
+    }) as unknown as typeof fetch;
+    return { f, calls };
+  }
+
+  const TEXT: Record<string, string> = {
+    'pyproject.toml': '[project]\ndependencies = ["langgraph"]',
+    'agents/graph.py': 'from langgraph.graph import StateGraph\n',
+    'tests/test_graph.py': 'from agents.graph import build\n\ndef test_build():\n    assert build()\n',
+  };
+
+  /** Answers the batch: each repo alias gets its files, 2 releases and one successful deployment. */
+  const answer = (query: string) => {
+    const data: Record<string, Record<string, unknown>> = {};
+    for (const line of query.split('\n').filter((l) => /^r\d+:/.test(l))) {
+      const node: Record<string, unknown> = {
+        releases: { totalCount: 2 },
+        latestRelease: { tagName: 'v1.0.0' },
+        deployments: { nodes: [{ latestStatus: { state: 'SUCCESS' } }, { latestStatus: { state: 'FAILURE' } }] },
+      };
+      for (const m of line.matchAll(/(f\d+): object\(expression: "[^:"]+:([^"]+)"\)/g)) node[m[1]] = { text: TEXT[m[2]] ?? null, isBinary: false };
+      data[line.split(':')[0]] = node;
+    }
+    return new Response(JSON.stringify({ data }));
+  };
+
+  it('reads manifests, source and delivery records for every repo in one request', async () => {
+    const { f, calls } = withGraphQL([repo('a'), repo('b')], answer);
+    const out = await fetchProfileFacts('dev', { fetch: f, token: 't' });
+
+    expect(calls.filter((c) => c === '/graphql')).toHaveLength(1);
+    expect(calls.some((c) => c.includes('/contents/'))).toBe(false); // manifests came from the batch
+    const r = out.repos[0];
+    expect(r.codeRead).toBe(true);
+    expect(r.manifests[0].deps).toEqual(['langgraph']);
+    expect(r.files?.map((x) => x.path)).toEqual(['agents/graph.py', 'tests/test_graph.py']);
+    expect(r.delivery).toEqual({ releases: 2, latestRelease: 'v1.0.0', deployments: 1, pages: false });
+    expect(calls.length).toBeLessThanOrEqual(SUBREQUEST_BUDGET);
+  });
+
+  it('falls back to REST manifests, reading no code, when GraphQL fails', async () => {
+    const { f, calls } = withGraphQL([repo('a')], () => new Response('{"message":"Bad gateway"}', { status: 502 }));
+    const out = await fetchProfileFacts('dev', { fetch: f, token: 't' });
+    expect(out.repos[0].codeRead).toBe(false);
+    expect(out.repos[0].files).toEqual([]);
+    expect(out.repos[0].manifests[0].deps).toEqual(['langgraph']);
+    expect(calls.some((c) => c.endsWith('/contents/pyproject.toml'))).toBe(true);
+  });
+
+  it('never calls GraphQL without a token', async () => {
+    const { f, calls } = withGraphQL([repo('a')], answer);
+    const out = await fetchProfileFacts('dev', { fetch: f });
+    expect(calls).not.toContain('/graphql');
+    expect(out.repos[0].codeRead).toBe(false);
   });
 });

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { SEED_CANDIDATES } from '../data/seed-candidates';
 import { pickBrief, type BriefFile } from '../lib/briefs';
 import { boardId, fetchShortlist, saveShortlist } from '../lib/load-shortlist';
@@ -6,10 +6,11 @@ import { compareMatches, matchRole, tierBreakdown } from '../lib/match';
 import { githubRef, seedRef } from '../lib/shortlist';
 import { SKILL_BY_ID } from '../lib/skills';
 import type { CandidateProfile, EvidenceItem, MatchResult, Requirement, Role, Tier } from '../lib/types';
-import { Breakdown, EvidenceLevel, Inline, strengthLabel } from './marks';
+import { Breakdown, EvidenceLevel, Inline, levelLabel, strengthLabel } from './marks';
+import ReportTable, { LevelLegend } from './ReportTable';
 
 const label = (id: string) => SKILL_BY_ID.get(id)?.label ?? id;
-const TIER_RANK: Record<Tier, number> = { mentioned: 0, described: 1, demonstrated: 2, shipped: 3 };
+const TIER_RANK: Record<Tier, number> = { mentioned: 0, described: 1, declared: 2, demonstrated: 3, shipped: 4 };
 
 interface Props {
   role: Role;
@@ -172,6 +173,7 @@ export default function FounderView({ role, requirements, optedIn, onToggleOptIn
         Six of these candidates are fictional demo profiles with illustrative repos. Real candidates would appear here once they
         share their evidence with speedrun.
       </p>
+      <LevelLegend />
     </section>
   );
 }
@@ -204,6 +206,13 @@ function CandidateRow({
     total: [...m.covered, ...m.missing].filter((c) => c.section === 'requirements').length,
   };
   const open = brief ? m.missing.find((x) => x.skill === brief.targetSkill) : (m.missing.find((x) => x.section !== 'other') ?? m.missing[0]);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [inspecting, setInspecting] = useState(false);
+  const titleId = useId();
+  const show = () => {
+    dialog.current?.showModal();
+    setInspecting(true);
+  };
 
   return (
     <tr className="ref-grid grid gap-x-3 gap-y-3 border-b border-rule py-5 lg:table-row lg:py-0">
@@ -253,6 +262,61 @@ function CandidateRow({
             {brief ? 'Open requirement' : 'Not yet shown'}: {label(open.skill)}
           </p>
         )}
+        <button
+          type="button"
+          aria-haspopup="dialog"
+          onClick={show}
+          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold underline decoration-rule underline-offset-4 hover:decoration-ink"
+        >
+          Inspect all {total} skills
+        </button>
+        <dialog
+          ref={dialog}
+          aria-labelledby={titleId}
+          onClose={() => setInspecting(false)}
+          // A click on the backdrop lands on the dialog element itself, not its content: close.
+          onClick={(e) => e.target === e.currentTarget && dialog.current?.close()}
+          className="dialog-sheet bg-sheet p-0 text-ink"
+        >
+          {inspecting && (
+            <div className="flex min-h-0 flex-1 flex-col">
+              <header className="flex flex-wrap items-start justify-between gap-4 border-b border-ink px-5 pt-5 pb-4 sm:px-7">
+                <div className="min-w-0">
+                  <p className="field-label">
+                    {role.company}, {role.title}
+                  </p>
+                  <h3 id={titleId} className="report-head mt-1 text-3xl leading-none">
+                    {row.name}
+                  </h3>
+                  <p className="mt-1.5 text-sm">
+                    <span className="font-semibold">{strengthLabel(m.strength)}</span>
+                    <span className="tnum text-slate">
+                      , {m.covered.length} of {total} skills{core.total > 0 && `, core ${core.shown} of ${core.total}`}.{' '}
+                      {row.real ? 'Real public GitHub.' : 'Demo candidate, fictional.'}
+                    </span>
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={onToggle}
+                    aria-pressed={shortlisted}
+                    aria-label={`Shortlist ${row.name}`}
+                    className={`btn btn-sm ${shortlisted ? 'btn-primary' : 'btn-secondary'}`}
+                  >
+                    {shortlisted ? 'Shortlisted' : 'Shortlist'}
+                  </button>
+                  <button type="button" onClick={() => dialog.current?.close()} className="btn btn-sm btn-quiet" autoFocus>
+                    Close
+                  </button>
+                </div>
+              </header>
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-7 sm:px-7">
+                <CandidateDetail name={row.name} match={m} brief={brief} optedIn={optedIn} />
+              </div>
+            </div>
+          )}
+        </dialog>
       </td>
       <td className="col-start-2 text-sm lg:col-auto lg:py-5 lg:align-top">
         <p className="text-slate">
@@ -279,5 +343,92 @@ function CandidateRow({
         </button>
       </td>
     </tr>
+  );
+}
+
+/**
+ * Everything a founder needs to judge one candidate without leaving the shortlist: every requirement with its
+ * level and repository, the weakest part of the evidence, and what the side quest would test.
+ */
+function CandidateDetail({
+  name,
+  match: m,
+  brief,
+  optedIn,
+}: {
+  name: string;
+  match: MatchResult;
+  brief: ReturnType<typeof pickBrief>;
+  optedIn: boolean;
+}) {
+  // The weakest part: the heaviest requirement the code doesn't show (core requirements first). If everything is
+  // shown, the covered requirement with the lowest level.
+  const SECTION_RANK = { requirements: 0, role: 1, 'nice-to-have': 2, other: 3 } as const;
+  const gap = [...m.missing].sort((a, b) => b.weight - a.weight || SECTION_RANK[a.section] - SECTION_RANK[b.section])[0];
+  const thinnest = [...m.covered].sort((a, b) => TIER_RANK[a.evidence.tier] - TIER_RANK[b.evidence.tier] || a.weight - b.weight)[0];
+
+  return (
+    <section aria-label={`All evidence for ${name}`} className="pt-5">
+      <div className="grid gap-x-10 gap-y-4 md:grid-cols-2">
+        <div>
+          <h4 className="field-label">Weakest part of the evidence</h4>
+          {gap ? (
+            <p className="mt-1 text-reading">
+              <span className="font-semibold">{label(gap.skill)}</span>
+              {gap.section === 'requirements' && <span className="text-slate">, a core requirement,</span>}{' '}
+              {gap.evidence ? (
+                <>
+                  is only <span className="font-semibold">{levelLabel(gap.evidence.tier)}</span>
+                  {gap.evidence.repo && (
+                    <>
+                      {' '}
+                      in <span className="font-mono">{gap.evidence.repo}</span>
+                    </>
+                  )}
+                  : <Inline text={gap.evidence.reasons[0]} />
+                </>
+              ) : (
+                'has no evidence in the repos read.'
+              )}
+            </p>
+          ) : thinnest ? (
+            <p className="mt-1 text-reading">
+              Every skill this role names is shown in the code. The least supported is{' '}
+              <span className="font-semibold">{label(thinnest.skill)}</span>, {levelLabel(thinnest.evidence.tier)}:{' '}
+              <Inline text={thinnest.evidence.reasons[0]} />
+            </p>
+          ) : (
+            <p className="mt-1 text-reading text-slate">No evidence for this role yet.</p>
+          )}
+        </div>
+        <div>
+          <h4 className="field-label">What the side quest would test</h4>
+          {brief ? (
+            <div className="mt-1 text-reading">
+              <p>
+                <span className="font-semibold text-alert">{label(brief.targetSkill)}</span>, the open requirement, through{' '}
+                <span className="font-semibold">“{brief.brief.title}”</span>: {brief.brief.why_they_care}
+              </p>
+              <ul className="mt-1.5 list-disc space-y-1 pl-4 text-slate">
+                {brief.brief.scope.slice(0, 2).map((x) => (
+                  <li key={x}>{x}</li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p className="mt-1 text-reading text-slate">
+              {!optedIn
+                ? 'Nothing: this role is closed to side quests.'
+                : m.strength !== 'strong'
+                  ? 'Nothing yet: side quests open only once existing evidence is strong, so a side quest closes one gap, not five.'
+                  : 'Nothing yet: no reviewed side quest targets this candidate’s open requirement.'}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <h4 className="field-label mt-6">Every skill this role names, with the repository behind it</h4>
+      <ReportTable covered={m.covered} missing={m.missing} openSkill={brief?.targetSkill ?? null} openTitle={brief?.brief.title ?? null} legend={false} />
+    </section>
   );
 }
