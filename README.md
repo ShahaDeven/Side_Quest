@@ -7,7 +7,8 @@ own words, and shows the files behind every claim. When a founder has opened a r
 strong, it offers a one-day *side quest* that closes the single requirement the code doesn't show yet.
 
 **Live, no sign-in:** [what the founder sees](https://side-quest.deven-rshaha.workers.dev/?demo=1) ·
-[the candidate report](https://side-quest.deven-rshaha.workers.dev/?demo=1&view=candidate)
+[the candidate report](https://side-quest.deven-rshaha.workers.dev/?demo=1&view=candidate) ·
+[video walkthrough](https://drive.google.com/file/d/11mpa-hzv2eMQIA_-h0EwagHd8_6KLE57/view?usp=sharing)
 
 Built in approx. 8/9 hours with Claude Code.
 
