@@ -98,7 +98,7 @@ evidence and now say so.
 
 **Requirements.** Each role description is split into sections. Every skill in a ~35-skill engineering taxonomy is
 weighted by where the founder wrote it: title +3 · requirements +2 · responsibilities or stack +1 · nice-to-have +0.5 ·
-+1 per extra mention (up to 3). Skills named only in an "about the company" section are ignored when the description
++1 per mention, the first included (up to +3). Skills named only in an "about the company" section are ignored when the description
 has real sections.
 
 **Strength per role** is a label, never a percentage, and it is always shown next to its breakdown
@@ -116,6 +116,37 @@ requirements").
 **A side quest unlocks only when all three hold:** the founder opted the role in, the candidate's evidence is Strong,
 and there's a real open requirement. It targets an open requirement from the role's own sections, never one named only in the company description. Every brief
 was generated from the job description alone, then hand-edited and reviewed. Only briefs marked reviewed reach the UI.
+
+<details>
+<summary><strong>Matching limits and false positives</strong></summary>
+
+**Not yet shown means the files we read don't show it, not that the candidate lacks the skill.**
+
+- **Skills come from a fixed taxonomy** of ~35 engineering skills, each defined by phrases, package names, file
+  patterns and a few code patterns (`src/lib/skills.ts`). It is pattern matching, not open-ended reading of the job
+  description: a requirement outside the taxonomy isn't extracted at all, and a phrase can match in the wrong sense.
+  The tests pin known false positives (CUDA is not C++, MLflow is not observability, a `charts/` folder of plots is
+  not Kubernetes, "evaluation" counts as LLM evals only near an AI word).
+- **Evidence comes from the files that were read.** Nothing is run, built, type-checked or judged for quality.
+  Each repo contributes a sample (up to 8 source, 2 test and 3 config files of 80 B–24 KB), so use outside the sample
+  isn't seen.
+- **A detected import is evidence of use, not of production-quality work.** It shows the code calls the package, and
+  says nothing about how well.
+- **Repeated mentions raise a requirement's weight**, by +1 per mention up to +3. That measures how much the founder
+  asks for the skill. It says nothing about the candidate.
+- **When repos disagree, the strongest evidence wins.** For each skill, evidence from every repo is sorted by level,
+  then by the number of reasons. The top item is what matching uses and what the report shows. Ties keep the order
+  the repos were read in.
+- **Gaming.** A candidate could add an import to a trivial file in a skill folder, and it would count as
+  Demonstrated. Little limits this today:
+  - Only repos the candidate owns are read, never forks.
+  - A language needs ≥ 5 files and ≥ 20 KB of the candidate's own code, by sole authorship or ≥ 50% of commits.
+  - Every claim names the file, so a reviewer can open it, and shared repos carry a contributor note.
+
+  Nothing checks that an imported package is actually called, or how much code uses it. Treat it as a known
+  limitation.
+
+</details>
 
 ## What's real and what's simulated
 
@@ -172,6 +203,58 @@ flowchart LR
   and the bundled demo profile.
 - **Versioned caches.** `EVIDENCE_VERSION` is part of every cache key, so a deploy never serves evidence computed
   under older rules.
+
+<details>
+<summary><strong>Data and privacy</strong></summary>
+
+| Data | Where it goes | How long | Purpose |
+|---|---|---|---|
+| Resume text | This browser tab's memory only. Never sent to the server, saved, or put in the URL | Until the tab is reloaded or closed | Adds Mentioned-level evidence on screen |
+| GitHub profile data (public only: login, name, avatar URL, repo names, file paths and the evidence reasons; not raw files or READMEs) | Cloudflare KV, keyed by login and evidence version | 6 hours, then it expires | Avoid rereading GitHub on every visit |
+| Proof-link documents (login, name, avatar URL, the evidence for the chosen roles, creation time) | Cloudflare D1, `proofs` table | Until deleted with the delete link. There is no automatic expiry | The shareable proof page |
+| Deletion tokens | Shown once to the person who created the link. D1 stores only its SHA-256 hash | As long as the proof link | Proves the right to delete |
+| Founder shortlist (demo board) | A random board id in this browser's localStorage, plus D1 rows of board id, role id and candidate ref (`seed:<id>` or `gh:<login>`) | Until un-shortlisted. No automatic expiry; at most 200 rows per board | The demo founder's shortlist |
+| IP-derived hash | Cloudflare KV: HMAC-SHA256 of date and IP under a Worker secret, as the key of a counter. The IP itself is never stored | 2 days | Rate limit: 20 proof links per IP per day |
+
+Cloudflare Workers Logs is enabled for this Worker, so Cloudflare keeps invocation logs (request URLs, which include
+`?user=<login>` for profile reads, and errors the code logs) under its own retention policy.
+
+**Deleting a proof link removes** its D1 row: the stored evidence document and the token hash. The page then reads
+"Proof link deleted". **It doesn't remove** the KV cache of that GitHub profile (it expires within 6 hours, and is
+shared by anyone who looks up the same login), the rate-limit counter (it expires within 2 days), or copies anyone
+already made of the page or its Markdown.
+
+</details>
+
+<details>
+<summary><strong>What the tests protect</strong></summary>
+
+128 tests in 11 files (`tests/`, Vitest). They cover:
+
+- **Evidence level boundaries.** Each level is tested at its edge:
+  - A listed dependency with source files is only Declared.
+  - Five Python files are only Declared. Demonstrated needs ≥ 20 KB of the candidate's own code, read.
+  - Importing a SQL driver isn't SQL. SQL statements are.
+  - Tests, CI and a deploy URL are notes that never raise a level.
+  - Shipped needs a GitHub release, deployment or Pages site.
+
+  These pin the review's corrections in place, so the earlier over-generous rules can't come back unnoticed.
+- **Reading code.** Python, JS/TS, Go and Rust import detection; package-name aliases; code patterns only in the
+  files they're about; which files get sampled; the single GraphQL request, its fallback to REST, and never calling
+  GraphQL without a token; the request budget under the Worker's limit; 403 handling.
+- **Requirement extraction and weighting.** Section headings, weights (title > requirements > role > nice-to-have >
+  intro), quoting the requirements line, and ignoring link-only lines.
+- **Strong / Some / Thin.** The three rules for Strong, the cap explanations, mention-only evidence reading Thin, and
+  the ordering.
+- **The side-quest gate.** Invited, earned and targeted. Only reviewed briefs are picked, briefs exist only for opted-in
+  roles, and every reviewed brief is revalidated against its real job description on each run.
+- **Proof links.** The server computes the match. A role link holds exactly one role. Resume evidence is never
+  carried. A side quest is attached only when the gate holds. The 64 KB fit, Markdown, ids and delete tokens, and the
+  keyed IP hash.
+- **Taxonomy false positives**, manifest parsing, speedrun API paging and fallbacks, URL state, and the fictional
+  candidates (no links, `.example` hosts only, valid ids).
+
+</details>
 
 **Stack:** Astro 7 · React 19 · TypeScript (strict) · Tailwind CSS v4 · Vitest · Cloudflare Workers, D1, KV ·
 pnpm · Node 24.
