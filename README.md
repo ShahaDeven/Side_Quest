@@ -1,31 +1,32 @@
 # Side Quest
 
-> **TL;DR**\
-> A resume is a claim nobody has time to check, and founders fill the gap with unpaid take-homes.\
-> Side Quest reads a candidate's public GitHub and answers each live speedrun role's requirements with the files that show them.\
-> Try it: https://side-quest.deven-rshaha.workers.dev/?demo=1
+**A resume is a claim. Side Quest shows the code behind it.**
 
-Built in about 8 hours with Claude Code.
-
-**An evidence layer for the speedrun Talent Network.** Side Quest reads a candidate's public GitHub, checks it
-against each live speedrun engineering role in the founder's own words, and shows the files behind every claim.
-When a founder has opened a role to it and the evidence is already strong, it offers a one-day *side quest* that
-closes the single requirement the code doesn't show yet.
+Side Quest reads a candidate's public GitHub, checks it against each live speedrun engineering role in the founder's
+own words, and shows the files behind every claim. When a founder has opened a role to it and the evidence is already
+strong, it offers a one-day *side quest* that closes the single requirement the code doesn't show yet.
 
 **Live, no sign-in:** [what the founder sees](https://side-quest.deven-rshaha.workers.dev/?demo=1) ·
 [the candidate report](https://side-quest.deven-rshaha.workers.dev/?demo=1&view=candidate)
+
+Built in about 8 hours with Claude Code.
 
 > An unofficial concept I built for my application to the a16z speedrun talent team's Product Engineer role. It is
 > not affiliated with or endorsed by a16z or speedrun. It uses speedrun's public jobs API and links back to every
 > posting. Founder opt-ins and the six other candidates in the founder view are simulated, and labelled as such.
 
+<!-- TODO: swap in docs/screenshots/demo.gif once it's recorded -->
 ![What a founder sees: candidates for Sekai's AI Agent Engineer role, ranked by evidence in their code](docs/screenshots/founder-view.png)
 
 ---
 
-## Why I built this
+## The moment
 
-Job hunting is broken on both sides in the same place: **a resume is a claim, and nobody can check it quickly.**
+In October I spent 1 day building Slip Check (`storeroom-slip-validator`) for an AI startup's case study: a
+validator for warehouse checkout slips, based on the handwritten slips I filled in at my campus storeroom job. Most of what that founder would want to know
+was already in my GitHub; there was no way for them to see which part answered their questions.
+
+That gap sits in the same place on every side of hiring:
 
 - **Candidates** already have the evidence: projects, repos, tests, deploys. But it sits unread, because no founder
   has time to open nine repos and work out which file answers which requirement.
@@ -33,13 +34,17 @@ Job hunting is broken on both sides in the same place: **a resume is a claim, an
   looked at work they have already done, and they often end in silence.
 - **The talent team** sits between the two and has to decide who to introduce to whom, mostly from self-reported text.
 
-I've lived the candidate side of this. This autumn I built small, company-specific projects for startups I wanted to
-work with (`storeroom-slip-validator` is one of them). The work existed, but there was nowhere to put it where a
-founder would see, in their own terms, which part of it answered what they were asking for.
+## What I almost built instead
 
-My first idea was the obvious one: generate a custom build-to-sell project for every role. I dropped it. Unsolicited,
-AI-generated take-homes are noise for founders and a treadmill for candidates. Side Quest is the version I'd trust on
-both sides:
+My first idea was the obvious one: generate a custom build-to-sell project for every role. I dropped it.
+Unsolicited, AI-generated take-homes are noise for founders and a treadmill for candidates.
+
+**The extra work should be small, invited and earned, and it should come after someone has looked at the work that
+already exists.**
+
+## What Side Quest does
+
+It's the version I'd trust on both sides:
 
 1. **Start from work that already exists.** Read the code, not the resume.
 2. **Answer the founder's requirements, in their words**, with a file path for every answer and no single score.
@@ -60,26 +65,9 @@ both sides:
 
 ![Inspecting one candidate over the shortlist: the weakest part, what the side quest would test, and every requirement with its repository](docs/screenshots/founder-inspect.png)
 
-## What the role asks for, and where it shows up here
+## How a claim becomes checkable
 
-The posting asks for one person who can take an idea all the way to a live product.
-
-| The role asks | In this project |
-|---|---|
-| **Product:** spot what's broken for job seekers and decide what's worth building | The problem above, the build-to-sell idea I dropped, and the side-quest gate (invited, earned, targeted) instead of generated take-homes. Three users, each with their own view: candidate report, founder view, talent-team link. |
-| **Design:** taste, and it looks and feels right | A report, not a dashboard: founder requirements in quotes, file paths in mono, five ruled cells per skill, red used only for the open requirement. No match percentages, no scores, no badges. [Design system](docs/design-system.md). |
-| **Ship:** get it live, deployment included, using AI tools to move fast | Deployed on Cloudflare Workers from GitHub, with D1 and KV. Built with Claude Code as my pair. The side-quest briefs were generated with Claude Haiku for **$0.039 in total**, then hand-edited and reviewed. |
-| **Lived it:** you've been a job seeker recently | [Why I built this](#why-i-built-this). |
-| **Job hunting sux: tools useful to job seekers, not ads** | Unofficial and labelled. Resume text never leaves the browser. A role link names exactly one company. Simulated things say so. Old proof links say when stricter rules replaced the ones they were read under. |
-
-It also sits next to the products the posting cites rather than copying them. career-ops and Tsenta score jobs
-against a CV. Juicebox and Paraform help founders source. Jack & Jill give each side its own agent. Side Quest is the
-piece between them: **evidence from the work itself, readable by both sides**, built on speedrun's own jobs API and
-pointing candidates to [the Talent Network](https://speedrun-talent-network.com/join/).
-
-## Evidence levels
-
-Every level claims only what was actually checked, and every claim shows its source.
+Each level is a step from claim to proof, and each says exactly what was checked. Every claim shows its source.
 
 | Level | Means | Example reason in the UI |
 |---|---|---|
@@ -96,9 +84,9 @@ Every level claims only what was actually checked, and every claim shows its sou
   on GitHub.
 - **A resume can only ever reach Mentioned.** It's the self-reported claim this product exists to get past.
 
-These rules were tightened after an outside review found the first version too generous: a listed dependency used to
-count as Demonstrated, and any test file used to count as Shipped. Links created under the old rules keep their
-evidence and now say so.
+These rules were tightened after a review found the first version too generous: a listed dependency used to count as
+Demonstrated, and any test file used to count as Shipped. Links created under the old rules keep their evidence and
+now say so.
 
 ![The candidate report: each founder sentence, the skills it names, the evidence level and the files read](docs/screenshots/candidate-report.png)
 
@@ -106,8 +94,8 @@ evidence and now say so.
 
 **Requirements.** Each role description is split into sections. Every skill in a ~35-skill engineering taxonomy is
 weighted by where the founder wrote it: title +3 · requirements +2 · responsibilities or stack +1 · nice-to-have +0.5 ·
-+1 per mention, the first included (up to +3). Skills named only in an "about the company" section are ignored when the description
-has real sections.
++1 per mention, the first included (up to +3). Skills named only in an "about the company" section are ignored when the
+description has real sections.
 
 **Strength per role** is a label, never a percentage, and it is always shown next to its breakdown
 (for example *Demonstrated 8 / Described 1 / Not yet shown 1*):
@@ -120,14 +108,13 @@ has real sections.
 
 Strong, Some and Thin are rule-based evidence classifications, not predictions of hiring success or overall engineering
 ability. The skill counts shown in the UI are descriptive; the classification uses requirement weights and coverage
-thresholds.
-
-When a role isn't Strong, the report says why ("too few readable skills", "mostly day-to-day items, not the core
-requirements").
+thresholds. When a role isn't Strong because of the last two rules, the report says why ("too few readable skills",
+"mostly day-to-day items, not the core requirements").
 
 **A side quest unlocks only when all three hold:** the founder opted the role in, the candidate's evidence is Strong,
-and there's a real open requirement. It targets an open requirement from the role's own sections, never one named only in the company description. Every brief
-was generated from the job description alone, then hand-edited and reviewed. Only briefs marked reviewed reach the UI.
+and there's a real open requirement. It targets an open requirement from the role's own sections, never one named only
+in the company description. Every brief was generated from the job description alone, then hand-edited and reviewed.
+Only briefs marked reviewed reach the UI.
 
 <details>
 <summary><strong>Matching limits and false positives</strong></summary>
@@ -173,7 +160,29 @@ was generated from the job description alone, then hand-edited and reviewed. Onl
 Nothing on the site claims users, metrics or endorsements it doesn't have. The impact measures in the roadmap are
 proposals, not results.
 
-## Architecture
+## Why this fits the role
+
+The posting asks for one person who can take an idea all the way to a live product.
+
+| The role asks | In this project |
+|---|---|
+| **Product:** spot what's broken for job seekers and decide what's worth building | The moment, the build-to-sell idea I dropped, and the side-quest gate (invited, earned, targeted) instead of generated take-homes. Three users, each with their own view: candidate report, founder view, talent-team link. |
+| **Design:** taste, and it looks and feels right | A report, not a dashboard: founder requirements in quotes, file paths in mono, five ruled cells per skill, red used only for the open requirement. No match percentages, no scores, no badges. [Design system](docs/design-system.md). |
+| **Ship:** get it live, deployment included, using AI tools to move fast | Deployed on Cloudflare Workers from GitHub, with D1 and KV. Built with Claude Code as my pair. The side-quest briefs were generated with Claude Haiku for **$0.039 in total**, then hand-edited and reviewed. |
+| **Lived it:** you've been a job seeker recently | [The moment](#the-moment). |
+| **Job hunting sux: tools useful to job seekers, not ads** | Unofficial and labelled. Resume text never leaves the browser. A role link names exactly one company. Simulated things say so. Old proof links say when stricter rules replaced the ones they were read under. |
+
+It sits next to the products the posting cites rather than copying them. career-ops and Tsenta score jobs against a
+CV. Juicebox and Paraform help founders source. Jack & Jill give each side its own agent. Side Quest is the piece
+between them: **evidence from the work itself, readable by both sides**, built on speedrun's own jobs API and pointing
+candidates to [the Talent Network](https://speedrun-talent-network.com/join/).
+
+## How it's built
+
+![How it is built: the browser calls three Worker routes; the Worker reads speedrun and GitHub (REST plus one GraphQL request), caches in KV and stores proof links and shortlists in D1](docs/architecture.png)
+
+<details>
+<summary>Diagram source (Mermaid)</summary>
 
 ```mermaid
 flowchart LR
@@ -202,19 +211,34 @@ flowchart LR
   R -.-> UI
 ```
 
+</details>
+
 - **Within the free plan's 50 outbound requests per call.** A profile read costs 1 user + 1 repo list + 3 per repo
-  (9 repos) + 1 GraphQL request for every repo's sample files (up to 8 source, 2 test and 3 config files each),
-  manifests and delivery records. Without a token, manifests come over REST and no code is read, so nothing can pass
-  Declared: an honest ceiling, not a guess.
+  (9 repos) + 1 GraphQL request for every repo's sample files, manifests and delivery records. Without a token,
+  manifests come over REST and no code is read, so nothing can pass Declared: an honest ceiling, not a guess.
 - **The browser never sends evidence.** Creating a proof link sends only a GitHub login and role ids. The server
   rereads GitHub and rebuilds the document, so a page can't be edited to claim more. A role link must name exactly one
   role, and requests for more are rejected rather than trimmed. Links are capped at 64 KB, limited to 20 per IP per
-  day (counted under an HMAC-SHA256 of the date and IP, keyed with a Worker secret, so the IP is never stored and
-  the hash can't be reversed by trying every IPv4 address), and deletable with a one-time token stored as a SHA-256 hash.
+  day (counted under an HMAC-SHA256 of the date and IP, keyed with a Worker secret, so the IP is never stored and the
+  hash can't be reversed by trying every IPv4 address), and deletable with a one-time token stored as a SHA-256 hash.
 - **It never shows a blank screen.** If the Worker can't be reached, the page falls back to the bundled job snapshot
   and the bundled demo profile.
 - **Versioned caches.** `EVIDENCE_VERSION` is part of every cache key, so a deploy never serves evidence computed
   under older rules.
+
+**Stack:** Astro 7 · React 19 · TypeScript (strict) · Tailwind CSS v4 · Vitest · Cloudflare Workers, D1, KV ·
+pnpm · Node 24.
+
+| Path | What's there |
+|---|---|
+| `src/lib/github.ts` | GitHub reader: repo selection for skill coverage, the request budget, the GraphQL batch |
+| `src/lib/code.ts` | Which files to read, import detection (Python, JS/TS, Go, Rust), code patterns |
+| `src/lib/evidence.ts` | Repo facts → evidence levels with reasons and notes |
+| `src/lib/match.ts` | Requirement extraction, weighting, strength, the side-quest gate |
+| `src/lib/proof.ts` | Proof documents: role and talent-team links, size cap, Markdown |
+| `src/components/` | Candidate report, founder view, requirement table, side quest, proof pages |
+| `src/data/` | Job snapshot, demo profile, reviewed briefs, simulated opt-ins, fictional candidates |
+| `scripts/` | Snapshot refresh, demo profile capture, brief generation |
 
 <details>
 <summary><strong>Data and privacy</strong></summary>
@@ -268,24 +292,11 @@ already made of the page or its Markdown.
 
 </details>
 
-**Stack:** Astro 7 · React 19 · TypeScript (strict) · Tailwind CSS v4 · Vitest · Cloudflare Workers, D1, KV ·
-pnpm · Node 24.
+<details>
+<summary><strong>Run it locally and deploy</strong></summary>
 
-| Path | What's there |
-|---|---|
-| `src/lib/github.ts` | GitHub reader: repo selection for skill coverage, the request budget, the GraphQL batch |
-| `src/lib/code.ts` | Which files to read, import detection (Python, JS/TS, Go, Rust), code patterns |
-| `src/lib/evidence.ts` | Repo facts → evidence levels with reasons and notes |
-| `src/lib/match.ts` | Requirement extraction, weighting, strength, the side-quest gate |
-| `src/lib/proof.ts` | Proof documents: role and talent-team links, size cap, Markdown |
-| `src/components/` | Candidate report, founder view, requirement table, side quest, proof pages |
-| `src/data/` | Job snapshot, demo profile, reviewed briefs, simulated opt-ins, fictional candidates |
-| `scripts/` | Snapshot refresh, demo profile capture, brief generation |
-
-## Run it locally
-
-Requires [pnpm](https://pnpm.io). The repo pins Node 24 and pnpm 12, and pnpm downloads that Node for this project
-only.
+**Run it locally.** Requires [pnpm](https://pnpm.io). The repo pins Node 24 and pnpm 12, and pnpm downloads that
+Node for this project only.
 
 ```bash
 pnpm install
@@ -314,9 +325,7 @@ pnpm preview     # build and run on the local Workers runtime (wrangler dev)
 | `pnpm demo-profile` | Re-read the demo GitHub profile and print how it matches every role |
 | `pnpm briefs -- --dry-run` | Plan side-quest briefs and estimate the cost. Without `--dry-run` it calls Claude Haiku using `ANTHROPIC_API_KEY` from `.env`, capped by `--max-usd` (default $0.25) |
 
-## Deploy
-
-Cloudflare Workers (free plan), built from this repo by Cloudflare's GitHub integration:
+**Deploy.** Cloudflare Workers (free plan), built from this repo by Cloudflare's GitHub integration:
 
 - **Build command:** `pnpm test && pnpm build` · **Deploy command:** `pnpm wrangler deploy`
 - **Build variables:** `NODE_VERSION=24`, `PNPM_VERSION=12.16.1`
@@ -329,13 +338,13 @@ Cloudflare Workers (free plan), built from this repo by Cloudflare's GitHub inte
 
 Every push to `main` deploys after the tests pass. Pushes to other branches get preview URLs.
 
+</details>
+
 ## Known limitations
 
-- **It reads a sample, not the whole repo.** Up to 8 source, 2 test and 3 config files per repo, chosen coverage
-  first: the best file from each skill folder, with entry points preferred. A skill used only in files outside the
-  sample stays Declared, and the note says how many files were read.
-- **Import detection is pattern-based**, for Python, JS/TS, Go and Rust. It recognises imports and a few code
-  patterns. It doesn't run, type-check or judge the quality of code.
+- **It reads a sample, not the whole repo, and detects use by pattern.** See
+  [Matching limits](#matching-and-the-side-quest-gate): a skill used only outside the sample stays Declared, and the
+  note says how many files were read.
 - **Public GitHub only**, and only repos the candidate owns (no forks). Work in private repos or at past employers is
   invisible to it.
 - **Engineering roles only**, with a ~35-skill taxonomy. Anything outside it reads as not yet shown, and the page says
@@ -360,6 +369,9 @@ Every push to `main` deploys after the tests pass. Pushes to other branches get 
 **How I'd measure it (proposed, not results):** qualified introductions per candidate; founder time to evaluate a
 candidate; shortlist → introduction conversion; the share of candidates with Demonstrated evidence for the roles they
 apply to; side-quest acceptance and completion; and how many completed side quests lead to a conversation.
+
+Side Quest is the tool I wanted on the other side of my own job hunt: work that already exists, read in the founder's
+own words, with the files to back it up.
 
 ---
 
