@@ -9,22 +9,22 @@ strong, it offers a one-day *side quest* that closes the single requirement the 
 **Live, no sign-in:** [what the founder sees](https://side-quest.deven-rshaha.workers.dev/?demo=1) ·
 [the candidate report](https://side-quest.deven-rshaha.workers.dev/?demo=1&view=candidate)
 
-Built in about 8 hours with Claude Code.
+Built in approx. 8/9 hours with Claude Code.
 
 > An unofficial concept I built for my application to the a16z speedrun talent team's Product Engineer role. It is
 > not affiliated with or endorsed by a16z or speedrun. It uses speedrun's public jobs API and links back to every
 > posting. Founder opt-ins and the six other candidates in the founder view are simulated, and labelled as such.
 
-<!-- TODO: swap in docs/screenshots/demo.gif once it's recorded -->
-![What a founder sees: candidates for Sekai's AI Agent Engineer role, ranked by evidence in their code](docs/screenshots/founder-view.png)
+![A 30-second walkthrough of the live site: the founder view for Sekai's AI Agent Engineer role, one candidate's evidence sheet, the candidate report with its open requirement, and the proof-link preview](docs/screenshots/demo.gif)
 
 ---
 
 ## The moment
 
-In October I spent 1 day building Slip Check (`storeroom-slip-validator`) for an AI startup's case study: a
-validator for warehouse checkout slips, based on the handwritten slips I filled in at my campus storeroom job. Most of what that founder would want to know
-was already in my GitHub; there was no way for them to see which part answered their questions.
+This autumn I built 5/6 company-specific projects for startups I wanted to work with. Slip Check
+(`storeroom-slip-validator`) took a day: a validator for warehouse checkout slips, based on the handwritten slips I
+filled in at my campus storeroom job. Others took 2/3 days. Each one was proof of something already sitting in
+my GitHub, and no founder had a way to see which part answered their questions.
 
 That gap sits in the same place on every side of hiring:
 
@@ -323,6 +323,7 @@ pnpm preview     # build and run on the local Workers runtime (wrangler dev)
 |---|---|
 | `pnpm snapshot` | Refresh `src/data/jobs-snapshot.json` from the live speedrun API |
 | `pnpm demo-profile` | Re-read the demo GitHub profile and print how it matches every role |
+| `pnpm eval-claims -- --users a,b,c` | Sample claims across profiles and levels into a CSV for a hand check, auto-checking code-level claims against a fresh download; `--tally` reports the agreement rate |
 | `pnpm briefs -- --dry-run` | Plan side-quest briefs and estimate the cost. Without `--dry-run` it calls Claude Haiku using `ANTHROPIC_API_KEY` from `.env`, capped by `--max-usd` (default $0.25) |
 
 **Deploy.** Cloudflare Workers (free plan), built from this repo by Cloudflare's GitHub integration:
@@ -375,5 +376,5 @@ own words, with the files to back it up.
 
 ---
 
-Built by [Deven Shah](https://github.com/ShahaDeven). Screenshots are from the local build of this
-repository on 2026-11-02, using my public GitHub as the demo profile.
+Built by [Deven Shah](https://github.com/ShahaDeven). The walkthrough GIF was recorded on the live site on 2026-11-03;
+the screenshots are from the local build on 2026-11-02. Both use my public GitHub as the demo profile.
